@@ -6,7 +6,7 @@
     'sortable' => true,
 ])
 
-<th {{ $attributes->merge(['class' => 'px-4 py-4 text-[10px] font-black uppercase tracking-widest bg-gray-50/50 dark:bg-gray-900/50 group ' . ($sortable && $name ? 'cursor-pointer' : 'cursor-default')]) }}
+<th {{ $attributes->merge(['class' => 'px-6 py-4 text-[10px] font-black uppercase tracking-widest  group ' . ($sortable && $name ? 'cursor-pointer' : 'cursor-default')]) }}
     @if($sortable && $name) wire:click="sortBy('{{ $name }}')" @endif
 >
     @if($sortable && $name)

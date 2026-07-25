@@ -40,6 +40,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>
 
 @can('view_users')

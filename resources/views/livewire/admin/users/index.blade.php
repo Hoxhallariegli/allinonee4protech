@@ -76,13 +76,13 @@
                     <td>
                         <div class="flex space-x-2">
                                 @can('view_users_profiles')
-                                    <x-a href="{{ route('admin.users.show', $user) }}">{{ __('users.Profile') }}</x-a>
+                                    <x-a href="{{ route('admin.users.show', $user) }}" class="!transition-none">{{ __('users.Profile') }}</x-a>
                                 @endcan
 
                                 @if(can('edit_users'))
-                                    <x-a href="{{ route('admin.users.edit', $user) }}">{{ __('admin.Edit') }}</x-a>
+                                    <x-a href="{{ route('admin.users.edit', $user) }}" class="!transition-none">{{ __('admin.Edit') }}</x-a>
                                 @elseif(auth()->id() === $user->id && can('edit_own_account'))
-                                    <x-a href="{{ route('admin.users.edit', $user) }}">{{ __('admin.Edit') }}</x-a>
+                                    <x-a href="{{ route('admin.users.edit', $user) }}" class="!transition-none">{{ __('admin.Edit') }}</x-a>
                                 @endif
 
                                 @if(can('add_users') && !empty($user->invite_token))
@@ -109,10 +109,10 @@
                                 @endif
 
                                 @if(can('delete_users') && auth()->id() !== $user->id)
-                                    <div x-data="{ confirmation: '' }" class="inline-block">
+                                    <div x-data="{ confirmation: '' }" x-cloak class="inline-block !transition-none">
                                         <x-modal>
                                             <x-slot name="trigger">
-                                                <a href="#" @click="on = true" class="text-red-600 hover:text-red-900">{{ __('admin.Delete') }}</a>
+                                                <a href="#" @click="on = true" class="text-red-600 hover:text-red-900 !transition-none">{{ __('admin.Delete') }}</a>
                                             </x-slot>
 
                                             <x-slot name="modalTitle">

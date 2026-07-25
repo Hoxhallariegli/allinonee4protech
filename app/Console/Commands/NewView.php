@@ -163,6 +163,17 @@ class NewView extends Command
     protected function generateQuery($name, $fields)
     {
         $with = collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "'" . Str::camel(str_replace('_id', '', $f['name'])) . "'")->implode(', ');
+
+        $searchFields = collect($fields)
+            ->filter(fn($f) => in_array($f['type'], ['string', 'text']))
+            ->map(fn($f) => "                \$query->orWhere('{$f['name']}', 'like', '%' . \$params['search'] . '%');")
+            ->implode("\n");
+
+        $relSearch = collect($fields)
+            ->filter(fn($f) => $f['type'] === 'foreignId')
+            ->map(fn($f) => "                \$query->orWhereHas('" . Str::camel(str_replace('_id', '', $f['name'])) . "', function(\$q) use (\$params) { \$q->where('name', 'like', '%' . \$params['search'] . '%'); });")
+            ->implode("\n");
+
         $filters = "";
         foreach ($fields as $f) {
             if ($f['type'] === 'foreignId' || $f['type'] === 'enum') {
@@ -170,7 +181,7 @@ class NewView extends Command
             }
         }
 
-        $stub = "<?php\n\nnamespace App\Domain\\$name\Queries;\n\nuse App\Models\\$name;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass {$name}ListQuery\n{\n    public function handle(array \$params = [], string \$sortField = 'id', string \$sortAsc = 'asc'): Builder\n    {\n        \$query = $name::query()" . ($with ? "->with([$with])" : "") . ";\n        if (isset(\$params['search']) && \$params['search']) {\n            \$query->where('id', 'like', '%' . \$params['search'] . '%');\n        }\n$filters\n        return \$query->orderBy(\$sortField, \$sortAsc);\n    }\n}";
+        $stub = "<?php\n\nnamespace App\Domain\\$name\Queries;\n\nuse App\Models\\$name;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass {$name}ListQuery\n{\n    public function handle(array \$params = [], string \$sortField = 'id', string \$sortAsc = 'asc'): Builder\n    {\n        \$query = $name::query()" . ($with ? "->with([$with])" : "") . ";\n        \n        if (isset(\$params['search']) && \$params['search']) {\n            \$query->where(function(\$query) use (\$params) {\n                \$query->where('id', 'like', '%' . \$params['search'] . '%');\n$searchFields\n$relSearch\n            });\n        }\n$filters\n        return \$query->orderBy(\$sortField, \$sortAsc);\n    }\n}";
         File::put(app_path("Domain/$name/Queries/{$name}ListQuery.php"), $stub);
     }
 
@@ -208,6 +219,8 @@ class NewView extends Command
 
         // INDEX
         $filtersProps = ""; $filtersReset = ""; $availableLists = "";
+        $filterFieldsArray = collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "'{$f['name']}'")->push("'search'")->push("'paginate'")->implode(', ');
+
         foreach($fields as $f) {
             if ($f['type'] === 'foreignId') {
                 $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
@@ -216,22 +229,9 @@ class NewView extends Command
                 $availableLists .= "            '{$rv}' => \\App\Models\\{$f['relatedModel']}::pluck('name', 'id')->toArray(),\n";
             }
         }
-        $indexStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\Queries\\{$name}ListQuery;\nuse App\Domain\\$name\Actions\\Delete{$name}Action;\nuse Livewire\{Component, WithPagination, Attributes\Title, Attributes\Url};\n\n#[Title('$pluralName')]\nclass $pluralName extends Component\n{\n    use WithPagination;\n    public int \$paginate = 10;\n    #[Url(history: true)] public string \$search = '';\n$filtersProps    public bool \$openFilter = false;\n    public string \$sortField = 'id';\n    public bool \$sortAsc = true;\n\n    public function updatedSearch() { \$this->resetPage(); }\n    public function resetFilters() { \$this->reset(['search', 'openFilter', $filtersReset]); }\n\n    public function render()\n    {\n        abort_if_cannot('view_{$pluralSnake}');\n        \$query = (new {$name}ListQuery())->handle([\n            'search' => \$this->search,\n" . collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "            '{$f['name']}' => \$this->{$f['name']},")->implode("\n") . "\n        ], \$this->sortField, \$this->sortAsc ? 'asc' : 'desc');\n\n        return view('$viewPath.index', [\n            'items' => \$query->paginate(\$this->paginate),\n            'sortableFields' => $name::sortable(),\n$availableLists        ])->layout('components.layouts.app');\n    }\n\n    public function sortBy(string \$field) { if (!in_array(\$field, $name::sortable())) return; if (\$this->sortField === \$field) { \$this->sortAsc = ! \$this->sortAsc; } \$this->sortField = \$field; }\n\n    public function delete$name(string \$id, Delete{$name}Action \$action)
+        $indexStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\Queries\\{$name}ListQuery;\nuse App\Domain\\$name\Actions\\Delete{$name}Action;\nuse Livewire\{Component, WithPagination, Attributes\Title, Attributes\Url};\n\n#[Title('$pluralName')]\nclass $pluralName extends Component\n{\n    use WithPagination;\n    public int \$paginate = 10;\n    #[Url(history: true)] public string \$search = '';\n$filtersProps    public bool \$openFilter = false;\n    public string \$sortField = 'id';\n    public bool \$sortAsc = true;\n\n    public function updated(\$property)\n    {\n        if (in_array(\$property, [$filterFieldsArray])) {\n            \$this->resetPage();\n        }\n    }\n\n    public function resetFilters() { \$this->reset(['search', 'openFilter', $filtersReset]); \$this->resetPage(); }\n\n    public function render()\n    {\n        abort_if_cannot('view_{$pluralSnake}');\n        \$query = (new {$name}ListQuery())->handle([\n            'search' => \$this->search,\n" . collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "            '{$f['name']}' => \$this->{$f['name']},")->implode("\n") . "\n        ], \$this->sortField, \$this->sortAsc ? 'asc' : 'desc');\n\n        return view('$viewPath.index', [\n            'items' => \$query->paginate(\$this->paginate),\n            'sortableFields' => $name::sortable(),\n$availableLists        ])->layout('components.layouts.app');\n    }\n\n    public function sortBy(string \$field) { if (!in_array(\$field, $name::sortable())) return; if (\$this->sortField === \$field) { \$this->sortAsc = ! \$this->sortAsc; } \$this->sortField = \$field; }\n\n    public function delete$name(string \$id, Delete{$name}Action \$action)
     {
-        abort_if_cannot('delete_{$pluralSnake}');
-        try {
-            \$item = $name::findOrFail(\$id);
-            \$action->execute(\$item);
-            \$this->dispatch('toast', message: __('$pluralKebab.deleted'), type: 'success');
-            \$this->resetPage();
-        } catch (\\Illuminate\\Database\\QueryException \$e) {
-            if (\$e->getCode() == \"23000\" || \$e->getCode() == \"19\") {
-                \$this->dispatch('toast', message: __('$pluralKebab.delete_error_referenced'), type: 'error');
-            } else {
-                \$this->dispatch('toast', message: __('$pluralKebab.delete_error'), type: 'error');
-            }
-        }
-    }\n}";
+        abort_if_cannot('delete_{$pluralSnake}');\n        try {\n            \$item = $name::findOrFail(\$id);\n            \$action->execute(\$item);\n            \$this->dispatch('toast', message: __('$pluralKebab.deleted'), type: 'success');\n            \$this->resetPage();\n        } catch (\\Illuminate\\Database\\QueryException \$e) {\n            if (\$e->getCode() == \"23000\" || \$e->getCode() == \"19\") {\n                \$this->dispatch('toast', message: __('$pluralKebab.delete_error_referenced'), type: 'error');\n            } else {\n                \$this->dispatch('toast', message: __('$pluralKebab.delete_error'), type: 'error');\n            }\n        }\n    }\n}";
         File::put("$dir/$pluralName.php", $indexStub);
 
         // CREATE
@@ -267,17 +267,79 @@ class NewView extends Command
 
     protected function getIndexViewStub($name, $fields, $pluralSnake, $pluralName) {
         $pk = Str::kebab($pluralName);
-        $headers = "                <x-table.th name=\"id\" :label=\"__('$pk.ID')\" :\$sortField :\$sortAsc :sortable=\"in_array('id', \$sortableFields)\" />\n"; $filters = "";
+
+        $searchableNames = collect($fields)
+            ->filter(fn($f) => in_array($f['type'], ['string', 'text', 'foreignId']))
+            ->map(fn($f) => Str::title(str_replace(['_id', '_'], ['', ' '], $f['name'])))
+            ->prepend('ID')
+            ->implode(', ');
+
+        $headers = "                        <x-table.th name=\"id\" :label=\"__('$pk.ID')\" :\$sortField :\$sortAsc :sortable=\"in_array('id', \$sortableFields)\" />\n"; $filters = "";
         foreach ($fields as $f) {
             $label = Str::title(str_replace('_', ' ', $f['name']));
-            $headers .= "                <x-table.th name=\"{$f['name']}\" :label=\"__('$pk.$label')\" :\$sortField :\$sortAsc :sortable=\"in_array('{$f['name']}', \$sortableFields)\" />\n";
+            $headers .= "                        <x-table.th name=\"{$f['name']}\" :label=\"__('$pk.$label')\" :\$sortField :\$sortAsc :sortable=\"in_array('{$f['name']}', \$sortableFields)\" />\n";
             if ($f['type'] === 'foreignId') {
                 $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
-                $filters .= "            <div><x-form.dropdown-search wire:model.live=\"{$f['name']}\" :label=\"__('$pk.$label')\" :data=\"\${$rv}\" :placeholder=\"__('$pk.Filter $label')\" /></div>\n";
+                $filters .= "                    <div><x-form.dropdown-search wire:model.live=\"{$f['name']}\" :label=\"__('$pk.$label')\" :data=\"\${$rv}\" :placeholder=\"__('$pk.Filter $label')\" /></div>\n";
             }
         }
         $listKey = "List of " . strtolower($pluralName);
-        return "<div class=\"space-y-8\" x-data=\"{ openFilter: @entangle('openFilter') }\"><div class=\"flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-1\"><div><x-h1>{{ __('$pk.$pluralName') }}</x-h1><x-short-description>{{ __('$pk.$listKey') }}</x-short-description></div><div class=\"flex items-center gap-3\">@if(\$search || \$openFilter)<button wire:click=\"resetFilters\" class=\"inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-none\"><span>{{ __('$pk.Reset') }}</span></button>@endif <button @click=\"openFilter = !openFilter\" class=\"inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm transition-none\"><span>{{ __('$pk.Filters') }}</span></button> @can('add_{$pluralSnake}')<x-btn :href=\"route('admin." . Str::kebab($pluralName) . ".create')\" icon=\"plus\">{{ __('$pk.Add $name') }}</x-btn>@endcan</div></div><div x-show=\"openFilter\" x-cloak x-transition:enter=\"transition ease-out duration-300\" x-transition:enter-start=\"opacity-0 -translate-y-4\" class=\"p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-[2rem] shadow-sm\"><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6\"><div><label class=\"block mb-1.5 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.Search') }}</label><input wire:model.live.debounce.300ms=\"search\" type=\"text\" placeholder=\"{{ __('$pk.Search') }}...\" class=\"w-full p-3 text-sm font-bold bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition shadow-sm dark:text-white\"></div>$filters</div></div>@include('errors.messages')<div class=\"overflow-hidden bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-50 dark:border-gray-700 shadow-sm\"><div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left text-gray-500 dark:text-gray-400\"><thead class=\"bg-gray-50/50 dark:bg-gray-900/50\"><tr>$headers<th class=\"px-4 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest\">{{ __('$pk.Action') }}</th></tr></thead><tbody class=\"divide-y divide-gray-50 dark:divide-gray-700/50\">@foreach(\$items as \$item)<livewire:admin." . Str::kebab($pluralName) . ".row :\$item :key=\"\$item->id\" />@endforeach</tbody></table></div><div class=\"p-4 border-t border-gray-50 dark:border-gray-700/50\">{{ \$items->links() }}</div></div></div>";
+        return "<div x-data=\"{ openFilter: @entangle('openFilter') }\">
+    <div class=\"card !p-0 overflow-hidden shadow-none border-gray-200\">
+        <!-- Header Section -->
+        <div class=\"p-6\">
+            <div class=\"flex flex-col sm:flex-row sm:items-center justify-between gap-4\">
+                <div>
+                    <x-h1>{{ __('$pk.$pluralName') }}</x-h1>
+                    <x-short-description>{{ __('$pk.$listKey') }}</x-short-description>
+                </div>
+                <div class=\"flex items-center gap-3\">
+                    @if(\$search || \$openFilter)
+                        <button wire:click=\"resetFilters\" class=\"inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl !transition-none\">
+                            <span>{{ __('$pk.Reset') }}</span>
+                        </button>
+                    @endif
+                    <button @click=\"openFilter = !openFilter\" class=\"inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm !transition-none\">
+                        <span>{{ __('$pk.Filters') }}</span>
+                    </button>
+                    @can('add_{$pluralSnake}')
+                        <x-btn :href=\"route('admin." . Str::kebab($pluralName) . ".create')\" icon=\"plus\">{{ __('$pk.Add $name') }}</x-btn>
+                    @endcan
+                </div>
+            </div>
+
+            <div x-show=\"openFilter\" x-cloak class=\"mt-6 p-6 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl\">
+                <div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6\">
+                    <div>
+                        <label class=\"block mb-1.5 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.Search') }}</label>
+                        <input wire:model.live.debounce.300ms=\"search\" type=\"text\" placeholder=\"{{ __('$pk.Search by $searchableNames') }}\" class=\"w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-none shadow-sm dark:text-white\">
+                    </div>
+                    $filters
+                </div>
+            </div>
+        </div>
+
+        @include('errors.messages')
+
+        <!-- Table Section -->
+        <div class=\"overflow-x-auto border-t border-gray-100 dark:border-gray-700\">
+            <table class=\"w-full text-sm text-left text-gray-500 dark:text-gray-400\">
+                <thead class=\"bg-gray-100/50 dark:bg-gray-700/50\">
+                    <tr>
+$headers                        <th class=\"px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest\">{{ __('$pk.Action') }}</th>
+                    </tr>
+                </thead>
+                <tbody class=\"divide-y divide-gray-50 dark:divide-gray-700/50\">
+                    @foreach(\$items as \$item)
+                        <livewire:admin." . Str::kebab($pluralName) . ".row :\$item :key=\"\$item->id\" />@endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class=\"p-4 border-t border-gray-50 dark:border-gray-700/50\">
+            {{ \$items->links() }}
+        </div>
+    </div>
+</div>";
     }
 
     protected function getCreateViewStub($name, $fields, $pluralSnake, $pluralName) {
@@ -292,7 +354,7 @@ class NewView extends Command
 
     protected function getRowViewStub($name, $fields, $pluralSnake, $pluralName) {
         $pk = Str::kebab($pluralName);
-        $cells = "    <td class=\"px-4 py-5 font-bold text-blue-600 dark:text-blue-400\">{{ \$item->id }}</td>\n";
+        $cells = "    <td class=\"px-6 py-5 font-bold text-blue-600 dark:text-blue-400\">{{ \$item->id }}</td>\n";
 
         $displayNameField = 'id';
         foreach ($fields as $f) {
@@ -301,30 +363,30 @@ class NewView extends Command
             }
             if ($f['type'] === 'foreignId') {
                 $rel = Str::camel(str_replace('_id', '', $f['name']));
-                $cells .= "    <td class=\"px-4 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->{$rel}->name ?? \$item->{$f['name']} }}</td>\n";
+                $cells .= "    <td class=\"px-6 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->{$rel}->name ?? \$item->{$f['name']} }}</td>\n";
             } elseif($f['type'] === 'date') {
-                 $cells .= "    <td class=\"px-4 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']}?->format('d/m/Y') }}</td>\n";
+                 $cells .= "    <td class=\"px-6 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']}?->format('d/m/Y') }}</td>\n";
             } else {
-                $cells .= "    <td class=\"px-4 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']} }}</td>\n";
+                $cells .= "    <td class=\"px-6 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']} }}</td>\n";
             }
         }
 
         return "
 <tr class=\"hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none\">
     $cells
-    <td class=\"px-4 py-5 text-right\">
-        <div class=\"flex justify-end gap-3\">
+    <td class=\"px-6 py-5 text-right !transition-none\">
+        <div class=\"flex justify-end gap-3 !transition-none\">
             @can('edit_{$pluralSnake}')
-                <x-a href=\"{{ route('admin.$pk.edit', ['" . Str::camel($name) . "' => \$item->id]) }}\" class=\"!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none\">
+                <x-a href=\"{{ route('admin.$pk.edit', ['" . Str::camel($name) . "' => \$item->id]) }}\" class=\"!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none !transition-none\">
                     {{ __('admin.Edit') }}
                 </x-a>
             @endcan
 
             @can('delete_{$pluralSnake}')
-                <div x-data=\"{ confirmation: '' }\" class=\"inline-block\">
+                <div x-data=\"{ confirmation: '' }\" x-cloak class=\"inline-block !transition-none\">
                     <x-modal>
                         <x-slot name=\"trigger\">
-                            <button @click=\"on = true\" class=\"text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-none\">
+                            <button @click=\"on = true\" class=\"text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 !transition-none\">
                                 {{ __('admin.Delete') }}
                             </button>
                         </x-slot>
@@ -344,18 +406,19 @@ class NewView extends Command
                                     <div class=\"text-xs text-gray-600 dark:text-gray-400\">
                                         {{ __('$pk.Type the name') }} <span class=\"font-bold text-red-600\">\"{{ \$item->{$displayNameField} }}\"</span> {{ __('$pk.to confirm') }}
                                     </div>
-                                    <input x-model=\"confirmation\" class=\"px-3 py-2 text-sm border border-slate-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full focus:ring-2 focus:ring-red-500 outline-none transition-all\">
+                                    <input x-model=\"confirmation\" class=\"px-3 py-2 text-sm border border-slate-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full focus:ring-2 focus:ring-red-500 outline-none !transition-none\">
                                 </div>
                             </div>
                         </x-slot>
 
                         <x-slot name=\"footer\">
-                            <x-button variant=\"gray\" @click=\"on = false\">{{ __('admin.Cancel') }}</x-button>
+                            <x-button variant=\"gray\" @click=\"on = false\" class=\"!transition-none\">{{ __('admin.Cancel') }}</x-button>
                             <x-button
                                 variant=\"red\"
                                 x-bind:disabled=\"confirmation !== '{{ \$item->{$displayNameField} }}'\"
                                 wire:click=\"\$parent.delete$name('{{ \$item->id }}')\"
                                 @click=\"on = false\"
+                                class=\"!transition-none\"
                             >
                                 {{ __('admin.Delete') }}
                             </x-button>
@@ -385,7 +448,7 @@ class NewView extends Command
                  $inputs .= "<div class=\"md:col-span-2\"><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.textarea name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3 !bg-gray-50/50 dark:!bg-gray-900/50 !border-gray-100 dark:!border-gray-800 dark:text-gray-200\" /></div>";
             } else {
                 $it = in_array($f['type'], ['decimal', 'integer', 'bigInteger']) ? 'number' : ($f['type'] === 'date' ? 'date' : ($f['type'] === 'datetime' ? 'datetime-local' : 'text'));
-                $sa = $f['type'] === 'decimal' ? 'step="0.01"' : '';
+                $sa = $f['type'] === 'decimal' ? 'step=\"0.01\"' : '';
                 $inputs .= "<div><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.input type=\"$it\" $sa name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3.5 !bg-gray-50/50 dark:!bg-gray-900/50 !border-gray-200 dark:!border-gray-700 dark:text-gray-200\" /></div>";
             }
         }
@@ -404,6 +467,12 @@ class NewView extends Command
         $humanName = Str::title(Str::snake($name, ' '));
         $humanPlural = Str::title(Str::snake($pluralName, ' '));
         $listKey = "List of " . strtolower($pluralName);
+
+        $searchableNames = collect($fields)
+            ->filter(fn($f) => in_array($f['type'], ['string', 'text', 'foreignId']))
+            ->map(fn($f) => Str::title(str_replace(['_id', '_'], ['', ' '], $f['name'])))
+            ->prepend('ID')
+            ->implode(', ');
 
         $service = new \App\Services\TranslationService();
 
@@ -434,8 +503,9 @@ class NewView extends Command
             'delete_error' => "Could not delete $humanName.",
             'delete_error_referenced' => "$humanName is referenced by other records and cannot be deleted.",
             "New $name record" => "New $humanName record",
-            "Update $humanName info" => "Update $humanName info",
+            "Update $name info" => "Update $humanName info",
             $listKey => "List of " . strtolower($humanPlural),
+            "Search by $searchableNames" => "Search by $searchableNames",
         ];
 
         foreach ($fields as $f) {
