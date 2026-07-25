@@ -1,8 +1,8 @@
 <div>
     <x-2col>
         <x-slot name="left">
-            <h3>{{ __('Roles') }}</h3>
-            <p>{{ __('Turn roles on and off, disabled roles will disable the users permissions.') }}</p>
+            <h3>{{ __('admin.Roles') }}</h3>
+            <p>{{ __('users.Turn roles on and off, disabled roles will disable the users permissions.') }}</p>
         </x-slot>
         <x-slot name="right">
 
@@ -19,7 +19,7 @@
                     @endforeach
 
                     <div class="mt-5">
-                        <x-button>{{ __('Update Roles') }}</x-button>
+                        <x-button>{{ __('users.Update Roles') }}</x-button>
                     </div>
 
                     @include('errors.messages')

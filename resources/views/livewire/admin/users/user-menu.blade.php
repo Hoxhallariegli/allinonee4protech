@@ -70,7 +70,7 @@
                   <x-dropdown.link :href="route('admin.users.show', auth()->user())">
                       <div class="flex gap-2.5">
                           <x-heroicon-s-eye class="size-5" />
-                          {{ __('View Profile') }}
+                          {{ __('users.View Profile') }}
                       </div>
                   </x-dropdown.link>
               @endcan
@@ -79,14 +79,14 @@
                   <x-dropdown.link :href="route('admin.users.edit', auth()->user())">
                       <div class="flex gap-2.5">
                           <x-heroicon-s-pencil class="size-5" />
-                          {{ __('Edit Account') }}
+                          {{ __('users.Edit Account') }}
                       </div>
                   </x-dropdown.link>
               @endcan
 
               <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-400">
                 <x-heroicon-s-lock-closed class="size-5" />
-                {{ __('Log out') }}
+                {{ __('users.Log out') }}
               </a>
               <form id="logout-form" action="{{ route('logout') }}" method="post">
                 {{ csrf_field() }}

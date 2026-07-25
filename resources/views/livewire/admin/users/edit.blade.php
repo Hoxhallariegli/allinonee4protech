@@ -1,8 +1,8 @@
 <div>
     @can('view_users')
         <p>
-            <x-a href="{{ route('admin.users.index') }}">{{ __('Users') }}</x-a>
-            <span class="dark:text-gray-200">- {{ __('Edit User') }}</span>
+            <x-a href="{{ route('admin.users.index') }}">{{ __('users.Users') }}</x-a>
+            <span class="dark:text-gray-200">- {{ __('users.Edit User') }}</span>
         </p>
     @endcan
 

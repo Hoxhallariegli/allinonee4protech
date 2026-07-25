@@ -1,141 +1,47 @@
 @can('view_dashboard')
-    <x-nav.link route="dashboard" icon="home">{{ __('Dashboard') }}</x-nav.link>
+    <x-nav.link route="dashboard" icon="home">{{ __('admin.Dashboard') }}</x-nav.link>
 @endcan
 
 @if(can('view_system_settings') || can('view_roles') || can('view_audit_trails'))
-    <x-nav.divider>{{ __('Settings') }}</x-nav.divider>
+    <x-nav.divider>{{ __('admin.Settings') }}</x-nav.divider>
 @endif
 
 @can('view_audit_trails')
-    <x-nav.link route="admin.settings.audit-trails.index" icon="identification">{{ __('Audit Trails') }}</x-nav.link>
+    <x-nav.link route="admin.settings.audit-trails.index" icon="identification">{{ __('admin.Audit Trails') }}</x-nav.link>
 @endcan
 
 @can('view_roles')
-    <x-nav.link route="admin.settings.roles.index" icon="archive-box">{{ __('Roles') }}</x-nav.link>
+    <x-nav.link route="admin.settings.roles.index" icon="archive-box">{{ __('admin.Roles') }}</x-nav.link>
 @endcan
 
 @can('view_system_settings')
-    <x-nav.link route="admin.settings" icon="wrench-screwdriver">{{ __('System Settings') }}</x-nav.link>
+    <x-nav.link route="admin.settings" icon="wrench-screwdriver">{{ __('admin.System Settings') }}</x-nav.link>
 @endcan
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@can('view_categories')
-    <x-nav.link route="admin.categories.index" icon="chevron-right">{{ __('Categories') }}</x-nav.link>
+@can('view_system_settings')
+    <x-nav.link route="admin.settings.languages.index" icon="language">{{ __('admin.Languages') }}</x-nav.link>
 @endcan
 
-@can('view_products')
-    <x-nav.link route="admin.products.index" icon="chevron-right">{{ __('Products') }}</x-nav.link>
+@can('view_system_settings')
+    <x-nav.link route="admin.settings.notifications" icon="bell">{{ __('admin.Notifications') }}</x-nav.link>
 @endcan
 
-@can('view_sales')
-    <x-nav.link route="admin.sales.index" icon="chevron-right">{{ __('Sales') }}</x-nav.link>
-@endcan
-<x-nav.divider>{{ __('Account') }}</x-nav.divider>
+<x-nav.divider>{{ __('admin.Modules') }}</x-nav.divider>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>
 
 @can('view_users')
-    <x-nav.link route="admin.users.index" icon="users">{{ __('Users') }}</x-nav.link>
+    <x-nav.link route="admin.users.index" icon="users">{{ __('admin.Users') }}</x-nav.link>
 @endcan

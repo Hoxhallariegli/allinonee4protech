@@ -60,8 +60,16 @@ class Roles extends Component
     {
         abort_if_cannot('delete_roles');
 
-        $this->builder()->findOrFail($id)->delete();
-
-        $this->reset();
+        try {
+            $this->builder()->findOrFail($id)->delete();
+            $this->dispatch('toast', message: __('roles.deleted'), type: 'success');
+            $this->reset();
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == "23000" || $e->getCode() == "19") {
+                $this->dispatch('toast', message: __('roles.delete_error_referenced'), type: 'error');
+            } else {
+                $this->dispatch('toast', message: __('roles.delete_error'), type: 'error');
+            }
+        }
     }
 }

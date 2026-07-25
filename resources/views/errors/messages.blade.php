@@ -8,10 +8,6 @@
     <x-alert>{{ session('message') }}</x-alert>
 @endif
 
-@if (session('success'))
-    <x-alert variant="red">{{ session('success') }}</x-alert>
-@endif
-
 @if (session('status'))
     <x-alert>{{ session('status') }}</x-alert>
 @endif

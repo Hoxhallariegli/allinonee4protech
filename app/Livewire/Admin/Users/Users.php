@@ -108,9 +108,16 @@ class Users extends Component
     {
         abort_if_cannot('delete_users');
 
-        $this->builder()->findOrFail($id)->delete();
-
-        $this->dispatch('close-modal');
+        try {
+            $this->builder()->findOrFail($id)->delete();
+            $this->dispatch('toast', message: __('users.deleted'), type: 'success');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == "23000" || $e->getCode() == "19") {
+                $this->dispatch('toast', message: __('users.delete_error_referenced'), type: 'error');
+            } else {
+                $this->dispatch('toast', message: __('users.delete_error'), type: 'error');
+            }
+        }
     }
 
     public function resendInvite(string $id): void

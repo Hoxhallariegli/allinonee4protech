@@ -1,98 +1,143 @@
 # 🍎 E4ProTech Starterkit Laravel
 
-The ultimate Laravel 12 & Livewire 3 starter kit, architected for scalability, speed, and a premium Apple-style user experience. This template is designed to automate the heavy lifting while following **Enterprise Best Practices (DDD, Actions, DTOs)**.
-
-## 🚀 Key Features
-
-- **Architectural Excellence**: Implements Domain-Driven Design (DDD) patterns.
-- **Layered Logic**: Separation of concerns using **Actions**, **DTOs**, and **Dedicated Queries**.
-- **Centralized Validation**: All business rules are defined once in the Model and shared across the UI.
-- **Apple UI/UX**: Ultra-minimalist design, responsive grids, and full **Dark Mode** support.
-- **Smart Data Components**: 
-    - **Searchable Dropdowns**: Native `x-form.dropdown-search` for handling large datasets.
-    - **Sortable Headers**: Dynamic table column sorting with visual feedback.
-    - **Create-on-the-fly**: Create related records directly from dropdowns.
-- **One-Command Scaffolding**: Generate a full feature in seconds.
+The ultimate **Laravel 12 & Livewire 3** starter kit, architected for scalability, speed, and a premium **Apple-style** user experience. This template automates the heavy lifting while strictly following **Enterprise Best Practices (DDD, Actions, DTOs, Repository-less Queries)**.
 
 ---
 
-## 🛠️ How to Generate a New Module
+## 🚀 Key Features
 
-To create a new CRUD feature with full architecture, run:
+- **Architectural Excellence**: Implements a clean Domain-Driven Design (DDD) inspired structure.
+- **Layered Logic**: Complete separation of concerns using **Actions**, **DTOs**, and **Dedicated Query Classes**.
+- **Centralized Validation**: All business rules are defined once in the Model's `rules()` method and shared across the entire UI.
+- **Apple UI/UX**: Ultra-minimalist design, responsive grids, rounded-3xl corners, and full **Dark Mode** support.
+- **Smart Data Components**: 
+    - **Searchable Dropdowns**: Native `x-form.dropdown-search` with live filtering.
+    - **Sortable Headers**: High-contrast blue headers with visual feedback and Model-controlled sorting.
+    - **Create-on-the-fly**: Create related records directly from dropdowns without leaving the current form.
+- **One-Command Scaffolding**: Generate a production-ready feature in seconds.
+- **Surgical API Generation**: One flag to build a complete JSON API layer for any module.
 
+---
+
+## 🛠️ The Power of `new:view`
+
+The core of this starter kit is the `php artisan new:view` command. It is an interactive wizard that builds a complete, layered module based on your database schema.
+
+### 1. Run the Command
 ```bash
 php artisan new:view {ModelName}
 ```
 
-### What happens behind the scenes?
-
-When you run this command, the system automatically generates:
-
-1.  **Domain Layer** (`app/Domain/{Model}`):
-    - `Actions/`: Logic for Creating, Updating, and Deleting.
-    - `DTOs/`: Data Transfer Objects for safe data handling.
-    - `Queries/`: Dedicated list queries with built-in filtering, searching, and eager loading.
-2.  **Infrastructure Layer**:
-    - **Migration**: Schema with correct types (Enum, Date, ForeignId, etc.).
-    - **Model**: Centralized `rules()`, `sortable()` fields, and Relationships.
-3.  **UI Layer** (`app/Livewire/Admin` & `resources/views/livewire`):
-    - **Index**: Data table with Pagination, Sortable Headers, and Filters.
-    - **Create/Edit**: Beautifully spaced forms with smart inputs.
-    - **Row**: Modular table rows.
-4.  **Security & Ecosystem**:
-    - Registers **Permissions** in the database.
-    - Adds **Translations** to `en.json`.
-    - Generates **Modular Routes** in `routes/admin/`.
-    - Injects a new link into the **Navigation** sidebar.
+### 2. Advanced Options
+*   `--api`: Generates a fully-functional API layer (Controllers, Resources, FormRequests).
+*   `--firebase`: Automatically integrates Firebase Push Notifications into the Create Action.
 
 ---
 
-## 🏗️ Architecture Breakdown
+## 📡 Surgical API Automation
 
-### 1. Centralized Rules (Model)
-Instead of repeating validation in Controllers, we define it in the Model:
-```php
-public static function rules($id = null): array {
-    return [
-        'name' => ['required', 'string'],
-        'price' => ['required', 'numeric'],
-    ];
+By appending the `--api` flag, the starter kit generates a high-performance RESTful API layer for your module. Unlike generic scaffolders, this system ensures **100% Logic Parity** between your Web UI and API.
+
+### 1. What is Generated?
+*   **`app/Http/Controllers/Api/{Model}Controller.php`**: Standardized controller using Domain Actions.
+*   **`app/Http/Resources/{Model}Resource.php`**: Transform your models into clean JSON structures.
+*   **`app/Http/Requests/Api/{Model}/Store{Model}Request.php`**: Dedicated API validation.
+*   **`app/Http/Requests/Api/{Model}/Update{Model}Request.php`**: Partial-update (PATCH) support.
+
+### 2. Standardized Responses
+The API layer uses the `ApiResponse` class and the `to_api()` helper to ensure consistent JSON outputs:
+```json
+{
+    "status": "success",
+    "message": "Record created.",
+    "data": { "id": 1, "name": "..." },
+    "meta": null
 }
 ```
 
-### 2. Actions & DTOs
-Livewire components never touch the database directly. They pass data through DTOs to Actions:
-```php
-public function store(CreateProductAction $action) {
-    $this->validate();
-    $dto = ProductDTO::fromArray($this->all());
-    $action->execute($dto);
-}
-```
-
-### 3. Separate Queries
-Tired of messy `where` clauses in Livewire? All filtering logic lives in a dedicated Query class:
-```php
-$query = (new ProductListQuery())->handle($params, $sortField, $sortAsc);
-```
+### 3. Shared Domain Logic
+The API Controller **reuses** the same `DTOs`, `Actions`, and `Queries` as the Livewire components. This means:
+- If you change a rule in an Action, both the Website and the Mobile App reflect it instantly.
+- Zero code duplication.
 
 ---
 
-## 🎨 UI Components
+## 🗑️ How to Remove a Module
+
+If you need to completely delete a module and all its generated files, use the `remove:view` command. It will perform a surgical cleanup of the entire ecosystem.
+
+### 1. Run the Cleanup
+```bash
+php artisan remove:view {ModelName}
+```
+
+### 2. What is Removed?
+The command automatically deletes:
+1.  **Domain Layer**: The entire `app/Domain/{Model}` folder (Actions, DTOs, Queries).
+2.  **Infrastructure**: The Model and the Migration file.
+3.  **UI Layer**: Livewire components and all Blade views.
+4.  **API Layer**: Controllers, Resources, and FormRequests.
+5.  **Ecosystem**: Route files (Web & API), sidebar navigation links, and permissions from the database.
+
+---
+
+## 🏗️ Architectural Output (What is Generated?)
+
+When you run `new:view`, the system generates a structured ecosystem across four layers:
+
+### A. Domain Layer (`app/Domain/{Model}`)
+*   **`DTOs/{Model}DTO.php`**: A readonly object that ensures data integrity between the UI and the Database.
+*   **`Actions/`**: Pure logic classes for data mutation:
+    - `Create{Model}Action.php`
+    - `Update{Model}Action.php`
+    - `Delete{Model}Action.php`
+*   **`Queries/{Model}ListQuery.php`**: Encapsulates all filtering, searching, and eager-loading logic. No more messy queries in your Livewire components!
+
+### B. Infrastructure Layer
+*   **Migration**: Production-ready schema with correct types (Enum, ForeignId constraints).
+*   **Model (`app/Models/{Model}.php`)**:
+    - `rules()`: Centralized validation array.
+    - `sortable()`: Defined list of fields that the UI is allowed to sort.
+    - `casts()`: Auto-casting for dates, booleans, and enums.
+
+### C. UI Layer (`app/Livewire/Admin` & `resources/views/livewire`)
+*   **Index**: Data table with Pagination, Sortable Headers, and the "Smart Filter" panel.
+*   **Create/Edit**: Forms with auto-filling relationship logic and "Create-on-the-fly" inputs.
+*   **Row**: Modular table rows for easy maintenance.
+
+---
+
+## 🎨 Professional UI Components
 
 | Component | Description |
 | :--- | :--- |
-| `<x-table.th>` | High-contrast sortable headers with blue visual cues. |
-| `<x-form.dropdown-search>` | Stable Alpine.js dropdown for high-performance searching. |
-| `<x-form.input>` | Smart inputs that adapt to `date`, `number`, and `text` types. |
-| `<x-btn>` | Apple-style action buttons with Heroicon support. |
+| `<x-table.th>` | **Pro Sortable Header**. Changes color to Blue if sortable, includes Apple-style chevron indicators. |
+| `<x-form.dropdown-search>` | **Searchable Select**. Handles large datasets with live search, `wire:ignore` for stability, and "+ Add New" integration. |
+| `<x-form.input>` | **Smart Input**. Automatically adapts to `type="number"`, `type="date"`, or `type="text"` with high-contrast labels. |
+| `<x-form.textarea>` | **Auto-spanning Area**. Occupies full width in grids for shippable notes/descriptions. |
 
 ---
 
-## 📦 Deployment & Git
-This starter kit is optimized for production. 
-1.  Push to Git.
-2.  Run `composer install`.
-3.  Run `php artisan migrate`.
+## 🚀 Enterprise-grade Examples
 
-Developed by **E4ProTech**. Empowering developers to build professional Laravel apps at the speed of thought. 🚀
+You can use PowerShell one-liners to skip the interactive wizard and scaffold complex modules instantly.
+
+### 1. Scaffold Categories (Standard Module)
+```powershell
+"name`n0`nno`nslug`n0`nno`n`ntag" | php artisan new:view Category
+```
+
+### 2. Scaffold BlogPosts (Module with API Support)
+```powershell
+"title`n0`nno`nslug`n0`nno`ncategory_id`n8`ncategories`nno`ncontent`n1`nyes`npublished`n4`nno`n`nnewspaper" | php artisan new:view BlogPost --api
+```
+
+---
+
+## 📦 Deployment
+1.  **Clone**: `git clone ...`
+2.  **Setup**: `composer install && npm install && npm run build`
+3.  **Database**: `php artisan migrate --seed`
+4.  **Admin Access**: Default credentials provided in `DatabaseSeeder`.
+
+Developed by **E4ProTech**. This kit is designed to turn hours of manual coding into a single command. 🚀

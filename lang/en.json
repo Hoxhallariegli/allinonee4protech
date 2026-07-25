@@ -56,5 +56,12 @@
     "Sale Date": "Sale Date",
     "Status": "Status",
     "Notes": "Notes",
-    "No": "No"
+    "No": "No",
+    "Tag": "Tag",
+    "Tags": "Tags",
+    "BlogPost": "BlogPost",
+    "BlogPosts": "BlogPosts",
+    "Title": "Title",
+    "Content": "Content",
+    "Published": "Published"
 }

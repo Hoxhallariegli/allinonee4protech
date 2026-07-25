@@ -126,3 +126,13 @@ if (! function_exists('storage_url')) {
         return Storage::url($file);
     }
 }
+
+if (! function_exists('to_api')) {
+    /**
+     * Helper to return a standardized API response.
+     */
+    function to_api(mixed $data = null, ?string $message = null, int $status = 200, array $headers = []): \App\Http\Responses\ApiResponse
+    {
+        return new \App\Http\Responses\ApiResponse($data, $message, $status, $headers);
+    }
+}

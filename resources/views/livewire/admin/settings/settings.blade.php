@@ -4,4 +4,5 @@
 
     <livewire:admin.settings.application-settings/>
     <livewire:admin.settings.security-settings/>
+    <livewire:admin.settings.firebase-settings/>
 </div>

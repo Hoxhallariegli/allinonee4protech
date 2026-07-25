@@ -4,36 +4,48 @@
         <div class="flex space-x-2">
 
             @can('edit_roles')
-                <x-a href="{{ route('admin.settings.roles.edit', ['role' => $role->id]) }}">{{ __('Edit') }}</x-a>
+                <x-a href="{{ route('admin.settings.roles.edit', ['role' => $role->id]) }}" class="!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none">{{ __('admin.Edit') }}</x-a>
             @endcan
 
             @if ($role->name !== 'admin')
                 @can('delete_roles')
-                    <div x-data="{ confirmation: '' }">
+                    <div x-data="{ confirmation: '' }" class="inline-block">
                         <x-modal>
                             <x-slot name="trigger">
-                                <a href="#" @click="on = true">{{ __('Delete') }}</a>
+                                <button @click="on = true" class="text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-none">{{ __('admin.Delete') }}</button>
                             </x-slot>
 
                             <x-slot name="modalTitle">
-                                <div class="pt-5">
-                                    {{ __('Are you sure you want to delete') }}: <b>{{ $role->label }}</b>
+                                <div class="py-2 text-lg font-black uppercase tracking-tighter text-gray-900 dark:text-white whitespace-normal text-left">
+                                    {{ __('users.Are you sure you want to delete') }}: <span class="text-red-600">{{ $role->label }}</span>?
                                 </div>
                             </x-slot>
 
                             <x-slot name="content">
-                                <label class="flex flex-col gap-2">
-                                    <div>{{ __('Type') }} <span class="font-bold">"{{ $role->label }}"</span> {{ __('to confirm') }}</div>
-                                    <input autofocus x-model="confirmation" class="px-3 py-2 border border-slate-300 rounded-lg">
-                                </label>
+                                <div class="space-y-4 text-left whitespace-normal">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                                        {{ __('users.Delete Warning') }}
+                                    </p>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="text-xs text-gray-600 dark:text-gray-400">{{ __('users.Type the name') }} <span class="font-bold text-red-600">"{{ $role->label }}"</span> {{ __('users.to confirm') }}</div>
+                                        <input x-model="confirmation" class="px-3 py-2 text-sm border border-slate-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full focus:ring-2 focus:ring-red-500 outline-none transition-all">
+                                    </div>
+                                </div>
                             </x-slot>
 
                             <x-slot name="footer">
-                                <x-button variant="gray" @click="on = false">{{ __('Cancel') }}</x-button>
-                                <x-button variant="red" x-bind:disabled="confirmation !== '{{ $role->label }}'" wire:click="deleteRole('{{ $role->id }}')">{{ __('Delete Role') }}</x-button>
+                                <x-button variant="gray" @click="on = false">{{ __('admin.Cancel') }}</x-button>
+                                <x-button
+                                    variant="red"
+                                    x-bind:disabled="confirmation !== '{{ $role->label }}'"
+                                    wire:click="$parent.deleteRole('{{ $role->id }}')"
+                                    @click="on = false"
+                                >
+                                    {{ __('admin.Delete') }}
+                                </x-button>
                             </x-slot>
                         </x-modal>
-                        </div>
+                    </div>
                 @endcan
             @endif
         </div>

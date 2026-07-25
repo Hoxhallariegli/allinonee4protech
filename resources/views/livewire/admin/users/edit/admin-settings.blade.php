@@ -1,7 +1,7 @@
 <div>
     <x-2col>
         <x-slot name="left">
-            <h3>{{ __('Admin Settings') }}</h3>
+            <h3>{{ __('users.Admin Settings') }}</h3>
         </x-slot>
         <x-slot name="right">
             <div class="card">
@@ -18,10 +18,10 @@
                                 </div>
                                 <label for="isOfficeLoginOnly" class="ml-3 flex flex-col cursor-pointer">
                                     <span class="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                                        {{ __('Office Login Only') }}
+                                        {{ __('users.Office Login Only') }}
                                     </span>
                                     <span class="block text-sm text-gray-500 dark:text-gray-200">
-                                        {{ __('When active user can only login at pre-approved IP addresses set in') }} <a href="{{ route('admin.settings') }}">{{ __('System Settings') }}</a>.
+                                        {{ __('users.When active user can only login at pre-approved IP addresses set in') }} <a href="{{ route('admin.settings') }}">{{ __('admin.System Settings') }}</a>.
                                     </span>
                                 </label>
                             </div>
@@ -33,10 +33,10 @@
                                     </div>
                                     <label for="isActive" class="ml-3 flex flex-col cursor-pointer">
                                         <span class="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                                            {{ __('Account Active') }}
+                                            {{ __('users.Account Active') }}
                                         </span>
                                         <span class="block text-sm text-gray-500 dark:text-gray-200">
-                                            {{ __('Only active users can login') }}.
+                                            {{ __('users.Only active users can login') }}.
                                         </span>
                                     </label>
                                 </div>
@@ -46,7 +46,7 @@
                     </fieldset>
 
                     <div class="mt-5">
-                        <x-button>{{ __('Update Settings') }}</x-button>
+                        <x-button>{{ __('users.Update Settings') }}</x-button>
                     </div>
 
                     @include('errors.messages')

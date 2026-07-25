@@ -1,13 +1,13 @@
 @use(App\Models\Permission)
 <div>
     <p class="mb-5">
-        <x-a class="link" href="{{ route('admin.settings.roles.index') }}">{{ __('Roles') }}</x-a>
-        <span class="dark:text-gray-200">- {{ __('Edit Role') }}</span>
+        <x-a class="link" href="{{ route('admin.settings.roles.index') }}">{{ __('roles.Roles') }}</x-a>
+        <span class="dark:text-gray-200">- {{ __('roles.Edit Role') }}</span>
     </p>
 
     <div class="float-right">
         <span class="error">*</span>
-        <span class="dark:text-gray-200"> = {{ __('required') }}</span>
+        <span class="dark:text-gray-200"> = {{ __('users.required') }}</span>
     </div>
 
     <div class="clearfix"></div>
@@ -18,9 +18,9 @@
 
             <div class="md:w-1/2">
                 @if ($role->name === 'admin')
-                    <x-form.input wire:model="label" :label="__('Role')" name='label' disabled />
+                    <x-form.input wire:model="label" :label="__('roles.Role')" name='label' disabled />
                 @else
-                    <x-form.input wire:model="label" :label="__('Role')" name='label' required />
+                    <x-form.input wire:model="label" :label="__('roles.Role')" name='label' required />
                 @endif
             </div>
 
@@ -51,7 +51,7 @@
 
         @endif
 
-        <x-button class="mt-5">{{ __('Update Role') }}</x-button>
+        <x-button class="mt-5">{{ __('roles.Update Role') }}</x-button>
 
     </x-form>
 

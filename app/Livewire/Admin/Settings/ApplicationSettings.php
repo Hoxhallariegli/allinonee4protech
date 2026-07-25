@@ -48,6 +48,8 @@ class ApplicationSettings extends Component
         Setting::updateOrCreate(['key' => 'app.name'], ['value' => $this->siteName]);
         Setting::updateOrCreate(['key' => 'is_forced_2fa'], ['value' => $this->isForced2Fa]);
 
+        \Illuminate\Support\Facades\Cache::forget('settings');
+
         add_user_log([
             'title' => 'updated application settings',
             'link' => route('admin.settings'),

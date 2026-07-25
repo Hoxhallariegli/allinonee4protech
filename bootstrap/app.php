@@ -30,6 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->replaceInGroup('web', ValidateCsrfToken::class, VerifyCsrfToken::class);
 
+        $middleware->appendToGroup('web', \App\Http\Middleware\LanguageMiddleware::class);
+
         $middleware->alias([
             'ipCheckMiddleware' => IpCheckMiddleware::class,
             'activeUser' => ActiveUser::class,

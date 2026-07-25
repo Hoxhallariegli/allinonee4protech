@@ -21,6 +21,10 @@ Livewire::setUpdateRoute(function ($handle) {
 });
 
 Route::get('/', WelcomeController::class);
+Route::get('language/{locale}', function ($locale) {
+    session()->put('locale', $locale);
+    return redirect()->back();
+})->name('language.switch');
 
 Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'activeUser', 'ipCheckMiddleware'])->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
@@ -38,6 +42,8 @@ Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'active
     Route::prefix('settings')->group(function () {
         Route::get('audit-trails', AuditTrails::class)->name('admin.settings.audit-trails.index');
         Route::get('system-settings', Settings::class)->name('admin.settings');
+        Route::get('languages', \App\Livewire\Admin\Settings\Languages::class)->name('admin.settings.languages.index');
+        Route::get('notifications', \App\Livewire\Admin\Settings\NotificationSettings::class)->name('admin.settings.notifications');
         Route::get('roles', Roles::class)->name('admin.settings.roles.index');
         Route::get('roles/{role}/edit', Edit::class)->name('admin.settings.roles.edit');
     });

@@ -2,13 +2,13 @@
 
     <div class="card">
 
-        <h3 class="mb-4">{{ __('Application Settings') }}</h3>
+        <h3 class="mb-4">{{ __('settings.Application Settings') }}</h3>
 
         <x-form wire:submit="update" method="put">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                <x-form.input wire:model="siteName" name="siteName" :label="__('Site Name')" />
+                <x-form.input wire:model="siteName" name="siteName" :label="__('settings.Site Name')" />
 
                 <fieldset>
 
@@ -20,10 +20,10 @@
                             </div>
                             <label for="isForced2Fa" class="ml-3 flex flex-col cursor-pointer">
                                 <span class="block text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    {{ __('Enforce 2FA') }}
+                                    {{ __('settings.Enforce 2FA') }}
                                 </span>
                                 <span class="block text-sm text-gray-500 dark:text-gray-200">
-                                    {{ __('Force 2 factor authentication for all users on login.') }}
+                                    {{ __('settings.Force 2 factor authentication for all users on login.') }}
                                 </span>
                             </label>
                         </div>
@@ -33,7 +33,7 @@
 
             </div>
 
-            <x-button>{{ __('Update Application Settings') }}</x-button>
+            <x-button>{{ __('settings.Update Application Settings') }}</x-button>
 
         </x-form>
 
