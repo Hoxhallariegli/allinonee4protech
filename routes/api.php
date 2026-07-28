@@ -944,3 +944,26 @@ declare(strict_types=1);
 
 
 
+
+Route::apiResource('customers', \App\Http\Controllers\Api\CustomerController::class);
+Route::apiResource('vehicle-brands', \App\Http\Controllers\Api\VehicleBrandController::class);
+Route::apiResource('vehicle-models', \App\Http\Controllers\Api\VehicleModelController::class);
+Route::apiResource('vehicles', \App\Http\Controllers\Api\VehicleController::class);
+Route::apiResource('vehicle-documents', \App\Http\Controllers\Api\VehicleDocumentController::class);
+Route::apiResource('employees', \App\Http\Controllers\Api\EmployeeController::class);
+Route::apiResource('mechanics', \App\Http\Controllers\Api\MechanicController::class);
+Route::apiResource('job-cards', \App\Http\Controllers\Api\JobCardController::class);
+Route::apiResource('services', \App\Http\Controllers\Api\ServiceController::class);
+Route::apiResource('parts', \App\Http\Controllers\Api\PartController::class);
+Route::apiResource('job-card-services', \App\Http\Controllers\Api\JobCardServiceController::class);
+Route::apiResource('job-card-parts', \App\Http\Controllers\Api\JobCardPartController::class);
+Route::apiResource('inventories', \App\Http\Controllers\Api\InventoryController::class);
+Route::apiResource('suppliers', \App\Http\Controllers\Api\SupplierController::class);
+Route::apiResource('purchase-orders', \App\Http\Controllers\Api\PurchaseOrderController::class);
+Route::apiResource('purchase-order-items', \App\Http\Controllers\Api\PurchaseOrderItemController::class);
+Route::apiResource('estimates', \App\Http\Controllers\Api\EstimateController::class);
+Route::apiResource('estimate-items', \App\Http\Controllers\Api\EstimateItemController::class);
+Route::apiResource('invoices', \App\Http\Controllers\Api\InvoiceController::class);
+Route::apiResource('invoice-items', \App\Http\Controllers\Api\InvoiceItemController::class);
+Route::apiResource('appointments', \App\Http\Controllers\Api\AppointmentController::class);
+Route::apiResource('reports', \App\Http\Controllers\Api\ReportController::class);

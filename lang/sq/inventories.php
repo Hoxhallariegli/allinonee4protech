@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Inventory' => 'Inventory',
+  'Inventories' => 'Inventories',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Inventory' => 'Add Inventory',
+  'Edit Inventory' => 'Edit Inventory',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Inventory created.',
+  'updated' => 'Inventory updated.',
+  'deleted' => 'Inventory deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Part Id' => 'Part Id',
+  'Quantity' => 'Quantity',
+];

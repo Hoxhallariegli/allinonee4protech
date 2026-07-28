@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'VehicleDocument' => 'VehicleDocument',
+  'VehicleDocuments' => 'VehicleDocuments',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add VehicleDocument' => 'Add VehicleDocument',
+  'Edit VehicleDocument' => 'Edit VehicleDocument',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'VehicleDocument created.',
+  'updated' => 'VehicleDocument updated.',
+  'deleted' => 'VehicleDocument deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Type' => 'Type',
+  'Document' => 'Document',
+  'Vehicle Id' => 'Vehicle Id',
+];

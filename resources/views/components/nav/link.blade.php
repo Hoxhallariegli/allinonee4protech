@@ -6,6 +6,12 @@
 
 @php
     $isActive = request()->routeIs($route);
+
+    // Nëse është rrugë CRUD (mbaron me .index), qëndro aktiv edhe për nën-faqet (edit, create, etj)
+    if (!$isActive && str_ends_with($route, '.index')) {
+        $pattern = str_replace('.index', '.*', $route);
+        $isActive = request()->routeIs($pattern);
+    }
 @endphp
 
 <a @if($navEnabled) wire:navigate @endif

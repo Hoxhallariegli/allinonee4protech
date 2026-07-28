@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Part' => 'Part',
+  'Parts' => 'Parts',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Part' => 'Add Part',
+  'Edit Part' => 'Edit Part',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Part created.',
+  'updated' => 'Part updated.',
+  'deleted' => 'Part deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Price' => 'Price',
+  'Stock' => 'Stock',
+];

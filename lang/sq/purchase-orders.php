@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'PurchaseOrder' => 'PurchaseOrder',
+  'PurchaseOrders' => 'PurchaseOrders',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add PurchaseOrder' => 'Add PurchaseOrder',
+  'Edit PurchaseOrder' => 'Edit PurchaseOrder',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'PurchaseOrder created.',
+  'updated' => 'PurchaseOrder updated.',
+  'deleted' => 'PurchaseOrder deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Supplier Id' => 'Supplier Id',
+  'Order Date' => 'Order Date',
+  'Status' => 'Status',
+];

@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Mechanic' => 'Mechanic',
+  'Mechanics' => 'Mechanics',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Mechanic' => 'Add Mechanic',
+  'Edit Mechanic' => 'Edit Mechanic',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Mechanic created.',
+  'updated' => 'Mechanic updated.',
+  'deleted' => 'Mechanic deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Employee Id' => 'Employee Id',
+  'Specialization' => 'Specialization',
+];

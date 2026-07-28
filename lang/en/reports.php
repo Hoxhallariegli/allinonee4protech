@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Report' => 'Report',
+  'Reports' => 'Reports',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Report' => 'Add Report',
+  'Edit Report' => 'Edit Report',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Report created.',
+  'updated' => 'Report updated.',
+  'deleted' => 'Report deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Report Type' => 'Report Type',
+  'Report Date' => 'Report Date',
+];

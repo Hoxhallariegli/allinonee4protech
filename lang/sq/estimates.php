@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Estimate' => 'Estimate',
+  'Estimates' => 'Estimates',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Estimate' => 'Add Estimate',
+  'Edit Estimate' => 'Edit Estimate',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Estimate created.',
+  'updated' => 'Estimate updated.',
+  'deleted' => 'Estimate deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Job Card Id' => 'Job Card Id',
+  'Estimate Date' => 'Estimate Date',
+  'Status' => 'Status',
+];
