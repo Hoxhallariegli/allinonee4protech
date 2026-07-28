@@ -175,6 +175,33 @@ foreach(range(1, 50) as $i) {
 
 ---
 
+## 🔗 Advanced Relationship Rules (Dot Notation)
+
+When scaffolding a `foreignId` field, you can pull data from **nested tables** (e.g., getting an Employee's name for a Mechanic record) using **Dot Notation**.
+
+### 1. The Format
+When the wizard asks for the **"Display field"**, use: `RELATION.FIELD` (e.g., `employee.name`).
+
+### 2. What Happens Under the Hood?
+- **Auto Eager Loading**: The generator adds `->with('relation.subRelation')` to your ListQuery class automatically to prevent Lazy Loading errors.
+- **Deep Resolution**: The UI renders `$item->relation?->subRelation?->field` safely.
+- **Global Dispatch**: When you create a new record in a nested modal, a global JS event is dispatched (`Livewire.dispatch(...)`) ensuring that even the deepest dropdowns refresh instantly.
+
+---
+
+## ⚡ Smart UI Features
+
+### 1. Auto-fill (Cascading Dropdowns)
+The UI components are aware of their relationships. If you have two related dropdowns in a form (e.g., **Brand** and **Model**), simply place the **Model** field after the **Brand** field in the wizard. 
+- When you select a **Model**, the system will automatically detect the linked `brand_id` and populate the **Brand** dropdown for you.
+
+### 2. Infinite Nested Modals
+Thanks to the **Global Dispatch** system and `MutationObserver` integration in our dropdowns, you can open a modal, from a modal, from a modal.
+- `JobCard Form` -> Add `Vehicle` (Modal 1) -> Add `Model` (Modal 2) -> Add `Brand` (Modal 3).
+- Saving the **Brand** will instantly update the list in **Modal 2**, and so on.
+
+---
+
 ## 📦 Deployment
 1.  **Clone**: `git clone ...`
 2.  **Setup**: `composer install && npm install && npm run build`

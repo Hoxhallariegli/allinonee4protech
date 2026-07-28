@@ -1,3 +1,22 @@
+### RREGULLAT PËR RELACIONET (DOT NOTATION) ###
+# Kur dëshiron të marrësh një fushë (p.sh 'name') nga një tabelë e lidhur (p.sh 'employees')
+# përmes një tabele ndërmjetëse (p.sh 'mechanics'), përdor rregullat e mëposhtme:
+#
+# 1. FORMATI: "relation_id`n8`nrelated_table`nRELATION.FIELD`nno"
+# 2. SHEMBULL (JobCard -> Mechanic -> Employee):
+#    Në vend të thjesht 'name', përdor 'employee.name'.
+#    Gjeneratori do të bëjë automatikisht:
+#    - Eager Loading: JobCard::with('mechanic.employee')
+#    - View Index: $item->mechanic?->employee?->name
+#    - Dropdown: Do të shfaqë emrin e punonjësit për çdo mekanik.
+#
+# 3. AUTO-LOAD (Cascading):
+#    Nëse në një formë ke dy dropdown-e të lidhura (p.sh Model dhe Brand),
+#    vendos Modelin pas Brand-it. Kur zgjedh Modelin, sistemi do të
+#    mbushë automatikisht Brand-in e duhur.
+
+-------------------------------------------------------------------------
+
 # Customer
 "name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Customer --api
 
@@ -7,7 +26,7 @@
 # VehicleModel
 "name`n0`nno`nbrand_id`n8`nvehicle_brands`nname`nno`n`ntag" | php artisan new:view VehicleModel --api
 
-# Vehicle
+# Vehicle (Auto-fill Brand kur zgjedh Model)
 "brand_id`n8`nvehicle_brands`nname`nno`nmodel_id`n8`nvehicle_models`nname`nno`nyear`n2`nyes`ncustomer_id`n8`ncustomers`nname`nno`nlicense_plate`n0`nyes`nvin`n0`nyes`n`ntruck" | php artisan new:view Vehicle --api
 
 # VehicleDocument
@@ -19,7 +38,7 @@
 # Mechanic
 "employee_id`n8`nemployees`nname`nno`nspecialization`n0`nyes`n`nuser" | php artisan new:view Mechanic --api
 
-# JobCard (Qendra e sistemit - Përdor employee.name për mekanikun)
+# JobCard (Përdor employee.name për mekanikun - AUTO EAGER LOADING)
 "vehicle_id`n8`nvehicles`nlicense_plate`nno`ncustomer_id`n8`ncustomers`nname`nno`nmechanic_id`n8`nmechanics`nemployee.name`nno`nstatus`n0`nno`nopened_at`n7`nyes`nclosed_at`n7`nyes`n`nclipboard-document" | php artisan new:view JobCard --api
 
 # Service
