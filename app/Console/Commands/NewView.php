@@ -196,9 +196,10 @@ class NewView extends Command
     protected function generateActions($name)
     {
         $dir = app_path("Domain/$name/Actions");
-        File::put("$dir/Create{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\n\nclass Create{$name}Action\n{\n    public function execute({$name}DTO \$dto): $name \n    {\n        return $name::create(\$dto->toArray());\n    }\n}");
-        File::put("$dir/Update{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\n\nclass Update{$name}Action\n{\n    public function execute($name \$model, {$name}DTO \$dto): $name\n    {\n        \$model->update(\$dto->toArray());\n        return \$model->fresh();\n    }\n}");
-        File::put("$dir/Delete{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\n\nclass Delete{$name}Action\n{\n    public function execute($name \$model): bool { return \$model->delete(); }\n}");
+        $plural = Str::plural($name);
+        File::put("$dir/Create{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Models\AuditTrail;\n\nclass Create{$name}Action\n{\n    public function execute({$name}DTO \$dto): $name \n    {\n        \$item = $name::create(\$dto->toArray());\n        AuditTrail::log(\$item, 'create', '$plural');\n        return \$item;\n    }\n}");
+        File::put("$dir/Update{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Models\AuditTrail;\n\nclass Update{$name}Action\n{\n    public function execute($name \$model, {$name}DTO \$dto): $name\n    {\n        \$model->fill(\$dto->toArray());\n        AuditTrail::log(\$model, 'update', '$plural');\n        \$model->save();\n        return \$model->fresh();\n    }\n}");
+        File::put("$dir/Delete{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Models\AuditTrail;\n\nclass Delete{$name}Action\n{\n    public function execute($name \$model): bool \n    {\n        AuditTrail::log(\$model, 'delete', '$plural');\n        return \$model->delete(); \n    }\n}");
     }
 
     protected function generateDTO($name, $fields)

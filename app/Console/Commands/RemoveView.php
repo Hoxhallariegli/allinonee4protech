@@ -135,7 +135,10 @@ class RemoveView extends Command
         }
 
         // 9. Remove Permissions from DB
-        Permission::where('module', $pluralName)->delete();
+        Permission::where('module', $pluralName)
+            ->orWhere('module', $singularName)
+            ->orWhere('name', 'like', "%_{$pluralSnake}")
+            ->delete();
         $this->info("✓ Removed permissions from database.");
 
         $this->info("✅ ALL components for $singularName have been surgically removed!");
