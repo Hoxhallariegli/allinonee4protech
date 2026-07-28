@@ -111,10 +111,8 @@ class RemoveView extends Command
 
         // 7. Delete Migration & Drop Table
         if (Schema::hasTable($tableName)) {
-            if ($this->confirm("⚠️  Do you also want to DROP the database table '$tableName'?", true)) {
-                Schema::dropIfExists($tableName);
-                $this->info("✓ Dropped Table: $tableName");
-            }
+            Schema::dropIfExists($tableName);
+            $this->info("✓ Dropped Table: $tableName");
         }
 
         $migrations = File::files(database_path('migrations'));

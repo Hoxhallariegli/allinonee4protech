@@ -42,6 +42,7 @@ Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'active
     Route::prefix('settings')->group(function () {
         Route::get('audit-trails', AuditTrails::class)->name('admin.settings.audit-trails.index');
         Route::get('system-settings', Settings::class)->name('admin.settings');
+        Route::get('ai-assistant', \App\Livewire\Admin\AiAssistant::class)->name('admin.settings.ai-assistant');
         Route::get('languages', \App\Livewire\Admin\Settings\Languages::class)->name('admin.settings.languages.index');
         Route::get('notifications', \App\Livewire\Admin\Settings\NotificationSettings::class)->name('admin.settings.notifications');
         Route::get('roles', Roles::class)->name('admin.settings.roles.index');

@@ -1,22 +1,18 @@
+<tr>
+    <td class="px-6 py-5">{{ $role->label }}</td>
+    <td class="px-6 py-5 text-right">
+        <div class="flex justify-end space-x-2">
 
-<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none">
-    <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $role->label }}</td>
-    <td class="px-6 py-5 text-right !transition-none">
-        <div class="flex justify-end gap-3 !transition-none">
             @can('edit_roles')
-                <x-a href="{{ route('admin.settings.roles.edit', ['role' => $role->id]) }}" class="!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none !transition-none">
-                    {{ __('admin.Edit') }}
-                </x-a>
+                <x-a href="{{ route('admin.settings.roles.edit', ['role' => $role->id]) }}" class="!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none !transition-none">{{ __('admin.Edit') }}</x-a>
             @endcan
 
             @if ($role->name !== 'admin')
                 @can('delete_roles')
-                    <div x-data="{ confirmation: '' }" class="inline-block !transition-none">
+                    <div x-data="{ confirmation: '' }" x-cloak class="inline-block">
                         <x-modal>
                             <x-slot name="trigger">
-                                <button @click="on = true" class="text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 !transition-none">
-                                    {{ __('admin.Delete') }}
-                                </button>
+                                <button @click="on = true" class="text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 !transition-none">{{ __('admin.Delete') }}</button>
                             </x-slot>
 
                             <x-slot name="modalTitle">
@@ -31,9 +27,7 @@
                                         {{ __('users.Delete Warning') }}
                                     </p>
                                     <div class="flex flex-col gap-2">
-                                        <div class="text-xs text-gray-600 dark:text-gray-400">
-                                            {{ __('users.Type the name') }} <span class="font-bold text-red-600">"{{ $role->label }}"</span> {{ __('users.to confirm') }}
-                                        </div>
+                                        <div class="text-xs text-gray-600 dark:text-gray-400">{{ __('users.Type the name') }} <span class="font-bold text-red-600">"{{ $role->label }}"</span> {{ __('users.to confirm') }}</div>
                                         <input x-model="confirmation" class="px-3 py-2 text-sm border border-slate-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full focus:ring-2 focus:ring-red-500 outline-none !transition-none">
                                     </div>
                                 </div>

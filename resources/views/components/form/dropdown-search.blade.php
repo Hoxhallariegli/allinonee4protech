@@ -9,7 +9,6 @@
 @php
     $modelName = $attributes->wire('model')->value();
 
-    // Konvertojmë të dhënat në format Array të thjeshtë
     $list = [];
     foreach($data as $id => $name) {
         $list[] = ['v' => (string)$id, 'l' => (string)$name];
@@ -17,12 +16,14 @@
 @endphp
 
 <div class="relative w-full"
-     wire:ignore
+     data-list="{{ json_encode($list) }}"
      x-data="{
          search: '',
          isOpen: false,
          selectedId: @entangle($attributes->wire('model')),
-         options: {{ json_encode($list) }},
+
+         // VËMENDJE: $el pa 'this.' — 'this' s'është i lidhur ende këtu.
+         options: JSON.parse($el.getAttribute('data-list') || '[]'),
 
          get selectedLabel() {
              if (!this.selectedId) return '';
@@ -42,6 +43,11 @@
              this.$watch('selectedId', value => {
                  this.search = this.selectedLabel;
              });
+
+             const observer = new MutationObserver(() => {
+                 this.options = JSON.parse(this.$el.getAttribute('data-list') || '[]');
+             });
+             observer.observe(this.$el, { attributes: true, attributeFilter: ['data-list'] });
          },
 
          select(id) {

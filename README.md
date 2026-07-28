@@ -32,6 +32,17 @@ php artisan new:view {ModelName}
 *   `--api`: Generates a fully-functional API layer (Controllers, Resources, FormRequests).
 *   `--firebase`: Automatically integrates Firebase Push Notifications into the Create Action.
 
+### 3. Supported Field Types
+The wizard supports the following database types for automatic scaffolding:
+*   `string`: Standard short text (VARCHAR).
+*   `text`: Long text for descriptions or content.
+*   `integer` / `bigInteger`: Numeric values.
+*   `boolean`: Toggle/Switch (True/False).
+*   `decimal`: Monetary or precise numeric values (supports `step="0.01"`).
+*   `date` / `datetime`: Date and time pickers.
+*   `foreignId`: Automated relationship builder (creates constraints & dropdowns).
+*   `enum`: Predefined selection list.
+
 ---
 
 ## 📡 Surgical API Automation
@@ -130,6 +141,36 @@ You can use PowerShell one-liners to skip the interactive wizard and scaffold co
 ### 2. Scaffold BlogPosts (Module with API Support)
 ```powershell
 "title`n0`nno`nslug`n0`nno`ncategory_id`n8`ncategories`nno`ncontent`n1`nyes`npublished`n4`nno`n`nnewspaper" | php artisan new:view BlogPost --api
+```
+
+---
+
+## 💡 Quick Demo Data (Tinker)
+
+If you want to quickly populate your database with demo categories and blog posts, you can run the following script inside `php artisan tinker`:
+
+```php
+// Run php artisan tinker
+use App\Models\Category;
+use App\Models\BlogPost;
+use App\Models\Tag;
+
+$categories = collect([
+    ['name' => 'Laravel', 'slug' => 'laravel'],
+    ['name' => 'Livewire', 'slug' => 'livewire'],
+    ['name' => 'PHP', 'slug' => 'php'],
+    ['name' => 'Architecture', 'slug' => 'architecture'],
+])->map(fn($category) => Category::create($category));
+
+foreach(range(1, 50) as $i) {
+    BlogPost::create([
+        'title'       => "Laravel 12 Starter Kit Article {$i}",
+        'slug'        => "laravel-12-starter-kit-article-{$i}",
+        'category_id' => $categories->random()->id,
+        'content'     => "Demo blog content for article {$i}. Testing E4ProTech Starterkit.",
+        'published'   => true,
+    ]);
+}
 ```
 
 ---

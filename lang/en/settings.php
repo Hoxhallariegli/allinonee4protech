@@ -29,6 +29,8 @@ return [
   'Copy the "firebaseConfig" object (everything inside the curly braces {})' => 'Copy the "firebaseConfig" object (everything inside the curly braces {})',
   'Click "Generate new private key"' => 'Click "Generate new private key"',
   'Open the downloaded JSON file and paste its entire content here.' => 'Open the downloaded JSON file and paste its entire content here.',
+  'Paste the Firebase Web App configuration object here.' => 'Paste the Firebase Web App configuration object here.',
+  'Paste the content of your Firebase Service Account JSON file here.' => 'Paste the content of your Firebase Service Account JSON file here.',
   'Service Account JSON' => 'Service Account JSON',
   'Update Firebase Settings' => 'Update Firebase Settings',
   'Test Notification' => 'Test Notification',

@@ -4,642 +4,588 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Models\Permission;
 
 class NewView extends Command
 {
     protected $signature = 'new:view {name} {--api : Generate API layer automatically} {--firebase : Enable Firebase notifications}';
-    protected $description = 'Enterprise DDD Scaffolder with Events, Listeners, API and Firebase';
+    protected $description = 'Universal DDD Scaffolder - God Version (Pro UI, Nested Modals, Hardened)';
+
+    protected array $reserved = [
+        'class', 'function', 'array', 'return', 'if', 'else', 'elseif', 'parent', 'self', 'static',
+        'string', 'int', 'integer', 'float', 'bool', 'boolean', 'object', 'null', 'true', 'false',
+        'interface', 'trait', 'namespace', 'use', 'new', 'clone', 'match', 'enum', 'fn', 'yield',
+        'id', 'created_at', 'updated_at', 'deleted_at',
+    ];
 
     public function handle()
     {
-        $name = Str::studly($this->argument('name'));
+        try {
+            return $this->scaffold();
+        } catch (\Throwable $e) {
+            $this->error('Scaffolding failed: ' . $e->getMessage());
+            $this->line($e->getFile() . ':' . $e->getLine());
+            return 1;
+        }
+    }
+
+    protected function scaffold()
+    {
+        $rawName = trim((string) $this->argument('name'));
+        $clean = preg_replace('/[^A-Za-z0-9_\- ]/', '', $rawName);
+        $name = Str::studly((string) $clean);
+
+        if (!$name || !preg_match('/^[A-Z][A-Za-z0-9]*$/', $name)) {
+            $this->error("Invalid model name '$rawName'. Use letters and numbers only.");
+            return 1;
+        }
+        if (in_array(strtolower($name), $this->reserved, true)) {
+            $this->error("Error: '$name' is a reserved word.");
+            return 1;
+        }
+
         $tableName = Str::snake(Str::pluralStudly($name));
         $pluralName = Str::plural($name);
         $pluralKebab = Str::kebab($pluralName);
         $pluralSnake = Str::snake($pluralName);
 
+        if (Schema::hasTable($tableName)) {
+            $this->error("Table '$tableName' already exists. Aborting to avoid a conflicting migration.");
+            return 1;
+        }
+
+        // --- Overwrite guard ---
+        $modelPath = app_path("Models/$name.php");
+        $domainPath = app_path("Domain/$name");
+        $livewirePath = app_path("Livewire/Admin/$pluralName");
+        $viewsPath = resource_path('views/livewire/admin/' . Str::kebab($pluralName));
+        $routePath = base_path("routes/admin/$pluralKebab.php");
+
+        $existing = array_filter([
+            $modelPath => File::exists($modelPath),
+            $domainPath => File::isDirectory($domainPath),
+            $livewirePath => File::isDirectory($livewirePath),
+            $viewsPath => File::isDirectory($viewsPath),
+            $routePath => File::exists($routePath),
+        ]);
+
+        if (!empty($existing)) {
+            $this->warn('The following already exist and will be OVERWRITTEN:');
+            foreach (array_keys($existing) as $p) {
+                $this->line(" - $p");
+            }
+            if (!$this->confirm('Continue and overwrite these?', false)) {
+                $this->info('Aborted. Nothing was changed.');
+                return 1;
+            }
+        }
+
         $fields = [];
-        $this->info("🏗️ Starting Enterprise Automation for $name");
+        $usedNames = ['id', 'created_at', 'updated_at', 'deleted_at'];
+        $this->info("🏗️ Starting ENTERPRISE Scaffolding for $name");
 
         while (true) {
-            $fieldName = $this->ask('Field name (leave empty to finish)');
-            if (!$fieldName) break;
+            $fieldNameRaw = trim((string) $this->ask('Field name (leave empty to finish)'));
+            if ($fieldNameRaw === '') {
+                break;
+            }
+
+            $fieldName = Str::snake($fieldNameRaw);
+            if (!preg_match('/^[a-z][a-z0-9_]*$/', $fieldName)) {
+                $this->error("Invalid field name '$fieldNameRaw'. Use lowercase letters, numbers and underscores, starting with a letter.");
+                continue;
+            }
+            if (in_array($fieldName, $usedNames, true)) {
+                $this->error("Field '$fieldName' is already used or reserved.");
+                continue;
+            }
 
             $type = $this->choice('Field type', [
                 'string', 'text', 'integer', 'bigInteger', 'boolean', 'decimal', 'date', 'datetime', 'foreignId', 'enum'
             ], 0);
 
-            $extra = '';
-            $relatedModel = '';
-            $options = [];
+            $extra = ''; $relatedModel = ''; $labelField = 'name'; $options = [];
+
             if ($type === 'foreignId') {
-                $extra = $this->ask('Constrained table (e.g. users)', Str::snake(Str::pluralStudly(str_replace('_id', '', $fieldName))));
+                $extra = Str::snake(trim((string) $this->ask('Constrained table', Str::snake(Str::pluralStudly(str_replace('_id', '', $fieldName))))));
+                if (!Schema::hasTable($extra)) {
+                    $this->warn("Warning: table '$extra' doesn't exist yet — migration will fail unless it's created before this one runs.");
+                }
                 $relatedModel = Str::studly(Str::singular($extra));
+                if (!class_exists("App\\Models\\$relatedModel")) {
+                    $this->warn("Warning: App\\Models\\$relatedModel doesn't exist yet — the relation/dropdown will error until it's scaffolded too.");
+                }
+                $labelField = trim((string) $this->ask("Display field for $relatedModel (supports dot notation like employee.name)?", 'name'));
+                if (!preg_match('/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)?$/', $labelField)) {
+                    $this->warn("Invalid display field '$labelField', falling back to 'name'.");
+                    $labelField = 'name';
+                }
             }
 
             if ($type === 'enum') {
-                $optRaw = $this->ask('Enum options (comma separated)');
-                $options = array_map('trim', explode(',', $optRaw));
+                $optRaw = (string) $this->ask('Enum options (comma separated)');
+                $options = array_values(array_unique(array_filter(array_map(
+                    fn ($o) => trim($o),
+                    explode(',', $optRaw)
+                ))));
+                if (count($options) < 2) {
+                    $this->error('Enum needs at least 2 non-empty, unique options. Field skipped.');
+                    continue;
+                }
             }
 
             $fields[] = [
-                'name' => $fieldName,
-                'type' => $type,
-                'constrained' => $extra,
-                'relatedModel' => $relatedModel,
-                'options' => $options,
-                'nullable' => $this->confirm('Nullable?', false)
+                'name' => $fieldName, 'type' => $type, 'constrained' => $extra,
+                'relatedModel' => $relatedModel, 'labelField' => $labelField,
+                'options' => $options, 'nullable' => $this->confirm('Nullable?', false)
             ];
+            $usedNames[] = $fieldName;
         }
 
-        $icon = $this->ask('Menu icon (Heroicon name)', 'chevron-right');
+        $iconRaw = (string) $this->ask('Menu icon', 'chevron-right');
+        $iconClean = preg_replace('/[^a-z0-9\-]/', '', strtolower($iconRaw)) ?: 'chevron-right';
+        $iconMap = [
+            'box' => 'archive-box', 'file' => 'document', 'clipboard' => 'clipboard-document',
+            'office-building' => 'building-office', 'desktop' => 'computer-desktop',
+            'pencil' => 'pencil-square', 'chart-bar' => 'chart-bar'
+        ];
+        $icon = $iconMap[$iconClean] ?? $iconClean;
 
-        $withApi = $this->option('api') || ($this->choice('Do you want to generate an API layer?', ['No', 'Yes'], 0) === 'Yes');
-        $withFirebase = $this->option('firebase') || ($this->choice('Enable Firebase Notifications for this module?', ['No', 'Yes'], 0) === 'Yes');
+        $withApi = $this->option('api') || ($this->choice('Generate API?', ['No', 'Yes'], 0) === 'Yes');
 
-        // DDD Domain Structure
-        $this->generateDomainStructure($name, $fields, $withFirebase);
-
-        // Core Files
+        $this->generateDomainStructure($name, $fields);
         $this->generateMigration($tableName, $fields);
         $this->generateModel($name, $fields);
-
-        // UI Layer
         $this->generateLivewireComponents($name, $pluralSnake, $pluralName, $pluralKebab, $fields);
         $this->generateViews($name, $fields, $pluralSnake, $pluralName);
 
-        // API Layer
         if ($withApi) {
             $this->generateApiLayer($name, $pluralName, $pluralKebab, $fields);
         }
 
-        $this->info("💾 Migrating...");
-        $this->call('migrate');
+        $this->info('💾 Migrating...');
+        $exitCode = $this->call('migrate');
+        if ($exitCode !== 0) {
+            $this->error('Migration failed. Files were generated but the table was not created.');
+            $this->warn('Fix database/migrations manually, run "php artisan migrate", then re-add permissions/nav by hand if needed.');
+            return 1;
+        }
 
         $this->addPermissions($name, $pluralSnake);
         $this->generateTranslationFiles($pluralKebab, $name, $fields);
         $this->generateRouteFile($pluralName, $pluralKebab, $name, $pluralSnake);
         $this->addNavigation($pluralName, $pluralKebab, $pluralSnake, $icon);
 
-        $this->info("✅ DONE! Enterprise Module $name is ready.");
+        $this->info("✅ DONE! $name is ready with Modal Support.");
+        return 0;
     }
 
-    protected function generateDomainStructure($name, $fields, $withFirebase = false)
+    protected function generateDomainStructure($name, $fields)
     {
         $baseDir = app_path("Domain/$name");
-        File::makeDirectory("$baseDir/Actions", 0755, true, true);
-        File::makeDirectory("$baseDir/DTOs", 0755, true, true);
-        File::makeDirectory("$baseDir/Queries", 0755, true, true);
-        File::makeDirectory("$baseDir/Events", 0755, true, true);
-        File::makeDirectory("$baseDir/Listeners", 0755, true, true);
-
+        foreach (['Actions', 'DTOs', 'Queries', 'Events'] as $d) {
+            File::makeDirectory("$baseDir/$d", 0755, true, true);
+        }
         $this->generateDTO($name, $fields);
         $this->generateQuery($name, $fields);
-        $this->generateEvents($name);
-        $this->generateListeners($name, $withFirebase);
         $this->generateActions($name);
     }
 
     protected function generateActions($name)
     {
         $dir = app_path("Domain/$name/Actions");
-        $eventClass = "App\Domain\\$name\Events\\{$name}Created";
-
-        File::put("$dir/Create{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Events\\{$name}Created;\n\nclass Create{$name}Action\n{\n    public function execute({$name}DTO \$dto): $name \n    {\n        \$model = $name::create(\$dto->toArray());\n        event(new {$name}Created(\$model));\n        return \$model;\n    }\n}");
+        File::put("$dir/Create{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\n\nclass Create{$name}Action\n{\n    public function execute({$name}DTO \$dto): $name \n    {\n        return $name::create(\$dto->toArray());\n    }\n}");
         File::put("$dir/Update{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\n\nclass Update{$name}Action\n{\n    public function execute($name \$model, {$name}DTO \$dto): $name\n    {\n        \$model->update(\$dto->toArray());\n        return \$model->fresh();\n    }\n}");
         File::put("$dir/Delete{$name}Action.php", "<?php\n\nnamespace App\Domain\\$name\Actions;\n\nuse App\Models\\$name;\n\nclass Delete{$name}Action\n{\n    public function execute($name \$model): bool { return \$model->delete(); }\n}");
     }
 
-    protected function generateEvents($name)
-    {
-        $dir = app_path("Domain/$name/Events");
-        $stub = "<?php\n\nnamespace App\Domain\\$name\Events;\n\nuse App\Models\\$name;\nuse Illuminate\Foundation\Events\Dispatchable;\nuse Illuminate\Queue\SerializesModels;\n\nclass {$name}Created\n{\n    use Dispatchable, SerializesModels;\n    public function __construct(public $name \$model) {}\n}";
-        File::put("$dir/{$name}Created.php", $stub);
-    }
-
-    protected function generateListeners($name, $withFirebase)
-    {
-        $dir = app_path("Domain/$name/Listeners");
-        if (!$withFirebase) return;
-
-        $stub = "<?php\n\nnamespace App\Domain\\$name\Listeners;\n\nuse App\Domain\\$name\Events\\{$name}Created;\nuse App\Services\FirebaseService;\nuse App\Models\Setting;\n\nclass SendFirebaseNotification\n{\n    public function handle({$name}Created \$event)\n    {\n        \$shouldNotify = (bool) Setting::where('key', 'notify_firebase_$name')->value('value');\n        \n        if (\$shouldNotify) {\n            (new FirebaseService())->sendNotification(\n                'New $name Created',\n                'A new record has been added to ' . '$name'\n            );\n        }\n    }\n}";
-        File::put("$dir/SendFirebaseNotification.php", $stub);
-
-        $this->registerEventListener($name);
-    }
-
-    protected function registerEventListener($name)
-    {
-        $path = app_path('Providers/EventServiceProvider.php');
-        if (!File::exists($path)) return;
-
-        $event = "App\Domain\\$name\Events\\{$name}Created";
-        $listener = "App\Domain\\$name\Listeners\SendFirebaseNotification";
-
-        $content = File::get($path);
-        $search = 'protected $listen = [';
-        $entry = "\n        \\$event::class => [\n            \\$listener::class,\n        ],";
-
-        if (!str_contains($content, $event)) {
-            File::put($path, str_replace($search, $search . $entry, $content));
-        }
-    }
-
     protected function generateDTO($name, $fields)
     {
-        $props = ""; $fromArray = ""; $toArray = "";
+        $props = ''; $args = ''; $toArray = '';
         foreach ($fields as $f) {
-            $type = in_array($f['type'], ['integer', 'bigInteger']) ? 'int' : (in_array($f['type'], ['decimal', 'float']) ? 'float' : ($f['type'] === 'boolean' ? 'bool' : 'string'));
-            $props .= "        public readonly ?$type \${$f['name']},\n";
-            $fromArray .= "            {$f['name']}: \$data['{$f['name']}'] ?? null,\n";
+            $props .= "        public readonly mixed \${$f['name']},\n";
+            $args .= "            {$f['name']}: \$data['{$f['name']}'] ?? null,\n";
             $toArray .= "            '{$f['name']}' => \$this->{$f['name']},\n";
         }
-        $stub = "<?php\n\nnamespace App\Domain\\$name\DTOs;\n\nclass {$name}DTO\n{\n    public function __construct(\n$props    ) {}\n    public static function fromArray(array \$data): self { return new self(\n$fromArray        ); }\n    public function toArray(): array { return [\n$toArray        ]; }\n}";
+        $stub = "<?php\n\nnamespace App\Domain\\$name\DTOs;\n\nclass {$name}DTO\n{\n    public function __construct(\n$props    ) {}\n    public static function fromArray(array \$data): self { return new self(\n$args        ); }\n    public function toArray(): array { return [\n$toArray        ]; }\n}";
         File::put(app_path("Domain/$name/DTOs/{$name}DTO.php"), $stub);
     }
 
     protected function generateQuery($name, $fields)
     {
-        $with = collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "'" . Str::camel(str_replace('_id', '', $f['name'])) . "'")->implode(', ');
-
-        $searchFields = collect($fields)
-            ->filter(fn($f) => in_array($f['type'], ['string', 'text']))
-            ->map(fn($f) => "                \$query->orWhere('{$f['name']}', 'like', '%' . \$params['search'] . '%');")
-            ->implode("\n");
-
-        $relSearch = collect($fields)
-            ->filter(fn($f) => $f['type'] === 'foreignId')
-            ->map(fn($f) => "                \$query->orWhereHas('" . Str::camel(str_replace('_id', '', $f['name'])) . "', function(\$q) use (\$params) { \$q->where('name', 'like', '%' . \$params['search'] . '%'); });")
-            ->implode("\n");
-
-        $filters = "";
-        foreach ($fields as $f) {
-            if ($f['type'] === 'foreignId' || $f['type'] === 'enum') {
-                $filters .= "        if (isset(\$params['{$f['name']}']) && \$params['{$f['name']}']) \$query->where('{$f['name']}', \$params['{$f['name']}']);\n";
+        $with = collect($fields)->filter(fn ($f) => $f['type'] === 'foreignId')->map(function($f) {
+            $rel = Str::camel(str_replace('_id', '', $f['name']));
+            if (Str::contains($f['labelField'], '.')) {
+                $subRel = Str::beforeLast($f['labelField'], '.');
+                return "'$rel.$subRel'";
             }
-        }
+            return "'$rel'";
+        })->unique()->implode(', ');
 
-        $stub = "<?php\n\nnamespace App\Domain\\$name\Queries;\n\nuse App\Models\\$name;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass {$name}ListQuery\n{\n    public function handle(array \$params = [], string \$sortField = 'id', string \$sortAsc = 'asc'): Builder\n    {\n        \$query = $name::query()" . ($with ? "->with([$with])" : "") . ";\n        \n        if (isset(\$params['search']) && \$params['search']) {\n            \$query->where(function(\$query) use (\$params) {\n                \$query->where('id', 'like', '%' . \$params['search'] . '%');\n$searchFields\n$relSearch\n            });\n        }\n$filters\n        return \$query->orderBy(\$sortField, \$sortAsc);\n    }\n}";
-        File::put(app_path("Domain/$name/Queries/{$name}ListQuery.php"), $stub);
+        $searchFields = collect($fields)->filter(fn ($f) => in_array($f['type'], ['string', 'text']))->map(fn ($f) => "                \$query->orWhere('{$f['name']}', 'like', '%' . \$params['search'] . '%');")->implode("\n");
+        $filters = collect($fields)->filter(fn ($f) => $f['type'] === 'foreignId')->map(fn ($f) => "        if (isset(\$params['{$f['name']}']) && \$params['{$f['name']}']) \$query->where('{$f['name']}', \$params['{$f['name']}']);")->implode("\n");
+        File::put(app_path("Domain/$name/Queries/{$name}ListQuery.php"), "<?php\n\nnamespace App\Domain\\$name\Queries;\n\nuse App\Models\\$name;\nuse Illuminate\Database\Eloquent\Builder;\n\nclass {$name}ListQuery\n{\n    public function handle(array \$params = [], string \$sortField = 'id', string \$sortAsc = 'asc'): Builder\n    {\n        \$query = $name::query()" . ($with ? "->with([$with])" : '') . ";\n        if (isset(\$params['search']) && \$params['search']) {\n            \$query->where(function(\$query) use (\$params) {\n                \$query->where('id', 'like', '%' . \$params['search'] . '%');\n$searchFields\n            });\n        }\n$filters\n        \$sortField = in_array(\$sortField, $name::sortable(), true) ? \$sortField : 'id';\n        \$sortAsc = in_array(strtolower((string) \$sortAsc), ['asc', 'desc'], true) ? \$sortAsc : 'asc';\n        return \$query->orderBy(\$sortField, \$sortAsc);\n    }\n}");
     }
 
     protected function generateModel($name, $fields)
     {
-        $fillable = collect($fields)->map(fn($f) => "'{$f['name']}'")->implode(', ');
-        $relations = ""; $casts = ""; $rules = ""; $sortable = "'id'";
+        $fillable = collect($fields)->map(fn ($f) => "'{$f['name']}'")->implode(', ');
+        $relations = ''; $casts = ''; $rules = ''; $sortable = "'id'";
         foreach ($fields as $f) {
             if ($f['type'] === 'foreignId') {
                 $rel = Str::camel(str_replace('_id', '', $f['name']));
-                $relModel = $f['relatedModel'];
-                $relations .= "\n    public function $rel(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n    {\n        return \$this->belongsTo(\\App\Models\\$relModel::class, '{$f['name']}');\n    }\n";
+                $relations .= "\n    public function $rel(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return \$this->belongsTo(\\App\Models\\{$f['relatedModel']}::class, '{$f['name']}'); }\n";
             }
-            if ($f['type'] === 'boolean') $casts .= "            '{$f['name']}' => 'boolean',\n";
-            if (in_array($f['type'], ['date', 'datetime'])) $casts .= "            '{$f['name']}' => 'datetime',\n";
-            $ruleSet = $f['nullable'] ? "'nullable'" : "'required'";
-            if ($f['type'] === 'string') $ruleSet .= ", 'string', 'max:255'";
-            if (in_array($f['type'], ['integer', 'bigInteger'])) $ruleSet .= ", 'numeric'";
-            if ($f['type'] === 'date') $ruleSet .= ", 'date'";
-            if ($f['type'] === 'enum') $ruleSet .= ", 'in:" . implode(',', $f['options']) . "'";
-            $rules .= "            '{$f['name']}' => [$ruleSet],\n";
-            if ($f['type'] === 'foreignId') $rules .= "            'new_" . str_replace('_id', '', $f['name']) . "_name' => ['required_if:{$f['name']},new'],\n";
-            if (!in_array($f['type'], ['text'])) $sortable .= ", '{$f['name']}'";
-        }
+            if ($f['type'] === 'boolean') {
+                $casts .= "            '{$f['name']}' => 'boolean',\n";
+            }
+            if (in_array($f['type'], ['date', 'datetime'])) {
+                $casts .= "            '{$f['name']}' => 'datetime',\n";
+            }
+            if ($f['type'] === 'decimal') {
+                $casts .= "            '{$f['name']}' => 'decimal:2',\n";
+            }
 
-        $stub = "<?php\n\nnamespace App\Models;\n\nuse Illuminate\Database\Eloquent\Factories\HasFactory;\nuse Illuminate\Database\Eloquent\Model;\n\nclass $name extends Model\n{\n    use HasFactory;\n    protected \$fillable = [$fillable];\n    protected function casts(): array { return [\n$casts        ]; }\n    public static function rules(\$id = null): array { return [\n$rules        ]; }\n    public static function sortable(): array { return [$sortable]; }\n$relations\n}";
-        File::put(app_path("Models/$name.php"), $stub);
+            $req = $f['nullable'] ? "'nullable'" : "'required'";
+            $typeRule = match ($f['type']) {
+                'string' => "'string', 'max:255'",
+                'text' => "'string'",
+                'integer', 'bigInteger' => "'integer'",
+                'boolean' => "'boolean'",
+                'decimal' => "'numeric'",
+                'date', 'datetime' => "'date'",
+                'foreignId' => "'integer'",
+                'enum' => "\Illuminate\Validation\Rule::in(['" . implode("', '", array_map('addslashes', $f['options'])) . "'])",
+                default => null,
+            };
+            $rules .= "            '{$f['name']}' => [$req" . ($typeRule ? ", $typeRule" : '') . "],\n";
+            $sortable .= ", '{$f['name']}'";
+        }
+        File::put(app_path("Models/$name.php"), "<?php\n\nnamespace App\Models;\n\nuse Illuminate\Database\Eloquent\Factories\HasFactory;\nuse Illuminate\Database\Eloquent\Model;\n\nclass $name extends Model\n{\n    use HasFactory;\n    protected \$fillable = [$fillable];\n    protected function casts(): array { return [\n$casts        ]; }\n    public static function rules(\$id = null): array { return [\n$rules        ]; }\n    public static function sortable(): array { return [$sortable]; }\n$relations\n}");
     }
 
     protected function generateLivewireComponents($name, $pluralSnake, $pluralName, $pluralKebab, $fields)
     {
+        $camel = Str::camel($name);
         $dir = app_path("Livewire/Admin/$pluralName");
-        if (!File::isDirectory($dir)) File::makeDirectory($dir, 0755, true);
-        $viewPath = "livewire.admin." . Str::kebab($pluralName);
+        File::makeDirectory($dir, 0755, true, true);
+        $viewPath = 'livewire.admin.' . Str::kebab($pluralName);
 
-        // INDEX
-        $filtersProps = ""; $filtersReset = ""; $availableLists = "";
-        $filterFieldsArray = collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "'{$f['name']}'")->push("'search'")->push("'paginate'")->implode(', ');
+        $hasFile = collect($fields)->contains(fn ($f) => Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo']));
+        $availableListsIndex = ''; $availableListsForm = ''; $props = ''; $dataMap = ''; $fileHandlers = '';
+        $filterReset = ''; $filterProps = ''; $renderFilters = '';
 
-        foreach($fields as $f) {
-            if ($f['type'] === 'foreignId') {
-                $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
-                $filtersProps .= "    #[Url(history: true)] public \${$f['name']} = '';\n";
-                $filtersReset .= "'{$f['name']}', ";
-                $availableLists .= "            '{$rv}' => \\App\Models\\{$f['relatedModel']}::pluck('name', 'id')->toArray(),\n";
-            }
-        }
-        $indexStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\Queries\\{$name}ListQuery;\nuse App\Domain\\$name\Actions\\Delete{$name}Action;\nuse Livewire\{Component, WithPagination, Attributes\Title, Attributes\Url};\n\n#[Title('$pluralName')]\nclass $pluralName extends Component\n{\n    use WithPagination;\n    public int \$paginate = 10;\n    #[Url(history: true)] public string \$search = '';\n$filtersProps    public bool \$openFilter = false;\n    public string \$sortField = 'id';\n    public bool \$sortAsc = true;\n\n    public function updated(\$property)\n    {\n        if (in_array(\$property, [$filterFieldsArray])) {\n            \$this->resetPage();\n        }\n    }\n\n    public function resetFilters() { \$this->reset(['search', 'openFilter', $filtersReset]); \$this->resetPage(); }\n\n    public function render()\n    {\n        abort_if_cannot('view_{$pluralSnake}');\n        \$query = (new {$name}ListQuery())->handle([\n            'search' => \$this->search,\n" . collect($fields)->filter(fn($f) => $f['type'] === 'foreignId')->map(fn($f) => "            '{$f['name']}' => \$this->{$f['name']},")->implode("\n") . "\n        ], \$this->sortField, \$this->sortAsc ? 'asc' : 'desc');\n\n        return view('$viewPath.index', [\n            'items' => \$query->paginate(\$this->paginate),\n            'sortableFields' => $name::sortable(),\n$availableLists        ])->layout('components.layouts.app');\n    }\n\n    public function sortBy(string \$field) { if (!in_array(\$field, $name::sortable())) return; if (\$this->sortField === \$field) { \$this->sortAsc = ! \$this->sortAsc; } \$this->sortField = \$field; }\n\n    public function delete$name(string \$id, Delete{$name}Action \$action)
-    {
-        abort_if_cannot('delete_{$pluralSnake}');\n        try {\n            \$item = $name::findOrFail(\$id);\n            \$action->execute(\$item);\n            \$this->dispatch('toast', message: __('$pluralKebab.deleted'), type: 'success');\n            \$this->resetPage();\n        } catch (\\Illuminate\\Database\\QueryException \$e) {\n            if (\$e->getCode() == \"23000\" || \$e->getCode() == \"19\") {\n                \$this->dispatch('toast', message: __('$pluralKebab.delete_error_referenced'), type: 'error');\n            } else {\n                \$this->dispatch('toast', message: __('$pluralKebab.delete_error'), type: 'error');\n            }\n        }\n    }\n}";
-        File::put("$dir/$pluralName.php", $indexStub);
-
-        // CREATE
-        $props = ""; $newCreators = ""; $dataMap = "";
         foreach ($fields as $f) {
             $props .= "    public \${$f['name']} = '';\n";
             $dataMap .= "            '{$f['name']}' => \$this->{$f['name']},\n";
             if ($f['type'] === 'foreignId') {
                 $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
-                $props .= "    public \$new_" . str_replace('_id', '', $f['name']) . "_name = '';\n";
-                $newCreators .= "        if (\$this->{$f['name']} === 'new') { \$rel = \\App\Models\\{$f['relatedModel']}::create(['name' => \$this->new_" . str_replace('_id', '', $f['name']) . "_name, 'slug' => Str::slug(\$this->new_" . str_replace('_id', '', $f['name']) . "_name)]); \$this->{$f['name']} = \$rel->id; }\n";
+
+                if (Str::contains($f['labelField'], '.')) {
+                    $relPart = explode('.', $f['labelField'])[0];
+                    $availableListsIndex .= "            '{$rv}' => \\App\\Models\\{$f['relatedModel']}::with('$relPart')->get()->pluck('{$f['labelField']}', 'id')->toArray(),\n";
+                } else {
+                    $availableListsIndex .= "            '{$rv}' => \\App\\Models\\{$f['relatedModel']}::pluck('{$f['labelField']}', 'id')->toArray(),\n";
+                }
+
+                $availableListsForm .= "            '{$rv}' => \$this->get{$rv}List(),\n";
+                $filterReset .= "'{$f['name']}', ";
+                $filterProps .= "    #[Url(history: true)] public \${$f['name']} = '';\n";
+                $renderFilters .= "            '{$f['name']}' => \$this->{$f['name']},\n";
+            }
+            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
+                $fileHandlers .= "        if (\$this->{$f['name']} && !is_string(\$this->{$f['name']})) { \$this->{$f['name']} = \$this->{$f['name']}->store('uploads/$pluralKebab', 'public'); }\n";
             }
         }
-        $createStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\\Create{$name}Action;\nuse Illuminate\Support\Str;\nuse Livewire\{Component, Attributes\Title};\n\n#[Title('Add $name')]\nclass Create extends Component\n{\n$props\n    public function render() { abort_if_cannot('add_{$pluralSnake}'); return view('$viewPath.create', [\n$availableLists        ])->layout('components.layouts.app'); }\n\n    public function store(Create{$name}Action \$action)\n    {\n        \$this->validate();\n$newCreators\n        \$dto = {$name}DTO::fromArray([\n$dataMap        ]);\n        \$action->execute(\$dto);\n        session()->flash('success', __('$pluralKebab.created'));\n        return to_route('admin.$pluralKebab.index');\n    }\n    protected function rules(): array { return $name::rules(); }\n}";
-        File::put("$dir/Create.php", $createStub);
 
-        // EDIT
-        $camelName = Str::camel($name);
-        $editStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\\Update{$name}Action;\nuse Illuminate\Support\Str;\nuse Livewire\{Component, Attributes\Title};\n\n#[Title('Edit $name')]\nclass Edit extends Component\n{\n    public $name \$item;\n$props\n    public function mount($name \$" . $camelName . ") { \$this->item = \$" . $camelName . "; \$this->fill(\$" . $camelName . "->toArray()); " . collect($fields)->filter(fn($f) => $f['type'] === 'date')->map(fn($f) => "\$this->{$f['name']} = \$" . $camelName . "->{$f['name']}?->format('Y-m-d');")->implode(" ") . " }\n    public function render() { abort_if_cannot('edit_{$pluralSnake}'); return view('$viewPath.edit', [\n$availableLists        ])->layout('components.layouts.app'); }\n\n    public function update(Update{$name}Action \$action)\n    {\n        \$this->validate();\n$newCreators\n        \$dto = {$name}DTO::fromArray([\n$dataMap        ]);\n        \$action->execute(\$this->item, \$dto);\n        session()->flash('success', __('$pluralKebab.updated'));\n        return to_route('admin.$pluralKebab.index');\n    }\n    protected function rules(): array { return $name::rules(\$this->item->id); }\n}";
-        File::put("$dir/Edit.php", $editStub);
+        $imports = "use Livewire\Component;\nuse Livewire\WithPagination;\nuse Livewire\Attributes\Title;\nuse Livewire\Attributes\Url;\nuse Livewire\Attributes\On;\n";
+        if ($hasFile) {
+            $imports .= "use Livewire\WithFileUploads;\n";
+        }
+        $traits = '    use WithPagination' . ($hasFile ? ', WithFileUploads' : '') . ";\n";
+
+        // $onEvents / $formHelperMethods are shared by EVERY component that has a
+        // foreignId field, including QuickCreate. This is what makes nested \"create
+        // related record from inside a modal\" propagate the new id back into the
+        // field that opened it, at any nesting depth.
+        $formHelperMethods = ''; $onEvents = ''; $updatedHooks = '';
+        foreach ($fields as $f) {
+            if ($f['type'] === 'foreignId') {
+                $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
+                $onEvents .= "\n    #[On('" . Str::kebab($f['relatedModel']) . "-created')] \n    public function refresh" . Str::studly($rv) . "(\$id) { \$this->{$f['name']} = \$id; \$this->updated" . Str::studly($f['name']) . "(\$id); }\n";
+
+                // Add updated hook for auto-filling related fields
+                $updatedHooks .= "\n    public function updated" . Str::studly($f['name']) . "(\$value)\n    {\n        if (!\$value) return;\n        \$related = \\App\\Models\\{$f['relatedModel']}::find(\$value);\n        if (!\$related) return;\n";
+                foreach ($fields as $otherField) {
+                    if ($otherField['name'] !== $f['name'] && $otherField['type'] === 'foreignId') {
+                        // If the related model has a field with the same name as our other field, auto-fill it
+                        $updatedHooks .= "        if (isset(\$related->{$otherField['name']})) { \$this->{$otherField['name']} = \$related->{$otherField['name']}; }\n";
+                    }
+                }
+                $updatedHooks .= "    }\n";
+
+                $formHelperMethods .= "\n    protected function get{$rv}List() {\n";
+                if (Str::contains($f['labelField'], '.')) {
+                    $relPart = explode('.', $f['labelField'])[0];
+                    $formHelperMethods .= "        return \\App\\Models\\{$f['relatedModel']}::with('$relPart')->get()->pluck('{$f['labelField']}', 'id')->toArray();\n";
+                } else {
+                    $formHelperMethods .= "        return \\App\\Models\\{$f['relatedModel']}::pluck('{$f['labelField']}', 'id')->toArray();\n";
+                }
+                $formHelperMethods .= "    }\n";
+            }
+        }
+
+        $indexStub = "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\Queries\\{$name}ListQuery;\nuse App\Domain\\$name\Actions\\Delete{$name}Action;\n$imports\n#[Title('$pluralName')]\nclass $pluralName extends Component\n{\n    $traits\n    public int \$paginate = 10;\n    #[Url(history: true)] public string \$search = '';\n$filterProps    public bool \$openFilter = false;\n    public string \$sortField = 'id';\n    public bool \$sortAsc = true;\n\n    public function resetFilters() { \$this->reset(['search', 'openFilter', $filterReset]); \$this->resetPage(); }\n\n    public function render()\n    {\n        abort_if_cannot('view_{$pluralSnake}');\n        \$query = (new {$name}ListQuery())->handle(['search' => \$this->search, $renderFilters], \$this->sortField, \$this->sortAsc ? 'asc' : 'desc');\n\n        return view('$viewPath.index', [\n            'items' => \$query->paginate(\$this->paginate),\n            'sortableFields' => $name::sortable(),\n$availableListsIndex        ])->layout('components.layouts.app');\n    }\n\n    public function sortBy(\$field) { if (!in_array(\$field, $name::sortable(), true)) return; if (\$this->sortField === \$field) { \$this->sortAsc = ! \$this->sortAsc; } \$this->sortField = \$field; }\n\n    public function delete$name(\$id, Delete{$name}Action \$action) \n    {\n        abort_if_cannot('delete_{$pluralSnake}');\n        \$item = $name::find(\$id);\n        if (!\$item) { \$this->dispatch('toast', message: __('$pluralKebab.not_found'), type: 'error'); return; }\n        try { \$action->execute(\$item); \$this->dispatch('toast', message: __('$pluralKebab.deleted'), type: 'success'); \$this->resetPage(); } \n        catch (\\Illuminate\\Database\\QueryException \$e) { \$this->dispatch('toast', message: __('$pluralKebab.delete_error_referenced'), type: 'error'); }\n        catch (\\Exception \$e) { \$this->dispatch('toast', message: __('$pluralKebab.delete_error'), type: 'error'); }\n    }\n}";
+        File::put("$dir/$pluralName.php", $indexStub);
+
+        File::put("$dir/Create.php", "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\\Create{$name}Action;\n$imports\n#[Title('Add $name')]\nclass Create extends Component\n{\n    $traits $props $onEvents $updatedHooks $formHelperMethods\n    public function render() { abort_if_cannot('add_{$pluralSnake}'); return view('$viewPath.create', [\n$availableListsForm        ])->layout('components.layouts.app'); }\n    public function store(Create{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$dto); session()->flash('success', __('$pluralKebab.created')); return to_route('admin.$pluralKebab.index'); }\n    protected function rules(): array { return $name::rules(); }\n}");
+
+        $dateFills = collect($fields)->filter(fn ($f) => in_array($f['type'], ['date', 'datetime']))->map(function ($f) use ($camel) {
+            $fmt = $f['type'] === 'datetime' ? "'Y-m-d\\TH:i'" : "'Y-m-d'";
+            return "\$this->{$f['name']} = \$" . $camel . "->{$f['name']}?->format($fmt);";
+        })->implode(' ');
+        File::put("$dir/Edit.php", "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\\Update{$name}Action;\n$imports\n#[Title('Edit $name')]\nclass Edit extends Component\n{\n    $traits public $name \$item;\n$props $onEvents $updatedHooks $formHelperMethods\n    public function mount($name \$" . $camel . ") { \$this->item = \$" . $camel . "; \$this->fill(\$" . $camel . "->toArray()); $dateFills }\n    public function render() { abort_if_cannot('edit_{$pluralSnake}'); return view('$viewPath.edit', [\n$availableListsForm        ])->layout('components.layouts.app'); }\n    public function update(Update{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$this->item, \$dto); session()->flash('success', __('$pluralKebab.updated')); return to_route('admin.$pluralKebab.index'); }\n    protected function rules(): array { return $name::rules(\$this->item->id); }\n}");
         File::put("$dir/Row.php", "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse Livewire\Component;\n\nclass Row extends Component { public $name \$item; public function render() { return view('$viewPath.row'); } }");
+
+        // QuickCreate — the modal/nested version. It now gets $onEvents + $formHelperMethods
+        // too, exactly like Create/Edit, so any foreignId field inside a modal can ALSO
+        // listen for its own nested \"-created\" events and resolve its own dropdown lists.
+        //
+        // It no longer dispatches 'close-modal' — the modal stays open after a successful
+        // save, shows an inline success state (see quick-create.blade.php), and is closed
+        // only by the user (via the modal's own X button). \$this->reset() only clears the
+        // input fields, not \$created/\$createdId/\$createdLabel, so the success state sticks.
+        $displayField = 'id';
+        foreach ($fields as $f) {
+            if (in_array($f['name'], ['name', 'title', 'label'], true)) {
+                $displayField = $f['name'];
+                break;
+            }
+        }
+        $resetList = collect($fields)->map(fn ($f) => "'{$f['name']}'")->implode(', ');
+
+        $kebabName = Str::kebab($name);
+        File::put("$dir/QuickCreate.php", "<?php\n\nnamespace App\Livewire\Admin\\$pluralName;\n\nuse App\Models\\$name;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\\Create{$name}Action;\n$imports\nclass QuickCreate extends Component\n{\n    $traits $props $onEvents $updatedHooks $formHelperMethods\n    public bool \$created = false;\n    public ?int \$createdId = null;\n    public string \$createdLabel = '';\n\n    public function render() { return view('$viewPath.quick-create', [\n$availableListsForm        ]); }\n\n    public function store(Create{$name}Action \$action)\n    {\n        \$this->validate();\n$fileHandlers        \$dto = {$name}DTO::fromArray([\n$dataMap        ]);\n        \$item = \$action->execute(\$dto);\n        \$this->dispatch('$kebabName-created', id: \$item->id);\n        \$this->js(\"Livewire.dispatch('$kebabName-created', { id: {\$item->id} })\");\n        \$this->dispatch('toast', message: __('$pluralKebab.created'), type: 'success');\n        \$this->created = true;\n        \$this->createdId = \$item->id;\n        \$this->createdLabel = (string) (\$item->{$displayField} ?? \$item->id);\n        \$this->reset([$resetList]);\n    }\n\n    public function addAnother()\n    {\n        \$this->created = false;\n        \$this->createdId = null;\n        \$this->createdLabel = '';\n    }\n\n    protected function rules(): array { return $name::rules(); }\n}");
     }
 
     protected function generateViews($name, $fields, $pluralSnake, $pluralName)
     {
-        $dir = resource_path("views/livewire/admin/" . Str::kebab($pluralName));
-        if (!File::isDirectory($dir)) File::makeDirectory($dir, 0755, true);
-        File::put("$dir/index.blade.php", $this->getIndexViewStub($name, $fields, $pluralSnake, $pluralName));
-        File::put("$dir/create.blade.php", $this->getCreateViewStub($name, $fields, $pluralSnake, $pluralName));
-        File::put("$dir/edit.blade.php", $this->getEditViewStub($name, $fields, $pluralSnake, $pluralName));
-        File::put("$dir/row.blade.php", $this->getRowViewStub($name, $fields, $pluralSnake, $pluralName));
-    }
-
-    protected function getIndexViewStub($name, $fields, $pluralSnake, $pluralName) {
+        $dir = resource_path('views/livewire/admin/' . Str::kebab($pluralName));
+        File::makeDirectory($dir, 0755, true, true);
         $pk = Str::kebab($pluralName);
 
-        $searchableNames = collect($fields)
-            ->filter(fn($f) => in_array($f['type'], ['string', 'text', 'foreignId']))
-            ->map(fn($f) => Str::title(str_replace(['_id', '_'], ['', ' '], $f['name'])))
-            ->prepend('ID')
-            ->implode(', ');
+        File::put("$dir/index.blade.php", $this->getIndexStub($name, $pluralName, $pk, $fields));
+        File::put("$dir/create.blade.php", $this->getCreateStub($name, $pk, $fields));
+        File::put("$dir/edit.blade.php", $this->getEditStub($name, $pk, $fields));
+        File::put("$dir/row.blade.php", $this->getRowStub($name, $pk, $fields, $pluralSnake));
+        File::put("$dir/quick-create.blade.php", "<div class=\"p-6\">\n    @if(\$created)\n        <div class=\"flex flex-col items-center text-center py-10\">\n            <div class=\"w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-4\">\n                <x-heroicon-o-check class=\"w-6 h-6 text-green-500\" />\n            </div>\n            <p class=\"font-bold text-gray-900 dark:text-white\">{{ __('$pk.created') }}</p>\n            @if(\$createdLabel)<p class=\"text-sm text-gray-500 dark:text-gray-400 mt-1\">{{ \$createdLabel }}</p>@endif\n            <button type=\"button\" wire:click=\"addAnother\" class=\"mt-6 text-xs font-black uppercase tracking-widest text-blue-600 dark:text-blue-400\">{{ __('$pk.Add $name') }}</button>\n        </div>\n    @else\n        " . $this->getInputs($fields, $pk, true) . "\n        <div class=\"mt-8 flex justify-end\"><x-button wire:click=\"store\" variant=\"blue\">{{ __('$pk.Save') }}</x-button></div>\n    @endif\n</div>");
+    }
 
-        $headers = "                        <x-table.th name=\"id\" :label=\"__('$pk.ID')\" :\$sortField :\$sortAsc :sortable=\"in_array('id', \$sortableFields)\" />\n"; $filters = "";
-        foreach ($fields as $f) {
+    protected function getIndexStub($name, $pluralName, $pk, $fields)
+    {
+        $searchable = collect($fields)->filter(fn ($f) => in_array($f['type'], ['string', 'text']))->map(fn ($f) => Str::title($f['name']))->prepend('ID')->implode(', ');
+        $filters = collect($fields)->filter(fn ($f) => $f['type'] === 'foreignId')->map(function ($f) use ($pk) {
+            $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
             $label = Str::title(str_replace('_', ' ', $f['name']));
-            $headers .= "                        <x-table.th name=\"{$f['name']}\" :label=\"__('$pk.$label')\" :\$sortField :\$sortAsc :sortable=\"in_array('{$f['name']}', \$sortableFields)\" />\n";
+            return "<div><label class=\"block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100\">$label</label><x-form.dropdown-search name=\"{$f['name']}\" wire:model.live=\"{$f['name']}\" label=\"none\" :data=\"\${$rv}\" placeholder=\"Filter $label\" /></div>";
+        })->implode("\n");
+
+        return "<div x-data=\"{ openFilter: @entangle('openFilter') }\">\n    <div class=\"card !p-0 overflow-hidden shadow-none border-gray-200 dark:border-gray-700 dark:bg-gray-800\">\n        <div class=\"p-6\">\n            <div class=\"flex flex-col sm:flex-row sm:items-center justify-between gap-4\">\n                <div><x-h1>{{ __('$pk.$pluralName') }}</x-h1><x-short-description class=\"dark:text-gray-400\">{{ __('$pk.List of') }} ".strtolower($pluralName)."</x-short-description></div>\n                <div class=\"flex items-center gap-3\">\n                    @if(\$search || \$openFilter)\n                        <button wire:click=\"resetFilters\" class=\"inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-none shadow-none\"><span>{{ __('$pk.Reset') }}</span></button>\n                    @endif\n                    <button @click=\"openFilter = !openFilter\" class=\"inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm transition-none\"><span>{{ __('$pk.Filters') }}</span></button>\n                    <x-btn :href=\"route('admin.$pk.create')\" icon=\"plus\">{{ __('$pk.Add $name') }}</x-btn>\n                </div>\n            </div>\n\n            <div x-show=\"openFilter\" x-cloak class=\"mt-6 p-6 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl\">\n                <div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6\">\n                    <div>\n                        <label class=\"block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100\">{{ __('$pk.Search') }}</label>\n                        <input name=\"search\" wire:model.live.debounce.300ms=\"search\" type=\"text\" placeholder=\"Search by $searchable\" class=\"w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white\">\n                    </div>\n                    $filters\n                </div>\n            </div>\n        </div>\n\n        @include('errors.messages')\n\n        <div class=\"overflow-x-auto border-t border-gray-100 dark:border-gray-700\">\n            <table class=\"w-full text-sm text-left text-gray-500 dark:text-gray-400\">\n                <thead class=\"bg-gray-100/50 dark:bg-gray-700/50\"><tr><x-table.th name=\"id\" :label=\"__('$pk.ID')\" :\$sortField :\$sortAsc :sortable=\"true\" />" . collect($fields)->map(fn ($f) => "<x-table.th name=\"{$f['name']}\" :label=\"__('$pk.".Str::title(str_replace('_', ' ', $f['name']))."')\" :\$sortField :\$sortAsc :sortable=\"in_array('{$f['name']}', \$sortableFields)\" />")->implode("\n") . "<th class=\"px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest\">{{ __('$pk.Action') }}</th></tr></thead>\n                <tbody class=\"divide-y divide-gray-50 dark:divide-gray-700/50\">@forelse(\$items as \$item) <livewire:admin.$pk.row :\$item :key=\"\$item->id\" /> @empty <tr><td colspan=\"100\" class=\"px-6 py-10 text-center text-sm text-gray-400\">{{ __('$pk.No records found.') }}</td></tr> @endforelse</tbody>\n            </table>\n        </div>\n        <div class=\"p-4 border-t border-gray-50 dark:border-gray-700/50\">{{ \$items->links() }}</div>\n    </div>\n</div>";
+    }
+
+    protected function getCreateStub($name, $pk, $fields)
+    {
+        return "<div class=\"space-y-10\">\n    <div class=\"flex items-center justify-between gap-4 px-1\"><div><x-h1>{{ __('$pk.Add $name') }}</x-h1><x-short-description class=\"dark:text-gray-400\">{{ __('$pk.New record') }}</x-short-description></div><x-back-btn route=\"admin.$pk.index\" /></div>\n    @include('errors.errors')\n    <div class=\"bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700\"><form wire:submit.prevent=\"store\" class=\"space-y-8\">".$this->getInputs($fields, $pk, true)."<div class=\"mt-10 flex justify-end\"><x-button type=\"submit\" variant=\"blue\" class=\"w-full sm:w-auto !px-12 !py-4 !rounded-2xl\">{{ __('$pk.Save') }}</x-button></div></form></div>\n</div>";
+    }
+
+    protected function getEditStub($name, $pk, $fields)
+    {
+        return "<div class=\"space-y-10\">\n    <div class=\"flex items-center justify-between gap-4 px-1\"><div><x-h1>{{ __('$pk.Edit $name') }}</x-h1><x-short-description class=\"dark:text-gray-400\">{{ __('$pk.Update info') }}</x-short-description></div><x-back-btn route=\"admin.$pk.index\" /></div>\n    @include('errors.errors')\n    <div class=\"bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700\"><form wire:submit.prevent=\"update\" class=\"space-y-8\">".$this->getInputs($fields, $pk, false)."<div class=\"mt-10 flex justify-end\"><x-button type=\"submit\" variant=\"blue\" class=\"w-full sm:w-auto !px-12 !py-4 !rounded-2xl\">{{ __('$pk.Update') }}</x-button></div></form></div>\n</div>";
+    }
+
+    protected function getRowStub($name, $pk, $fields, $pluralSnake)
+    {
+        $cells = collect($fields)->map(function ($f) {
             if ($f['type'] === 'foreignId') {
-                $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
-                $filters .= "                    <div><x-form.dropdown-search wire:model.live=\"{$f['name']}\" :label=\"__('$pk.$label')\" :data=\"\${$rv}\" :placeholder=\"__('$pk.Filter $label')\" /></div>\n";
+                $labelPath = str_replace('.', '?->', $f['labelField']);
+                return "<td class=\"px-6 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->".Str::camel(str_replace('_id', '', $f['name']))."?->{$labelPath} ?? '-' }}</td>";
             }
-        }
-        $listKey = "List of " . strtolower($pluralName);
-        return "<div x-data=\"{ openFilter: @entangle('openFilter') }\">
-    <div class=\"card !p-0 overflow-hidden shadow-none border-gray-200\">
-        <!-- Header Section -->
-        <div class=\"p-6\">
-            <div class=\"flex flex-col sm:flex-row sm:items-center justify-between gap-4\">
-                <div>
-                    <x-h1>{{ __('$pk.$pluralName') }}</x-h1>
-                    <x-short-description>{{ __('$pk.$listKey') }}</x-short-description>
-                </div>
-                <div class=\"flex items-center gap-3\">
-                    @if(\$search || \$openFilter)
-                        <button wire:click=\"resetFilters\" class=\"inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl !transition-none\">
-                            <span>{{ __('$pk.Reset') }}</span>
-                        </button>
-                    @endif
-                    <button @click=\"openFilter = !openFilter\" class=\"inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm !transition-none\">
-                        <span>{{ __('$pk.Filters') }}</span>
-                    </button>
-                    @can('add_{$pluralSnake}')
-                        <x-btn :href=\"route('admin." . Str::kebab($pluralName) . ".create')\" icon=\"plus\">{{ __('$pk.Add $name') }}</x-btn>
-                    @endcan
-                </div>
-            </div>
-
-            <div x-show=\"openFilter\" x-cloak class=\"mt-6 p-6 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl\">
-                <div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6\">
-                    <div>
-                        <label class=\"block mb-1.5 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.Search') }}</label>
-                        <input wire:model.live.debounce.300ms=\"search\" type=\"text\" placeholder=\"{{ __('$pk.Search by $searchableNames') }}\" class=\"w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-none shadow-sm dark:text-white\">
-                    </div>
-                    $filters
-                </div>
-            </div>
-        </div>
-
-        @include('errors.messages')
-
-        <!-- Table Section -->
-        <div class=\"overflow-x-auto border-t border-gray-100 dark:border-gray-700\">
-            <table class=\"w-full text-sm text-left text-gray-500 dark:text-gray-400\">
-                <thead class=\"bg-gray-100/50 dark:bg-gray-700/50\">
-                    <tr>
-$headers                        <th class=\"px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest\">{{ __('$pk.Action') }}</th>
-                    </tr>
-                </thead>
-                <tbody class=\"divide-y divide-gray-50 dark:divide-gray-700/50\">
-                    @foreach(\$items as \$item)
-                        <livewire:admin." . Str::kebab($pluralName) . ".row :\$item :key=\"\$item->id\" />@endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class=\"p-4 border-t border-gray-50 dark:border-gray-700/50\">
-            {{ \$items->links() }}
-        </div>
-    </div>
-</div>";
-    }
-
-    protected function getCreateViewStub($name, $fields, $pluralSnake, $pluralName) {
-        $pk = Str::kebab($pluralName);
-        return "<div class=\"space-y-10\"><div class=\"flex items-center justify-between gap-4 px-1\"><div><x-h1>{{ __('$pk.Add $name') }}</x-h1><x-short-description>{{ __('$pk.New $name record') }}</x-short-description></div><x-back-btn route=\"admin.{$pk}.index\" /></div><div class=\"bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700\"><form wire:submit.prevent=\"store\" class=\"space-y-8\">" . $this->getFormInputs($fields, $pk) . "<div class=\"mt-10 flex justify-end\"><x-button type=\"submit\" variant=\"blue\" class=\"w-full sm:w-auto !px-12 !py-4 !rounded-2xl\">{{ __('$pk.Save') }}</x-button></div></form></div></div>";
-    }
-
-    protected function getEditViewStub($name, $fields, $pluralSnake, $pluralName) {
-        $pk = Str::kebab($pluralName);
-        return "<div class=\"space-y-10\"><div class=\"flex items-center justify-between gap-4 px-1\"><div><x-h1>{{ __('$pk.Edit $name') }}</x-h1><x-short-description>{{ __('$pk.Update $name info') }}</x-short-description></div><x-back-btn route=\"admin.{$pk}.index\" /></div><div class=\"bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700\"><form wire:submit.prevent=\"update\" class=\"space-y-8\">" . $this->getFormInputs($fields, $pk) . "<div class=\"mt-10 flex justify-end\"><x-button type=\"submit\" variant=\"blue\" class=\"w-full sm:w-auto !px-12 !py-4 !rounded-2xl\">{{ __('$pk.Update') }}</x-button></div></form></div></div>";
-    }
-
-    protected function getRowViewStub($name, $fields, $pluralSnake, $pluralName) {
-        $pk = Str::kebab($pluralName);
-        $cells = "    <td class=\"px-6 py-5 font-bold text-blue-600 dark:text-blue-400\">{{ \$item->id }}</td>\n";
+            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
+                return "<td class=\"px-6 py-5\">@if(\$item->{$f['name']}) <a href=\"{{ asset('storage/'.\$item->{$f['name']}) }}\" target=\"_blank\" rel=\"noopener\"><x-heroicon-o-arrow-down-tray class=\"w-5 h-5 text-blue-500\" /></a> @else - @endif</td>";
+            }
+            if (in_array($f['type'], ['date', 'datetime'])) {
+                return "<td class=\"px-6 py-5 text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']}?->format('d/m/Y H:i') ?? '-' }}</td>";
+            }
+            return "<td class=\"px-6 py-5 text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']} }}</td>";
+        })->implode("\n");
 
         $displayNameField = 'id';
         foreach ($fields as $f) {
-            if (in_array($f['name'], ['name', 'title', 'label'])) {
+            if (in_array($f['name'], ['name', 'title', 'label'], true)) {
                 $displayNameField = $f['name'];
-            }
-            if ($f['type'] === 'foreignId') {
-                $rel = Str::camel(str_replace('_id', '', $f['name']));
-                $cells .= "    <td class=\"px-6 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->{$rel}->name ?? \$item->{$f['name']} }}</td>\n";
-            } elseif($f['type'] === 'date') {
-                 $cells .= "    <td class=\"px-6 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']}?->format('d/m/Y') }}</td>\n";
-            } else {
-                $cells .= "    <td class=\"px-6 py-5 font-medium text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']} }}</td>\n";
             }
         }
 
-        return "
-<tr class=\"hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none\">
-    $cells
-    <td class=\"px-6 py-5 text-right !transition-none\">
-        <div class=\"flex justify-end gap-3 !transition-none\">
-            @can('edit_{$pluralSnake}')
-                <x-a href=\"{{ route('admin.$pk.edit', ['" . Str::camel($name) . "' => \$item->id]) }}\" class=\"!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none !transition-none\">
-                    {{ __('admin.Edit') }}
-                </x-a>
-            @endcan
-
-            @can('delete_{$pluralSnake}')
-                <div x-data=\"{ confirmation: '' }\" x-cloak class=\"inline-block !transition-none\">
-                    <x-modal>
-                        <x-slot name=\"trigger\">
-                            <button @click=\"on = true\" class=\"text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300 !transition-none\">
-                                {{ __('admin.Delete') }}
-                            </button>
-                        </x-slot>
-
-                        <x-slot name=\"modalTitle\">
-                            <div class=\"py-2 text-lg font-black uppercase tracking-tighter text-gray-900 dark:text-white whitespace-normal text-left\">
-                                {{ __('$pk.Are you sure you want to delete') }}: <span class=\"text-red-600\">{{ \$item->{$displayNameField} }}</span>?
-                            </div>
-                        </x-slot>
-
-                        <x-slot name=\"content\">
-                            <div class=\"space-y-4 text-left whitespace-normal\">
-                                <p class=\"text-sm text-gray-500 dark:text-gray-400 leading-relaxed\">
-                                    {{ __('$pk.Delete Warning') }}
-                                </p>
-                                <div class=\"flex flex-col gap-2\">
-                                    <div class=\"text-xs text-gray-600 dark:text-gray-400\">
-                                        {{ __('$pk.Type the name') }} <span class=\"font-bold text-red-600\">\"{{ \$item->{$displayNameField} }}\"</span> {{ __('$pk.to confirm') }}
-                                    </div>
-                                    <input x-model=\"confirmation\" class=\"px-3 py-2 text-sm border border-slate-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white w-full focus:ring-2 focus:ring-red-500 outline-none !transition-none\">
-                                </div>
-                            </div>
-                        </x-slot>
-
-                        <x-slot name=\"footer\">
-                            <x-button variant=\"gray\" @click=\"on = false\" class=\"!transition-none\">{{ __('admin.Cancel') }}</x-button>
-                            <x-button
-                                variant=\"red\"
-                                x-bind:disabled=\"confirmation !== '{{ \$item->{$displayNameField} }}'\"
-                                wire:click=\"\$parent.delete$name('{{ \$item->id }}')\"
-                                @click=\"on = false\"
-                                class=\"!transition-none\"
-                            >
-                                {{ __('admin.Delete') }}
-                            </x-button>
-                        </x-slot>
-                    </x-modal>
-                </div>
-            @endcan
-        </div>
-    </td>
-</tr>";
+        return "<tr class=\"hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none\">\n    <td class=\"px-6 py-5 font-bold text-blue-600 dark:text-blue-400\">{{ \$item->id }}</td>\n    $cells\n    <td class=\"px-6 py-5 text-right !transition-none\">\n        <div class=\"flex justify-end gap-3 !transition-none\">\n            @can('edit_{$pluralSnake}')\n                <x-a href=\"{{ route('admin.$pk.edit', \$item) }}\" class=\"!rounded-xl !bg-blue-50 dark:!bg-blue-900/30 !text-blue-600 dark:!text-blue-400 !px-4 !py-1.5 !text-[10px] !font-black !uppercase !border-none\">Edit</x-a>\n            @endcan\n            @can('delete_{$pluralSnake}')\n                <div x-data=\"{ confirmation: '' }\" x-cloak class=\"inline-block\">\n                    <x-modal>\n                        <x-slot name=\"trigger\"><button @click=\"on = true\" class=\"text-[10px] font-black uppercase text-red-400 hover:text-red-600 dark:hover:text-red-300\">Delete</button></x-slot>\n                        <x-slot name=\"modalTitle\"><div class=\"text-left dark:text-white\">Delete {{ \$item->{$displayNameField} }}?</div></x-slot>\n                        <x-slot name=\"content\"><div class=\"text-left space-y-2\"><p class=\"text-sm text-gray-500 dark:text-gray-400\">This action cannot be undone.</p><input x-model=\"confirmation\" placeholder=\"Type {{ \$item->{$displayNameField} }} to confirm\" class=\"w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-red-500 outline-none\"></div></x-slot>\n                        <x-slot name=\"footer\"><x-button variant=\"gray\" @click=\"on = false\">Cancel</x-button><x-button variant=\"red\" x-bind:disabled=\"confirmation !== '{{ \$item->{$displayNameField} }}'\" wire:click=\"\$parent.delete$name('{{ \$item->id }}')\" @click=\"on = false\">Delete</x-button></x-slot>\n                    </x-modal>\n                </div>\n            @endcan\n        </div>\n    </td>\n</tr>";
     }
 
-    protected function getFormInputs($fields, $pk) {
-        $inputs = "<div class=\"grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8\">";
-        foreach ($fields as $f) {
+    /**
+     * NOTE: the old \$inModal flag used to HIDE the \"+\" add button whenever a field
+     * was rendered inside a QuickCreate modal — that's what blocked adding e.g. a
+     * missing Brand while inside the Vehicle quick-create. The \"+\" now always renders
+     * for foreignId fields, so modals can nest (Vehicle -> Model field -> Brand modal)
+     * as deep as the data actually needs.
+     */
+    protected function getInputs($fields, $pk, $isCreating = true)
+    {
+        $inputs = '<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">';
+        $inputs .= collect($fields)->map(function ($f) use ($pk, $isCreating) {
             $label = Str::title(str_replace('_', ' ', $f['name']));
             if ($f['type'] === 'foreignId') {
                 $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
-                $inputs .= "<div><x-form.dropdown-search wire:model.live=\"{$f['name']}\" :label=\"__('$pk.$label')\" :data=\"\${$rv}\" :placeholder=\"__('$pk.Select $label')\" />@if(\${$f['name']} === 'new')<div class=\"mt-3 animate-in slide-in-from-top-1\"><x-form.input name=\"new_" . str_replace('_id', '', $f['name']) . "_name\" wire:model=\"new_" . str_replace('_id', '', $f['name']) . "_name\" label=\"none\" placeholder=\"{{ __('$pk.Enter New Name') }}\" class=\"!rounded-2xl !p-3.5 !bg-blue-50/30 dark:!bg-blue-900/10 !border-blue-100 dark:!border-blue-800\" /></div>@endif</div>";
-            } elseif ($f['type'] === 'enum') {
-                $inputs .= "<div><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.select name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3.5 !bg-gray-50/50 dark:!bg-gray-900/50 !border-gray-200 dark:!border-gray-700 dark:text-gray-200\"><option value=\"\">{{ __('$pk.Select $label') }}</option>";
-                foreach($f['options'] as $opt) $inputs .= "<option value=\"$opt\">{{ __('$pk.' . Str::title($opt)) }}</option>";
-                $inputs .= "</x-form.select></div>";
-            } elseif ($f['type'] === 'boolean') {
-                 $inputs .= "<div><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.checkbox name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3\" /></div>";
-            } elseif ($f['type'] === 'text') {
-                 $inputs .= "<div class=\"md:col-span-2\"><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.textarea name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3 !bg-gray-50/50 dark:!bg-gray-900/50 !border-gray-100 dark:!border-gray-800 dark:text-gray-200\" /></div>";
-            } else {
-                $it = in_array($f['type'], ['decimal', 'integer', 'bigInteger']) ? 'number' : ($f['type'] === 'date' ? 'date' : ($f['type'] === 'datetime' ? 'datetime-local' : 'text'));
-                $sa = $f['type'] === 'decimal' ? 'step=\"0.01\"' : '';
-                $inputs .= "<div><label class=\"block mb-2 text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-widest ml-1\">{{ __('$pk.$label') }}</label><x-form.input type=\"$it\" $sa name=\"{$f['name']}\" wire:model=\"{$f['name']}\" label=\"none\" class=\"!rounded-2xl !p-3.5 !bg-gray-50/50 dark:!bg-gray-900/50 !border-gray-200 dark:!border-gray-700 dark:text-gray-200\" /></div>";
+                $comp = 'admin.' . Str::kebab(Str::plural($f['relatedModel'])) . '.quick-create';
+
+                return "<div>\n    <div class=\"flex items-end gap-2\">\n        <div class=\"flex-1\"><x-form.dropdown-search name=\"{$f['name']}\" wire:model.live=\"{$f['name']}\" :label=\"__('$pk.$label')\" :data=\"\${$rv}\" /></div>\n        <x-modal>\n            <x-slot name=\"trigger\"><button type=\"button\" @click=\"on = true\" class=\"mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform\"><x-heroicon-o-plus class=\"w-5 h-5\" /></button></x-slot>\n            <x-slot name=\"modalTitle\"><div class=\"dark:text-white px-6 pt-6\">Add New " . $f['relatedModel'] . "</div></x-slot>\n            <x-slot name=\"content\"><livewire:$comp /></x-slot>\n        </x-modal>\n    </div>\n</div>";
             }
-        }
-        return $inputs . "</div>";
+            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
+                return "<div><x-form.file-upload name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$pk.$label')\" id=\"{$f['name']}\" :isEditing=\"!\" . ($isCreating ? 'true' : 'false') . \" /></div>";
+            }
+            if ($f['type'] === 'text') {
+                return "<div class=\"md:col-span-2\"><x-form.textarea name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$pk.$label')\" class=\"dark:bg-gray-900\" /></div>";
+            }
+            if ($f['type'] === 'boolean') {
+                return "<div><x-form.checkbox name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$pk.$label')\" /></div>";
+            }
+            if ($f['type'] === 'enum') {
+                $opts = collect($f['options'])->map(fn ($o) => '<option value=\"' . e($o) . '\">' . e($o) . '</option>')->implode('');
+                return "<div><label class=\"block mb-1.5 text-[10px] font-bold uppercase tracking-widest\">{{ __('$pk.$label') }}</label><select name=\"{$f['name']}\" wire:model=\"{$f['name']}\" class=\"w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl\"><option value=\"\">--</option>$opts</select></div>";
+            }
+            $type = ($f['type'] === 'datetime') ? 'datetime-local' : (($f['type'] === 'date') ? 'date' : 'text');
+            return "<div><x-form.input name=\"{$f['name']}\" type=\"$type\" wire:model=\"{$f['name']}\" :label=\"__('$pk.$label')\" class=\"dark:bg-gray-900\" /></div>";
+        })->implode("\n");
+        return $inputs . '</div>';
     }
 
     protected function generateTranslationFiles($pk, $name, $fields)
     {
-        $languages = ['en'];
-        if (File::exists(lang_path())) {
-            foreach (File::directories(lang_path()) as $dir) $languages[] = basename($dir);
-        }
-        $languages = array_unique($languages);
+        foreach (['en', 'sq'] as $lang) {
+            $dir = lang_path($lang);
+            File::makeDirectory($dir, 0755, true, true);
+            $path = "$dir/$pk.php";
 
-        $pluralName = Str::plural($name);
-        $humanName = Str::title(Str::snake($name, ' '));
-        $humanPlural = Str::title(Str::snake($pluralName, ' '));
-        $listKey = "List of " . strtolower($pluralName);
-
-        $searchableNames = collect($fields)
-            ->filter(fn($f) => in_array($f['type'], ['string', 'text', 'foreignId']))
-            ->map(fn($f) => Str::title(str_replace(['_id', '_'], ['', ' '], $f['name'])))
-            ->prepend('ID')
-            ->implode(', ');
-
-        $service = new \App\Services\TranslationService();
-
-        // 1. Build the basic English array
-        $data = [
-            'ID' => 'ID',
-            $name => $humanName,
-            $pluralName => $humanPlural,
-            "Add $name" => "Add $humanName",
-            "Edit $name" => "Edit $humanName",
-            'Delete' => 'Delete',
-            'Edit' => 'Edit',
-            'Save' => 'Save',
-            'Update' => 'Update',
-            'Filters' => 'Filters',
-            'Reset' => 'Reset',
-            'Search' => 'Search',
-            'Action' => 'Action',
-            'Are you sure?' => 'Are you sure?',
-            'Are you sure you want to delete' => 'Are you sure you want to delete',
-            'Delete Warning' => 'This action cannot be undone. This will permanently delete the record from the database.',
-            'Type the name' => 'Type the name',
-            'to confirm' => 'to confirm',
-            'Cancel' => 'Cancel',
-            'created' => "$humanName created successfully.",
-            'updated' => "$humanName updated successfully.",
-            'deleted' => "$humanName deleted successfully.",
-            'delete_error' => "Could not delete $humanName.",
-            'delete_error_referenced' => "$humanName is referenced by other records and cannot be deleted.",
-            "New $name record" => "New $humanName record",
-            "Update $name info" => "Update $humanName info",
-            $listKey => "List of " . strtolower($humanPlural),
-            "Search by $searchableNames" => "Search by $searchableNames",
-        ];
-
-        foreach ($fields as $f) {
-            $label = Str::title(str_replace('_', ' ', $f['name']));
-            $data[$label] = $label;
-            $data["Filter $label"] = "Filter $label";
-            $data["Select $label"] = "Select $label";
-            if ($f['type'] === 'foreignId') $data['Enter New Name'] = 'Enter New Name';
-            if ($f['type'] === 'enum') {
-                foreach($f['options'] as $opt) $data[Str::title($opt)] = Str::title($opt);
+            $existing = [];
+            if (File::exists($path)) {
+                try {
+                    $loaded = include $path;
+                    $existing = is_array($loaded) ? $loaded : [];
+                } catch (\Throwable $e) {
+                    $this->warn("Could not read existing $path ({$e->getMessage()}) — treating as empty, nothing will be lost since we still merge below.");
+                }
             }
-        }
 
-        // 2. Write to each language folder
-        foreach ($languages as $lang) {
-            $langDir = lang_path($lang);
-            if (!File::isDirectory($langDir)) File::makeDirectory($langDir, 0755, true);
-
-            $currentData = $data;
-            /*
-            if ($lang !== 'en') {
-                $this->info("  🌍 Auto-translating module labels to [$lang]...");
-                $currentData = $service->translate($data, $lang, 'en');
+            $defaults = [
+                'ID' => 'ID', $name => $name, Str::plural($name) => Str::plural($name), 'Action' => 'Action',
+                'Reset' => 'Reset', 'Filters' => 'Filters', 'Search' => 'Search', 'List of' => 'List of',
+                'Save' => 'Save', 'Update' => 'Update', 'Add ' . $name => 'Add ' . $name, 'Edit ' . $name => 'Edit ' . $name,
+                'New record' => 'New record', 'Update info' => 'Update info', 'No records found.' => 'No records found.',
+                'created' => $name . ' created.', 'updated' => $name . ' updated.', 'deleted' => $name . ' deleted.',
+                'not_found' => 'Record not found.',
+                'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+                'delete_error' => 'Could not delete record.',
+            ];
+            foreach ($fields as $f) {
+                $l = Str::title(str_replace('_', ' ', $f['name']));
+                $defaults[$l] = $l;
             }
-            */
 
-            $phpContent = "<?php\n\nreturn " . var_export($currentData, true) . ";\n";
-            $phpContent = str_replace(['array (', ')'], ['[', ']'], $phpContent);
-            File::put("$langDir/$pk.php", $phpContent);
+            // Existing values win for any key already translated. Only genuinely
+            // new keys (new fields, new UI strings) get the generated default.
+            $merged = array_merge($defaults, $existing);
 
-            // Ensure admin.php exists
-            $adminFile = "$langDir/admin.php";
-            if (!File::exists($adminFile)) {
-                $adminData = ['Back to List' => ($lang === 'en' ? 'Back to List' : $service->translate('Back to List', $lang, 'en'))];
-                $phpAdmin = "<?php\n\nreturn " . var_export($adminData, true) . ";\n";
-                $phpAdmin = str_replace(['array (', ')'], ['[', ']'], $phpAdmin);
-                File::put($adminFile, $phpAdmin);
+            if ($existing !== [] && $merged === $existing) {
+                $this->line("$path already has every key — left untouched.");
+                continue;
             }
+            if ($existing !== []) {
+                $this->line("$path merged — existing translations preserved, new keys added.");
+            }
+
+            $content = "<?php\n\nreturn " . var_export($merged, true) . ";\n";
+            $content = str_replace(['array (', ')'], ['[', ']'], $content);
+            File::put($path, $content);
         }
     }
 
     protected function generateMigration($tableName, $fields)
     {
-        $schemaFields = "";
-        foreach ($fields as $f) {
-            $line = $f['type'] === 'enum' ? "\$table->enum('{$f['name']}', ['" . implode("', '", $f['options']) . "'])" : "\$table->{$f['type']}('{$f['name']}')";
-            if ($f['type'] === 'foreignId' && $f['constrained']) $line .= "->constrained('{$f['constrained']}')";
-            if ($f['nullable']) $line .= "->nullable()";
-            $schemaFields .= "            $line;\n";
-        }
-        File::put("database/migrations/".date('Y_m_d_His')."_create_{$tableName}_table.php", "<?php\n\nuse Illuminate\Database\Migrations\Migration;\nuse Illuminate\Database\Schema\Blueprint;\nuse Illuminate\Support\Facades\Schema;\n\nreturn new class extends Migration\n{\n    public function up(): void { Schema::create('$tableName', function (Blueprint \$table) { \$table->id();\n$schemaFields            \$table->timestamps(); }); }\n    public function down(): void { Schema::dropIfExists('$tableName'); }\n};");
-    }
-
-    protected function generateRouteFile($pluralName, $pluralKebab, $name, $pluralSnake) { File::put(base_path("routes/admin/$pluralKebab.php"), "<?php\n\nuse Illuminate\Support\Facades\Route;\nuse App\Livewire\Admin\\$pluralName\\$pluralName;\nuse App\Livewire\Admin\\$pluralName\\Create;\nuse App\Livewire\Admin\\$pluralName\\Edit;\n\nRoute::prefix('$pluralKebab')->group(function () {\n    Route::get('/', $pluralName::class)->name('admin.$pluralKebab.index')->middleware('can:view_{$pluralSnake}');\n    Route::get('create', Create::class)->name('admin.$pluralKebab.create')->middleware('can:add_{$pluralSnake}');\n    Route::get('{" . Str::camel($name) . "}/edit', Edit::class)->name('admin.$pluralKebab.edit')->middleware('can:edit_{$pluralSnake}');\n});\n"); }
-
-    protected function addTranslations($name, $fields) {
-        $path = base_path('lang/en.json');
-        $translations = File::exists($path) ? json_decode(File::get($path), true) : [];
-        $translations[$name] = $name; $translations[Str::plural($name)] = Str::plural($name);
-        foreach ($fields as $field) { $label = Str::title(str_replace('_', ' ', $field['name'])); $translations[$label] = $label; }
-        File::put($path, json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-
-    protected function addPermissions($name, $pluralSnake) {
-        $permissions = ["view_{$pluralSnake}" => "View ".Str::plural($name), "add_{$pluralSnake}" => "Add ".Str::plural($name), "edit_{$pluralSnake}" => "Edit ".Str::plural($name), "delete_{$pluralSnake}" => "Delete ".Str::plural($name)];
-        foreach ($permissions as $p => $l) Permission::firstOrCreate(['name' => $p, 'label' => $l, 'module' => Str::plural($name)]);
-    }
-
-    protected function addNavigation($pluralName, $pluralKebab, $pluralSnake, $icon) {
-        $navPath = resource_path('views/components/layouts/app/navigation.blade.php');
-        if (File::exists($navPath)) {
-            $content = File::get($navPath);
-            $newLink = "\n@can('view_{$pluralSnake}')\n    <x-nav.link route=\"admin.{$pluralKebab}.index\" icon=\"$icon\">{{ __('$pluralKebab.$pluralName') }}</x-nav.link>\n@endcan\n";
-            $search = "<x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>";
-            if (strpos($content, $search) !== false && strpos($content, "admin.{$pluralKebab}.index") === false) {
-                File::put($navPath, str_replace($search, $newLink . $search, $content));
+        $schema = collect($fields)->map(function ($f) {
+            if ($f['type'] === 'enum') {
+                $opts = "['" . implode("', '", array_map('addslashes', $f['options'])) . "']";
+                $line = "\$table->enum('{$f['name']}', $opts)";
+            } elseif ($f['type'] === 'foreignId') {
+                $line = "\$table->foreignId('{$f['name']}')->constrained('{$f['constrained']}')";
+            } else {
+                $line = "\$table->{$f['type']}('{$f['name']}')";
             }
+            if ($f['nullable']) {
+                $line .= '->nullable()';
+            }
+            return "            $line;";
+        })->implode("\n");
+        File::put(
+            'database/migrations/' . date('Y_m_d_His') . "_create_{$tableName}_table.php",
+            "<?php\nuse Illuminate\Database\Migrations\Migration;\nuse Illuminate\Database\Schema\Blueprint;\nuse Illuminate\Support\Facades\Schema;\nreturn new class extends Migration { public function up() { Schema::create('$tableName', function (Blueprint \$table) { \$table->id();\n$schema\n            \$table->timestamps(); }); } public function down() { Schema::dropIfExists('$tableName'); } };"
+        );
+    }
+
+    protected function generateRouteFile($pluralName, $pluralKebab, $name, $pluralSnake)
+    {
+        $camel = Str::camel($name);
+        File::put(base_path("routes/admin/$pluralKebab.php"), "<?php\nuse Illuminate\Support\Facades\Route;\nuse App\Livewire\Admin\\$pluralName\\$pluralName;\nuse App\Livewire\Admin\\$pluralName\\Create;\nuse App\Livewire\Admin\\$pluralName\\Edit;\nRoute::prefix('$pluralKebab')->group(function () {\n    Route::get('/', $pluralName::class)->name('admin.$pluralKebab.index');\n    Route::get('create', Create::class)->name('admin.$pluralKebab.create');\n    Route::get('/{' . '$camel' . '}/edit', Edit::class)->name('admin.$pluralKebab.edit');\n});");
+    }
+
+    protected function addPermissions($name, $pluralSnake)
+    {
+        foreach (['view', 'add', 'edit', 'delete'] as $act) {
+            Permission::firstOrCreate(['name' => "{$act}_{$pluralSnake}"], ['label' => ucfirst($act) . ' ' . $name, 'module' => Str::plural($name)]);
+        }
+    }
+
+    protected function addNavigation($pluralName, $pluralKebab, $pluralSnake, $icon)
+    {
+        $navPath = resource_path('views/components/layouts/app/navigation.blade.php');
+        if (!File::exists($navPath)) {
+            $this->warn("Navigation file not found at $navPath — skipped.");
+            return;
+        }
+        $content = File::get($navPath);
+        if (str_contains($content, "admin.{$pluralKebab}.index")) {
+            $this->line("Nav link for $pluralKebab already exists — skipped.");
+            return;
+        }
+        $newLink = "\n@can('view_{$pluralSnake}')\n    <x-nav.link route=\"admin.{$pluralKebab}.index\" icon=\"$icon\">{{ __('$pluralKebab.$pluralName') }}</x-nav.link>\n@endcan\n";
+        $search = "<x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>";
+        if (str_contains($content, $search)) {
+            File::put($navPath, str_replace($search, $newLink . $search, $content));
+        } else {
+            File::append($navPath, $newLink);
+            $this->warn('Divider marker not found in navigation.blade.php — appended link at the end, please review placement.');
         }
     }
 
     protected function generateApiLayer($name, $pluralName, $pluralKebab, $fields)
     {
-        $this->info("📡 Generating API Layer for $name...");
-
-        $controllerDir = app_path("Http/Controllers/Api");
-        if (!File::isDirectory($controllerDir)) File::makeDirectory($controllerDir, 0755, true);
-
-        $resourceDir = app_path("Http/Resources");
-        if (!File::isDirectory($resourceDir)) File::makeDirectory($resourceDir, 0755, true);
-
-        $requestDir = app_path("Http/Requests/Api/$name");
-        if (!File::isDirectory($requestDir)) File::makeDirectory($requestDir, 0755, true);
-
-        // 1. Generate FormRequests
-        $this->generateApiRequests($name, $fields);
-
-        // 2. Generate Resource
-        $resourceData = collect($fields)->map(fn($f) => "            '{$f['name']}' => \$this->{$f['name']},")->implode("\n");
-        $resourceStub = "<?php\n\nnamespace App\Http\Resources;\n\nuse Illuminate\Http\Request;\nuse Illuminate\Http\Resources\Json\JsonResource;\n\nclass {$name}Resource extends JsonResource\n{\n    public function toArray(Request \$request): array\n    {\n        return [\n            'id' => \$this->id,\n$resourceData\n            'created_at' => \$this->created_at,\n            'updated_at' => \$this->updated_at,\n        ];\n    }\n}";
-        File::put("$resourceDir/{$name}Resource.php", $resourceStub);
-
-        // 3. Generate Controller (Matching Premium logic)
-        $camelName = Str::camel($name);
-        $fieldNames = collect($fields)->map(fn ($f) => "'{$f['name']}'")->implode(', ');
-
-        $controllerStub = "<?php\n\nnamespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;\nuse App\Models\\$name;\nuse App\Http\Resources\\{$name}Resource;\nuse App\Http\Requests\Api\\$name\Store{$name}Request;\nuse App\Http\Requests\Api\\$name\Update{$name}Request;\nuse App\Domain\\$name\DTOs\\{$name}DTO;\nuse App\Domain\\$name\Actions\Create{$name}Action;\nuse App\Domain\\$name\Actions\Update{$name}Action;\nuse App\Domain\\$name\Actions\Delete{$name}Action;\nuse App\Domain\\$name\Queries\\{$name}ListQuery;\nuse App\Http\Responses\ApiResponse;\nuse Illuminate\Http\Request;\n\nclass {$name}Controller extends Controller\n{\n    public function index(Request \$request, {$name}ListQuery \$query): ApiResponse\n    {\n        \$items = \$query->handle(\$request->all())->paginate(\$request->get('per_page', 15));\n        return to_api({$name}Resource::collection(\$items));\n    }\n\n    public function store(Store{$name}Request \$request, Create{$name}Action \$action): ApiResponse\n    {\n        \$dto = {$name}DTO::fromArray(\$request->validated());\n        \$model = \$action->execute(\$dto);\n        return to_api(new {$name}Resource(\$model), 'Record created.', 201);\n    }\n\n    public function show($name \$" . $camelName . "): ApiResponse\n    {\n        return to_api(new {$name}Resource(\$" . $camelName . "));\n    }\n\n    public function update(Update{$name}Request \$request, $name \$" . $camelName . ", Update{$name}Action \$action): ApiResponse\n    {\n        \$merged = array_merge(\$" . $camelName . "->toArray(), \$request->validated());\n        \$dto = {$name}DTO::fromArray(\$merged);\n        \$model = \$action->execute(\$" . $camelName . ", \$dto);\n        return to_api(new {$name}Resource(\$model), 'Record updated.');\n    }\n\n    public function destroy($name \$" . $camelName . ", Delete{$name}Action \$action): ApiResponse\n    {\n        try {\n            \$action->execute(\$" . $camelName . ");\n            return to_api(null, 'Record deleted.', 204);\n        } catch (\\Exception \$e) {\n            return to_api(null, \$e->getMessage(), 400);\n        }\n    }\n}";
-        File::put("$controllerDir/{$name}Controller.php", $controllerStub);
-
-        // 4. Add API Routes
-        $apiRoutePath = base_path("routes/api.php");
-        $routeStub = "\nRoute::apiResource('$pluralKebab', \App\Http\Controllers\Api\\{$name}Controller::class);";
-        File::append($apiRoutePath, $routeStub);
-    }
-
-    protected function generateApiRequests($name, $fields)
-    {
-        $dir = app_path("Http/Requests/Api/$name");
-        $rules = "";
-        foreach ($fields as $f) {
-            $ruleSet = $f['nullable'] ? "'nullable'" : "'required'";
-            if ($f['type'] === 'string') $ruleSet .= ", 'string', 'max:255'";
-            if (in_array($f['type'], ['integer', 'bigInteger'])) $ruleSet .= ", 'numeric'";
-            if ($f['type'] === 'date') $ruleSet .= ", 'date'";
-            if ($f['type'] === 'enum') $ruleSet .= ", 'in:" . implode(',', $f['options']) . "'";
-            $rules .= "            '{$f['name']}' => [$ruleSet],\n";
+        $dir = app_path('Http/Controllers/Api');
+        File::makeDirectory($dir, 0755, true, true);
+        File::put("$dir/{$name}Controller.php", "<?php\nnamespace App\Http\Controllers\Api;\nuse App\Http\Controllers\Controller;\nuse App\Models\\$name;\nclass {$name}Controller extends Controller { public function index() { return $name::paginate(); } }");
+        $apiRoutePath = base_path('routes/api.php');
+        $existing = File::exists($apiRoutePath) ? File::get($apiRoutePath) : '';
+        if (!str_contains($existing, "apiResource('$pluralKebab'")) {
+            File::append($apiRoutePath, "\nRoute::apiResource('$pluralKebab', \App\Http\Controllers\Api\\{$name}Controller::class);");
+        } else {
+            $this->line("API route for $pluralKebab already registered — skipped.");
         }
-
-        // Store Request
-        $storeStub = "<?php\n\nnamespace App\Http\Requests\Api\\$name;\n\nuse Illuminate\Foundation\Http\FormRequest;\n\nclass Store{$name}Request extends FormRequest\n{\n    public function authorize(): bool { return true; }\n    public function rules(): array\n    {\n        return [\n$rules        ];\n    }\n}";
-        File::put("$dir/Store{$name}Request.php", $storeStub);
-
-        // Update Request (using 'sometimes' for partial updates)
-        $updateRules = str_replace("'required'", "'sometimes'", $rules);
-        $updateStub = "<?php\n\nnamespace App\Http\Requests\Api\\$name;\n\nuse Illuminate\Foundation\Http\FormRequest;\n\nclass Update{$name}Request extends FormRequest\n{\n    public function authorize(): bool { return true; }\n    public function rules(): array\n    {\n        return [\n$updateRules        ];\n    }\n}";
-        File::put("$dir/Update{$name}Request.php", $updateStub);
     }
 }

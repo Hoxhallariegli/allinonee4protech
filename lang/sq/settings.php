@@ -29,6 +29,8 @@ return [
   'Copy the "firebaseConfig" object (everything inside the curly braces {})' => 'Kopjoni objektin "firebaseConfig" (çdo gjë brenda kllapave gjarpërushe {})',
   'Click "Generate new private key"' => 'Klikoni "Generate new private key"',
   'Open the downloaded JSON file and paste its entire content here.' => 'Hapni skedarin JSON të shkarkuar dhe ngjitni të gjithë përmbajtjen e tij këtu.',
+  'Paste the Firebase Web App configuration object here.' => 'Ngjitni objektin e konfigurimit të Firebase Web App këtu.',
+  'Paste the content of your Firebase Service Account JSON file here.' => 'Ngjitni përmbajtjen e skedarit tuaj JSON të Llogarisë së Shërbimit Firebase këtu.',
   'Service Account JSON' => 'Kodi JSON i Llogarisë së Shërbimit',
   'Update Firebase Settings' => 'Përditëso Cilësimet e Firebase',
   'Test Notification' => 'Testo Njoftimin',
