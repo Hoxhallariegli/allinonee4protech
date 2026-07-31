@@ -92,13 +92,10 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureViews(): void
     {
-        view()->composer('components.layouts.app', function () {
-            if (Auth::check()) {
-                $settings = cache()->remember('settings', 3600, fn () => Setting::all());
-                foreach ($settings as $setting) {
-                    config()->set([$setting->key => $setting->value]);
-                }
-            }
-        });
+        // Load settings globally for all views
+        $settings = cache()->remember('settings', 3600, fn () => Setting::all());
+        foreach ($settings as $setting) {
+            config()->set([$setting->key => $setting->value]);
+        }
     }
 }

@@ -23,6 +23,11 @@
                 localStorage.setItem('theme', 'light');
             }
         })();
+
+        // Global Notification Request Fallback
+        window.requestNotificationPermission = function() {
+            console.warn('Firebase helper initialized (Default). Waiting for config...');
+        };
     </script>
 
     @if(config('firebase_enabled') && config('firebase_web_config'))
@@ -43,6 +48,21 @@
                     const firebaseConfig = JSON.parse(jsonConfig);
                     firebase.initializeApp(firebaseConfig);
                     const messaging = firebase.messaging();
+
+                    window.requestNotificationPermission = function() {
+                        if (!('Notification' in window)) return;
+                        Notification.requestPermission().then((permission) => {
+                            if (permission === 'granted') {
+                                navigator.serviceWorker.ready.then((registration) => {
+                                    messaging.getToken({ serviceWorkerRegistration: registration }).then((token) => {
+                                        if (window.Livewire) {
+                                            window.Livewire.dispatch('fcm-token-received', { token: token });
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    };
 
                     if (isDebug) console.log('🔥 Firebase initialized successfully.');
 
