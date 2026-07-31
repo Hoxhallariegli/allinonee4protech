@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Domain\BerberApp\Booking\DTOs\BookingDTO;
 use App\Models\AuditTrail;
 use App\Services\FirebaseService;
+use Illuminate\Support\Facades\Log;
 
 class CreateBookingAction
 {
@@ -32,23 +33,55 @@ class CreateBookingAction
         $title = "Rezervim i Ri!";
         $body = "Klienti {$booking->customer_name} rezervoi në orën " . $booking->appointment_datetime->format('d/m H:i');
 
+        Log::info("🚀 Notification Flow Started for Booking #{$booking->id}");
+
         // 1. Notify specific barber if they have user_id and tokens
         if ($barber && $barber->user_id) {
-            $tokens = DeviceToken::where('user_id', $barber->user_id)->pluck('fcm_token')->toArray();
-            foreach ($tokens as $token) {
-                $this->firebaseService->sendNotification($title, $body, $token);
+            $enabled = \App\Models\NotificationSetting::where('user_id', $barber->user_id)
+                ->where('module', 'BerberApp')
+                ->where('event_type', 'booking_created')
+                ->where('enabled', true)
+                ->exists();
+
+            // Default to true if no setting exists
+            if (\App\Models\NotificationSetting::where('user_id', $barber->user_id)->where('module', 'BerberApp')->where('event_type', 'booking_created')->doesntExist()) {
+                $enabled = true;
+            }
+
+            if ($enabled) {
+                $tokens = DeviceToken::where('user_id', $barber->user_id)->pluck('fcm_token')->toArray();
+                Log::info("Found " . count($tokens) . " tokens for Barber: {$barber->name}");
+                foreach ($tokens as $token) {
+                    $this->firebaseService->sendNotification($title, $body, $token);
+                }
+            } else {
+                Log::info("Barber {$barber->name} has DISABLED booking notifications.");
             }
         }
 
         // 2. Notify all Admins who have permission
         $admins = User::all()->filter(fn($u) => $u->can('view_bookings'));
+        Log::info("Found " . count($admins) . " potential Admins to notify.");
 
         foreach ($admins as $admin) {
             if ($barber && $admin->id === $barber->user_id) continue;
 
-            $tokens = DeviceToken::where('user_id', $admin->id)->pluck('fcm_token')->toArray();
-            foreach ($tokens as $token) {
-                $this->firebaseService->sendNotification($title, $body, $token);
+            $enabled = \App\Models\NotificationSetting::where('user_id', $admin->id)
+                ->where('module', 'BerberApp')
+                ->where('event_type', 'booking_created')
+                ->where('enabled', true)
+                ->exists();
+
+            if (\App\Models\NotificationSetting::where('user_id', $admin->id)->where('module', 'BerberApp')->where('event_type', 'booking_created')->doesntExist()) {
+                $enabled = true;
+            }
+
+            if ($enabled) {
+                $tokens = DeviceToken::where('user_id', $admin->id)->pluck('fcm_token')->toArray();
+                Log::info("Found " . count($tokens) . " tokens for Admin: {$admin->name}");
+                foreach ($tokens as $token) {
+                    $this->firebaseService->sendNotification($title, $body, $token);
+                }
             }
         }
     }

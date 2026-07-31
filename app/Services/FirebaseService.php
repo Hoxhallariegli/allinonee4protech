@@ -10,22 +10,31 @@ class FirebaseService
 {
     public function sendNotification(string $title, string $body, string $topic = 'all'): bool
     {
+        Log::info("🔔 Firebase: Attempting to send notification.", ['title' => $title, 'recipient' => $topic]);
+
         // Prioritizohet .env, nese jo merret nga databaza
         $enabled = env('FIREBASE_ENABLED', Setting::where('key', 'firebase_enabled')->value('value'));
-        if (!$enabled) return false;
-
-        $projectId = env('FIREBASE_PROJECT_ID', Setting::where('key', 'firebase_project_id')->value('value'));
-        $credentialsJson = env('FIREBASE_CREDENTIALS', Setting::where('key', 'firebase_credentials')->value('value'));
-        $credentials = json_decode($credentialsJson, true);
-
-        if (!$projectId || !$credentials) {
-            Log::warning('Firebase config is missing in both .env and Settings UI.');
+        if (!$enabled) {
+            Log::warning("🔔 Firebase: Notifications are DISABLED globally.");
             return false;
         }
 
+        $projectId = env('FIREBASE_PROJECT_ID', Setting::where('key', 'firebase_project_id')->value('value'));
+        $credentialsJson = env('FIREBASE_CREDENTIALS', Setting::where('key', 'firebase_credentials')->value('value'));
+
+        if (!$projectId || !$credentialsJson) {
+            Log::error("🔔 Firebase: Missing configuration (Project ID or Credentials).");
+            return false;
+        }
+
+        $credentials = json_decode($credentialsJson, true);
+
         try {
             $token = $this->getAccessToken($credentials);
-            if (!$token) return false;
+            if (!$token) {
+                Log::error("🔔 Firebase: Failed to generate OAuth2 Access Token.");
+                return false;
+            }
 
             $message = [
                 'notification' => [
@@ -50,13 +59,14 @@ class FirebaseService
             ]);
 
             if (!$response->successful()) {
-                Log::error('Firebase API Response: ' . $response->body());
+                Log::error('🔔 Firebase: API Error Response.', ['status' => $response->status(), 'body' => $response->body()]);
                 return false;
             }
 
+            Log::info("🔔 Firebase: Notification sent successfully.");
             return true;
         } catch (\Exception $e) {
-            Log::error('Firebase Notification Error: ' . $e->getMessage());
+            Log::error('🔔 Firebase: Exception occurred.', ['error' => $e->getMessage()]);
             return false;
         }
     }
