@@ -49,7 +49,7 @@ class HandleBarberAbsence
                 // Conflict logic: Booking overlaps with Absence if:
                 // BookingStart < AbsenceEnd AND BookingEnd > AbsenceStart
                 $query->where('appointment_datetime', '<', $endTime->toDateTimeString())
-                      ->whereRaw('datetime(appointment_datetime, "+" || ba_services.duration_minutes || " minutes") > ?', [$startTime->toDateTimeString()]);
+                      ->whereRaw('DATE_ADD(appointment_datetime, INTERVAL ba_services.duration_minutes MINUTE) > ?', [$startTime->toDateTimeString()]);
             })
             ->select('ba_bookings.*')
             ->get();
