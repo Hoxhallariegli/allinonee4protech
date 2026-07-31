@@ -9,6 +9,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
+use Livewire\Attributes\On;
+use App\Models\BerberApp\DeviceToken;
+
 class NotificationsMenu extends Component
 {
     /**
@@ -17,6 +20,17 @@ class NotificationsMenu extends Component
     public Collection $notifications;
 
     public int $unseenCount = 0;
+
+    #[On('fcm-token-received')]
+    public function saveToken($token)
+    {
+        if (!auth()->check()) return;
+
+        DeviceToken::updateOrCreate(
+            ['user_id' => auth()->id(), 'fcm_token' => $token],
+            ['device_type' => 'web']
+        );
+    }
 
     public function mount(): void
     {

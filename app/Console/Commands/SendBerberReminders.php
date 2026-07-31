@@ -37,10 +37,20 @@ class SendBerberReminders extends Command
             $title = "Kujtesë për Takimin";
             $body = "Përshëndetje {$booking->customer_name}! Mos harroni takimin tuaj në " . Carbon::parse($booking->appointment_datetime)->format('H:i');
 
-            // Këtu do të duhej tokeni i klientit (i ruajtur në një tabelë tokens)
-            // Për këtë rast, supozojmë se dërgojmë te një topic unik për rezervimin
-            // ose kemi lidhur PSID/Token me rreshtin e booking.
-            $sent = $this->firebaseService->sendNotification($title, $body, "booking_{$booking->id}");
+            // Try to find device tokens for this booking
+            $tokens = \App\Models\BerberApp\DeviceToken::where('booking_id', $booking->id)->pluck('fcm_token')->toArray();
+
+            $sent = false;
+            if (!empty($tokens)) {
+                foreach ($tokens as $token) {
+                    if ($this->firebaseService->sendNotification($title, $body, $token)) {
+                        $sent = true;
+                    }
+                }
+            } else {
+                // Fallback to topic
+                $sent = $this->firebaseService->sendNotification($title, $body, "booking_{$booking->id}");
+            }
 
             if ($sent) {
                 $reminder->update([

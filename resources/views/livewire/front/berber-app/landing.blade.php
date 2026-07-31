@@ -107,6 +107,22 @@
                 {{-- Step 2: Date & Time --}}
                 @if($step == 2)
                     <div class="space-y-10">
+                        {{-- Custom Notification Prompt --}}
+                        @if(!$fcmToken)
+                            <div class="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-3xl border border-amber-100 dark:border-amber-800 flex items-center justify-between gap-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="size-12 bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center shrink-0">
+                                        <x-heroicon-o-bell-alert class="size-6"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-slate-900 dark:text-white font-bold text-sm leading-tight italic">Njoftimet e Rezervimit</p>
+                                        <p class="text-slate-500 dark:text-gray-400 text-xs mt-1">Lejoni njoftimet që t'ju njoftojmë në rast emergjence.</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="window.requestNotificationPermission()" class="px-6 py-3 bg-amber-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-200 dark:shadow-none">Lejo</button>
+                            </div>
+                        @endif
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div>
                                 <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 ml-1">Zgjidh Datën</label>

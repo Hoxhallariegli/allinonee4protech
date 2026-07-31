@@ -83,8 +83,15 @@ class HandleBarberAbsence
             $message = "Përshëndetje {$booking->customer_name}. Berberi {$barber->name} do të jetë me pushime gjatë orarit tuaj. Rezervimi u anullua. Ju lutem zgjidhni një berber tjetër ose një datë tjetër.";
         }
 
-        // We target the booking topic or use device tokens if we had a mapping
-        // For now, using the topic "booking_{id}" as established before
-        $this->firebaseService->sendNotification($title, $message, "booking_{$booking->id}");
+        // 1. Try sending to specific device tokens
+        $tokens = \App\Models\BerberApp\DeviceToken::where('booking_id', $booking->id)->pluck('fcm_token')->toArray();
+        if (!empty($tokens)) {
+            foreach ($tokens as $token) {
+                $this->firebaseService->sendNotification($title, $message, $token);
+            }
+        } else {
+            // 2. Fallback to topic
+            $this->firebaseService->sendNotification($title, $message, "booking_{$booking->id}");
+        }
     }
 }

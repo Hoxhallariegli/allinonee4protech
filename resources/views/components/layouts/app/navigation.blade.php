@@ -57,6 +57,8 @@
     @can('view_reminders')
         <x-nav.link route="admin.berber-app.reminders.index" icon="bell">{{ __('berber-app/reminders.Reminders') }}</x-nav.link>
     @endcan
+
+    <x-nav.link route="admin.berber-app.integrations.device-tokens" icon="device-phone-mobile">Device Tokens</x-nav.link>
 </x-nav.group>
 @endif
 

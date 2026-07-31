@@ -216,7 +216,11 @@ class Landing extends Component
         ]);
 
         if ($this->fcmToken) {
-            \Log::info("FCM Token for booking {$booking->id}: " . $this->fcmToken);
+            \App\Models\BerberApp\DeviceToken::create([
+                'booking_id' => $booking->id,
+                'fcm_token' => $this->fcmToken,
+                'device_type' => 'web'
+            ]);
         }
 
         $this->step = 4; // Success
