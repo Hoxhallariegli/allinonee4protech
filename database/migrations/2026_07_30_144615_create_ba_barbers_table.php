@@ -2,9 +2,17 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-return new class extends Migration { public function up() { Schema::create('ba_barbers', function (Blueprint $table) { $table->id();
+return new class extends Migration {
+    public function up() {
+        Schema::create('ba_barbers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('name');
             $table->string('photo')->nullable();
             $table->text('specialization')->nullable();
-            $table->boolean('active');
-            $table->timestamps(); }); } public function down() { Schema::dropIfExists('ba_barbers'); } };
+            $table->boolean('active')->default(true);
+            $table->timestamps();
+        });
+    }
+    public function down() { Schema::dropIfExists('ba_barbers'); }
+};
