@@ -39,6 +39,23 @@
                     firebase.initializeApp(jsonConfig);
                     const messaging = firebase.messaging();
 
+                    // Handle foreground messages
+                    messaging.onMessage((payload) => {
+                        window.dispatchEvent(new CustomEvent('toast', {
+                            detail: {
+                                message: payload.notification.title + ": " + payload.notification.body,
+                                type: 'info'
+                            }
+                        }));
+
+                        if (Notification.permission === "granted") {
+                            new Notification(payload.notification.title, {
+                                body: payload.notification.body,
+                                icon: '/favicon.ico'
+                            });
+                        }
+                    });
+
                     window.requestNotificationPermission = function() {
                         if (!('Notification' in window)) {
                             console.error('This browser does not support desktop notification');

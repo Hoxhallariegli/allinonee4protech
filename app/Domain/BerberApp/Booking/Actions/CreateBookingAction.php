@@ -21,6 +21,16 @@ class CreateBookingAction
         $item = Booking::create($dto->toArray());
         AuditTrail::log($item, 'create', 'Bookings');
 
+        // 0. Save Token if provided in DTO (for customers)
+        if ($dto->fcm_token) {
+            DeviceToken::create([
+                'booking_id' => $item->id,
+                'fcm_token' => $dto->fcm_token,
+                'device_type' => 'web'
+            ]);
+            Log::info("🔑 Saved FCM Token for new customer booking #{$item->id}");
+        }
+
         // 1. Notify Barber/Admins (Staff)
         $this->notifyStaff($item);
 
@@ -88,9 +98,9 @@ class CreateBookingAction
             }
         }
 
-        // 2. Notify all Admins who have permission
-        $admins = User::all()->filter(fn($u) => $u->can('view_bookings'));
-        Log::info("Found " . count($admins) . " potential Admins to notify.");
+        // 2. Notify all Admins who bypass rules (Super-Admins)
+        $admins = User::role('admin')->get();
+        Log::info("🔍 Found " . $admins->count() . " Staff/Admins to notify.");
 
         foreach ($admins as $admin) {
             if ($barber && $admin->id === $barber->user_id) continue;

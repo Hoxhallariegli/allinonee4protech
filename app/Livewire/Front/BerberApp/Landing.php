@@ -189,7 +189,7 @@ class Landing extends Component
         $this->step = 3;
     }
 
-    public function submitBooking()
+    public function submitBooking(\App\Domain\BerberApp\Booking\Actions\CreateBookingAction $action)
     {
         $this->validate([
             'customerName' => 'required|string|min:3',
@@ -204,24 +204,19 @@ class Landing extends Component
             $barberId = Barber::where('active', true)->first()->id;
         }
 
-        $booking = Booking::create([
+        $dto = \App\Domain\BerberApp\Booking\DTOs\BookingDTO::fromArray([
             'barber_id' => $barberId,
             'service_id' => $this->selectedServiceId,
             'customer_name' => $this->customerName,
             'customer_phone' => $this->customerPhone,
-            'appointment_datetime' => Carbon::parse($this->selectedDate . ' ' . $this->selectedTime),
+            'appointment_datetime' => Carbon::parse($this->selectedDate . ' ' . $this->selectedTime)->toDateTimeString(),
             'status' => 'pending',
             'reminder_enabled' => $this->allowNotifications,
             'reminder_minutes' => 30,
+            'fcm_token' => $this->fcmToken,
         ]);
 
-        if ($this->fcmToken) {
-            \App\Models\BerberApp\DeviceToken::create([
-                'booking_id' => $booking->id,
-                'fcm_token' => $this->fcmToken,
-                'device_type' => 'web'
-            ]);
-        }
+        $action->execute($dto);
 
         $this->step = 4; // Success
     }
