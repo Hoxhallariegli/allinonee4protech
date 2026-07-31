@@ -83,6 +83,7 @@
 
     <div x-show="showBooking"
          x-cloak
+         x-init="$watch('showBooking', value => { if(value && window.requestNotificationPermission) window.requestNotificationPermission() })"
          class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
 
         <div class="absolute inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md" @click="showBooking = false"></div>
