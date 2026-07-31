@@ -7,6 +7,8 @@ namespace App\Providers;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use App\Models\BerberApp\Booking;
+use App\Observers\BookingObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Booking::observe(BookingObserver::class);
         $this->configureAuth();
         $this->configureCommands();
         $this->configureDates();

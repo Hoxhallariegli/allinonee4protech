@@ -55,43 +55,15 @@ class HandleBarberAbsence
             ->get();
 
         foreach ($bookings as $booking) {
-            // Cancel the booking
+            // Cancel the booking - The BookingObserver will automatically handle:
+            // 1. Cancelling reminders
+            // 2. Notifying the customer via Firebase
             $booking->update([
                 'status' => 'cancelled',
                 'cancel_reason' => "Absenca e berberit ({$type}): " . ($reason ?? 'Emergjencë'),
             ]);
-
-            // 3. Cancel any pending reminders for this booking
-            Reminder::where('booking_id', $booking->id)
-                ->where('status', 'pending')
-                ->update(['status' => 'cancelled']);
-
-            // Notify the customer
-            $this->notifyCustomer($booking, $barber, $type);
         }
 
-        Log::info("Handled absence for barber {$barber->name} from {$start} to {$end}. Affected bookings: " . $bookings->count());
-    }
-
-    protected function notifyCustomer(Booking $booking, Barber $barber, string $type)
-    {
-        $title = "Anullim Rezervimi - Emergjencë";
-        $message = "Përshëndetje {$booking->customer_name}. Na vjen keq, por berberi {$barber->name} nuk mund të jetë prezent sot për shkak të një emergjence. Rezervimi juaj u anullua automatikisht. Mund të rezervoni me berberët e tjerë të lirë në aplikacion.";
-
-        if ($type === 'vacation') {
-            $title = "Ndryshim në Rezervim";
-            $message = "Përshëndetje {$booking->customer_name}. Berberi {$barber->name} do të jetë me pushime gjatë orarit tuaj. Rezervimi u anullua. Ju lutem zgjidhni një berber tjetër ose një datë tjetër.";
-        }
-
-        // 1. Try sending to specific device tokens
-        $tokens = \App\Models\BerberApp\DeviceToken::where('booking_id', $booking->id)->pluck('fcm_token')->toArray();
-        if (!empty($tokens)) {
-            foreach ($tokens as $token) {
-                $this->firebaseService->sendNotification($title, $message, $token);
-            }
-        } else {
-            // 2. Fallback to topic
-            $this->firebaseService->sendNotification($title, $message, "booking_{$booking->id}");
-        }
+        Log::info("Handled absence for barber {$barber->name}. Affected bookings: " . $bookings->count());
     }
 }
