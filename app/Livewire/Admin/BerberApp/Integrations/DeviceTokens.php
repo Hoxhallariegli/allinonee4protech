@@ -23,10 +23,16 @@ class DeviceTokens extends Component
     public function render()
     {
         $tokens = DeviceToken::with(['user', 'booking'])
-            ->where(function($q) {
-                $q->where('fcm_token', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('user', fn($sq) => $q->where('name', 'like', '%' . $this->search . '%'))
-                  ->orWhereHas('booking', fn($sq) => $q->where('customer_name', 'like', '%' . $this->search . '%'));
+            ->where(function($query) {
+                $searchTerm = '%' . $this->search . '%';
+
+                $query->where('fcm_token', 'like', $searchTerm)
+                    ->orWhereHas('user', function($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'like', $searchTerm);
+                    })
+                    ->orWhereHas('booking', function($subQuery) use ($searchTerm) {
+                        $subQuery->where('customer_name', 'like', $searchTerm);
+                    });
             })
             ->latest()
             ->paginate(15);
