@@ -21,6 +21,11 @@
                 localStorage.setItem('theme', 'light');
             }
         })();
+
+        // Global Notification Request Fallback
+        window.requestNotificationPermission = function() {
+            console.warn('Firebase is not configured or enabled. Notification request ignored.');
+        };
     </script>
 
     @if(config('firebase_enabled') && config('firebase_web_config'))
