@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Doctor' => 'Doctor',
+  'Doctors' => 'Doctors',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Doctor' => 'Add Doctor',
+  'Edit Doctor' => 'Edit Doctor',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Doctor created.',
+  'updated' => 'Doctor updated.',
+  'deleted' => 'Doctor deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Specialization' => 'Specialization',
+  'Phone' => 'Phone',
+];

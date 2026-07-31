@@ -2,16 +2,21 @@
     'route' => '',
     'icon' => ''
 ])
-<a wire:navigate href="{{ route($route) }}" class="block py-2 px-4 rounded-md {{ url()->current() == route($route)
-    ? 'bg-blue-50 border border-blue-100 text-gray-700'
-    : 'text-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-100 dark:text-gray-100 hover:bg-blue-50 hover:text-gray-900'
-}}">
-    <div class="flex gap-2">
-        @if ($icon)
-            <span class="flex flex-none items-center">
-                <x-dynamic-component :component="'heroicon-o-' . $icon" class="size-5 text-gray-400 group-hover:text-blue-500 dark:text-gray-500 dark:group-hover:text-gray-300" />
-            </span>
-        @endif
-        <span>{{ $slot }}</span>
-    </div>
+
+@php
+    $isActive = request()->routeIs($route);
+@endphp
+
+<a wire:navigate href="{{ route($route) }}"
+   class="group flex items-center gap-3 rounded-xl px-3 py-1.5 text-[13px] font-bold transition-all duration-200
+   {{ $isActive
+        ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
+        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+   }}">
+    @if ($icon)
+        <x-dynamic-component :component="'heroicon-o-' . $icon" class="size-4 transition-transform group-hover:scale-110 {{ $isActive ? 'text-blue-600' : 'text-gray-400' }}" />
+    @else
+        <div class="size-1 rounded-full {{ $isActive ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-700' }}"></div>
+    @endif
+    <span class="truncate">{{ $slot }}</span>
 </a>

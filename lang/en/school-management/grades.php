@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Grade' => 'Grade',
+  'Grades' => 'Grades',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Grade' => 'Add Grade',
+  'Edit Grade' => 'Edit Grade',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Grade created.',
+  'updated' => 'Grade updated.',
+  'deleted' => 'Grade deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Student Id' => 'Student Id',
+  'Exam Id' => 'Exam Id',
+  'Score' => 'Score',
+];

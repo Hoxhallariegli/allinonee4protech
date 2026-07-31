@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Warehouse' => 'Warehouse',
+  'Warehouses' => 'Warehouses',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Warehouse' => 'Add Warehouse',
+  'Edit Warehouse' => 'Edit Warehouse',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Warehouse created.',
+  'updated' => 'Warehouse updated.',
+  'deleted' => 'Warehouse deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Address' => 'Address',
+];

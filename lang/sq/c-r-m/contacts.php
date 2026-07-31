@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Contact' => 'Contact',
+  'Contacts' => 'Contacts',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Contact' => 'Add Contact',
+  'Edit Contact' => 'Edit Contact',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Contact created.',
+  'updated' => 'Contact updated.',
+  'deleted' => 'Contact deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Company Id' => 'Company Id',
+  'Email' => 'Email',
+];

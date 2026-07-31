@@ -10,6 +10,8 @@ use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Roles\Edit;
 use App\Livewire\Admin\Roles\Roles;
 use App\Livewire\Admin\Settings\Settings;
+use App\Livewire\Admin\Settings\Languages;
+use App\Livewire\Admin\Settings\NotificationSettings;
 use App\Livewire\Admin\Users\EditUser;
 use App\Livewire\Admin\Users\ShowUser;
 use App\Livewire\Admin\Users\Users;
@@ -43,8 +45,9 @@ Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'active
         Route::get('audit-trails', AuditTrails::class)->name('admin.settings.audit-trails.index');
         Route::get('system-settings', Settings::class)->name('admin.settings');
         Route::get('ai-assistant', \App\Livewire\Admin\AiAssistant::class)->name('admin.settings.ai-assistant');
-        Route::get('languages', \App\Livewire\Admin\Settings\Languages::class)->name('admin.settings.languages.index');
-        Route::get('notifications', \App\Livewire\Admin\Settings\NotificationSettings::class)->name('admin.settings.notifications');
+        Route::get('languages', Languages::class)->name('admin.settings.languages.index');
+        Route::get('notifications', NotificationSettings::class)->name('admin.settings.notifications');
+        Route::get('notification-preferences', \App\Livewire\Admin\Settings\UserNotificationSettings::class)->name('admin.settings.notification-preferences');
         Route::get('roles', Roles::class)->name('admin.settings.roles.index');
         Route::get('roles/{role}/edit', Edit::class)->name('admin.settings.roles.edit');
     });
@@ -55,8 +58,12 @@ Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'active
         Route::get('{user}', ShowUser::class)->name('admin.users.show');
     });
 
-    foreach (glob(__DIR__.'/admin/*.php') as $filename) {
-        require $filename;
+    // Load all admin routes recursively from admin folder and subfolders
+    $it = new RecursiveDirectoryIterator(__DIR__.'/admin');
+    foreach (new RecursiveIteratorIterator($it) as $file) {
+        if ($file->getExtension() === 'php') {
+            require $file->getPathname();
+        }
     }
 });
 

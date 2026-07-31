@@ -945,6 +945,179 @@ declare(strict_types=1);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Route::apiResource('clients', \App\Http\Controllers\Api\ClientController::class);
+Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class);
+Route::apiResource('buildings', \App\Http\Controllers\Api\BuildingController::class);
+Route::apiResource('apartments', \App\Http\Controllers\Api\ApartmentController::class);
+Route::apiResource('materials', \App\Http\Controllers\Api\MaterialController::class);
+Route::apiResource('contracts', \App\Http\Controllers\Api\ContractController::class);
+Route::apiResource('progress-reports', \App\Http\Controllers\Api\ProgressReportController::class);
+Route::apiResource('guardians', \App\Http\Controllers\Api\GuardianController::class);
+Route::apiResource('teachers', \App\Http\Controllers\Api\TeacherController::class);
+Route::apiResource('school-classes', \App\Http\Controllers\Api\SchoolClassController::class);
+Route::apiResource('students', \App\Http\Controllers\Api\StudentController::class);
+Route::apiResource('attendances', \App\Http\Controllers\Api\AttendanceController::class);
+Route::apiResource('exams', \App\Http\Controllers\Api\ExamController::class);
+Route::apiResource('grades', \App\Http\Controllers\Api\GradeController::class);
+Route::apiResource('payments', \App\Http\Controllers\Api\PaymentController::class);
+Route::apiResource('categories', \App\Http\Controllers\Api\CategoryController::class);
+Route::apiResource('warehouses', \App\Http\Controllers\Api\WarehouseController::class);
+Route::apiResource('products', \App\Http\Controllers\Api\ProductController::class);
+Route::apiResource('sales', \App\Http\Controllers\Api\SaleController::class);
+Route::apiResource('stock-transfers', \App\Http\Controllers\Api\StockTransferController::class);
+Route::apiResource('doctors', \App\Http\Controllers\Api\DoctorController::class);
+Route::apiResource('patients', \App\Http\Controllers\Api\PatientController::class);
+Route::apiResource('visits', \App\Http\Controllers\Api\VisitController::class);
+Route::apiResource('prescriptions', \App\Http\Controllers\Api\PrescriptionController::class);
+Route::apiResource('clinic-invoices', \App\Http\Controllers\Api\ClinicInvoiceController::class);
+Route::apiResource('waiters', \App\Http\Controllers\Api\WaiterController::class);
+Route::apiResource('dining-tables', \App\Http\Controllers\Api\DiningTableController::class);
+Route::apiResource('menu-items', \App\Http\Controllers\Api\MenuItemController::class);
+Route::apiResource('orders', \App\Http\Controllers\Api\OrderController::class);
+Route::apiResource('order-items', \App\Http\Controllers\Api\OrderItemController::class);
+Route::apiResource('owners', \App\Http\Controllers\Api\OwnerController::class);
+Route::apiResource('agents', \App\Http\Controllers\Api\AgentController::class);
+Route::apiResource('properties', \App\Http\Controllers\Api\PropertyController::class);
+Route::apiResource('property-visits', \App\Http\Controllers\Api\PropertyVisitController::class);
+Route::apiResource('companies', \App\Http\Controllers\Api\CompanyController::class);
+Route::apiResource('contacts', \App\Http\Controllers\Api\ContactController::class);
+Route::apiResource('leads', \App\Http\Controllers\Api\LeadController::class);
+Route::apiResource('deals', \App\Http\Controllers\Api\DealController::class);
+Route::apiResource('tasks', \App\Http\Controllers\Api\TaskController::class);
 Route::apiResource('customers', \App\Http\Controllers\Api\CustomerController::class);
 Route::apiResource('vehicle-brands', \App\Http\Controllers\Api\VehicleBrandController::class);
 Route::apiResource('vehicle-models', \App\Http\Controllers\Api\VehicleModelController::class);
@@ -953,11 +1126,10 @@ Route::apiResource('vehicle-documents', \App\Http\Controllers\Api\VehicleDocumen
 Route::apiResource('employees', \App\Http\Controllers\Api\EmployeeController::class);
 Route::apiResource('mechanics', \App\Http\Controllers\Api\MechanicController::class);
 Route::apiResource('job-cards', \App\Http\Controllers\Api\JobCardController::class);
-Route::apiResource('services', \App\Http\Controllers\Api\ServiceController::class);
 Route::apiResource('parts', \App\Http\Controllers\Api\PartController::class);
+Route::apiResource('inventories', \App\Http\Controllers\Api\InventoryController::class);
 Route::apiResource('job-card-services', \App\Http\Controllers\Api\JobCardServiceController::class);
 Route::apiResource('job-card-parts', \App\Http\Controllers\Api\JobCardPartController::class);
-Route::apiResource('inventories', \App\Http\Controllers\Api\InventoryController::class);
 Route::apiResource('suppliers', \App\Http\Controllers\Api\SupplierController::class);
 Route::apiResource('purchase-orders', \App\Http\Controllers\Api\PurchaseOrderController::class);
 Route::apiResource('purchase-order-items', \App\Http\Controllers\Api\PurchaseOrderItemController::class);
@@ -967,3 +1139,7 @@ Route::apiResource('invoices', \App\Http\Controllers\Api\InvoiceController::clas
 Route::apiResource('invoice-items', \App\Http\Controllers\Api\InvoiceItemController::class);
 Route::apiResource('appointments', \App\Http\Controllers\Api\AppointmentController::class);
 Route::apiResource('reports', \App\Http\Controllers\Api\ReportController::class);
+Route::apiResource('barbers', \App\Http\Controllers\Api\BarberController::class);
+Route::apiResource('services', \App\Http\Controllers\Api\ServiceController::class);
+Route::apiResource('bookings', \App\Http\Controllers\Api\BookingController::class);
+Route::apiResource('reminders', \App\Http\Controllers\Api\ReminderController::class);

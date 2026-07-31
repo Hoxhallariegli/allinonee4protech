@@ -1,0 +1,245 @@
+Specifikim Produkti — App Rezervimesh për Berber (Booking + Reminders me Firebase)
+
+Ky dokument është shkruar për t'ia kaluar një AI coding agent (Gemini) si brief i plotë zhvillimi. Përmban qëllimin, flows, modelin e të dhënave, arkitekturën teknike dhe rregullat e biznesit. Agenti duhet ta ndjekë këtë si "burim të vërtetës" përpara se të fillojë kodimin.
+
+1. Qëllimi i Produktit
+
+Një aplikacion (web app / PWA, mund të bëhet edhe app mobile më vonë) me dy lloj përdoruesish:
+
+Klienti — sheh landing page prezantuese të berberisë, zgjedh berber (ose "cilido, sa më parë") dhe orar të lirë, plotëson emër + telefon, jep (opsionalisht) leje për njoftime, dhe merr reminder përpara takimit me mundësi konfirmimi/anulimi me një klik.
+Berberi — ka panel të vetin ku sheh rezervimet, menaxhon orarin e disponueshmërisë, sheh statusin e çdo rezervimi (pending / konfirmuar / anulluar / pa përgjigje), dhe mund të aktivizojë/çaktivizojë reminder-at (si për klientët ashtu edhe për vete) me një toggle.
+
+Parim kryesor: çdo automatizim (reminder klienti, reminder berberi) duhet të jetë opsional dhe i çaktivizueshëm (feature flag / toggle), jo i detyruar.
+
+2. Përdoruesit dhe Rolet
+Rol	Çfarë bën
+Vizitor/Klient	Shfleton landing page, bën rezervim, jep të dhëna kontakti, merr/përgjigjet reminder-ave
+Berber (nëse ka disa)	Ka profil, shërbime, orar disponueshmërie
+Admin/Berberi-Owner	Login në panel, menaxhon berberët (nëse janë disa), oraret, rezervimet, cilësimet e reminder-ave
+
+Nëse berberia ka vetëm 1 berber, roli "Berber" dhe "Admin" bashkohen në një — thjeshtëso UI-n në atë rast (mos e detyro user-in të zgjedhë "cilido berber" nëse ka vetëm një).
+
+3. Landing Page (Faqja Publike)
+
+Struktura minimale:
+
+Hero section: emri i berberisë, foto/video atmosfere, buton kryesor "Rezervo Tani"
+Shërbimet: lista me çmime & kohëzgjatje (p.sh. "Prerje flokësh — 20min — 500L", "Rruajtje mjekre — 15min — 300L")
+Berberët (nëse ka disa): karta me foto, emër, specializim, rating (opsionale për v1)
+Galeri (foto punimesh)
+Vendndodhja & Orari i Punës (statik, hartë Google Maps embed)
+CTA i dyfishtë: "Rezervo Online" (sjell te flow-i i rezervimit) + numër telefoni për thirrje direkte
+4. Flow-i i Rezervimit (Klienti)
+Hapi 1 — Zgjedhja e mënyrës
+
+Dy opsione në formë butonash të mëdhenj:
+
+"Zgjidh Berberin" → shfaq listën e berberëve → pasi zgjedh njërin, shfaqen VETËM orarët e lira të atij berberi
+"Çfarëdo Ore e Lirë" → sistemi bashkon (union) sllotet e lira nga TË GJITHË berberët dhe i shfaq të renditura kronologjikisht; kur klienti zgjedh një sllot, sistemi auto-cakton berberin e parë të disponueshëm në atë orar (round-robin ose "kush ka më pak rezervime atë ditë", për të balancuar ngarkesën)
+Hapi 2 — Zgjedhja e shërbimit (nëse aplikohet)
+
+Nëse berberia ofron shërbime të ndryshme me kohëzgjatje të ndryshme, klienti zgjedh shërbimin PARA se t'i shfaqen sllotet (sepse kohëzgjatja e shërbimit ndikon në sllotet e disponueshme).
+
+Hapi 3 — Zgjedhja e datës/orarit
+Kalendar javor/ditor me sllote 15-30 min (konfigurueshëm nga admin)
+Sllotet e zëna shfaqen të gri/disabled
+Sllotet që bien brenda "buffer time" (p.sh. më pak se X min nga tani) fshihen automatikisht
+Hapi 4 — Të dhënat e klientit
+
+Formë e thjeshtë:
+
+Emër e Mbiemër (required)
+Numër Telefoni (required, validim format)
+Checkbox: "Dua të marr njoftim (reminder) përpara takimit" — ON by default, por i çaktivizueshëm
+Nëse e lë ON → shfaqet dropdown/radio: "Më kujto 1 orë përpara" ose "30 minuta përpara" (mund të zgjedhë vetëm një, ose të dyja nëse duam)
+Nëse browser/app e mbështet, në këtë hap kërkohet leja e push notifications (Firebase permission prompt)
+Hapi 5 — Konfirmimi
+Përmbledhje: Berberi, Shërbimi, Data/Ora, Emri, Telefoni
+Buton "Konfirmo Rezervimin"
+Ekran suksesi + (opsionale) SMS/WhatsApp konfirmim menjëherë (jashtë scope-it fillestar, shto vetëm nëse ka buxhet API)
+
+Statusi fillestar i rezervimit: pending (ende s'është koha e reminder-it).
+
+5. Sistemi i Reminder-ave (Firebase Cloud Messaging)
+5.1 Rregulli bazë
+Çdo rezervim me reminder_enabled = true dhe device token të vlefshëm merr 1 push notification X minuta para orarit (X = 60 ose 30, siç ka zgjedhur klienti; nëse s'ka zgjedhur, merr default-in që ka vendosur berberi në panel).
+Job-i (queue/scheduler) kontrollon çdo minutë rezervimet aktive (status = pending ose confirmed, jo cancelled) që u afrohet ora e reminder-it, dhe dërgon njoftimin.
+Pas dërgimit: reminder_sent_at = now(), status → awaiting_response.
+5.2 Përmbajtja e Njoftimit (Klienti)
+Titulli: Konfirmim Rezervimi
+Teksti: Përshëndetje [Emri]! Keni një rezervim më [DD.MM.YYYY] në orën [HH:mm] te [Emri i Berberit]. Ju lutem konfirmoni pjesëmarrjen.
+Butona (Action Buttons në notification, FCM data payload + Notification Actions):
+  [ Po, do vij ]   [ Jo, anulo ]
+Nëse platforma (web push) nuk mbështet action buttons drejtpërdrejt në notifikim, hapet një mini-faqe/deep-link me të njëjtin pyetje dhe 2 butona kur klienti kliklon mbi notifikimin.
+5.3 Logjika e Përgjigjes
+Veprim i klientit	Ndryshimi i statusit	Çfarë sheh berberi
+Klikon "Po"	status = confirmed, responded_at = now()	Badge jeshile "✅ Konfirmuar" në panel + (opsionale) push njoftim te berberi "Klienti X konfirmoi orën HH:mm"
+Klikon "Jo"	status = cancelled, responded_at = now(), cancel_reason = client_declined	Badge kuq "❌ U anulua" në panel + sllot-i lirohet automatikisht për rezervim të ri + (opsionale) push njoftim te berberi
+Nuk përgjigjet fare brenda një kohe të caktuar (p.sh. 15 min pas reminder-it, konfigurueshme)	status = no_response	Badge portokalli "⏳ Pa përgjigje" — berberi vendos vetë nëse e mban apo e liron sllotin
+5.4 Reminder për Berberin (i veçantë, gjithashtu toggle-able)
+Në panel, berberi ka switch: "Më dërgo njoftim kur më afrohet klienti" (default OFF ose ON, sipas preferencës — bëje ON by default pasi kjo është "selling point" kryesor i kërkuar)
+Kur nis rezultati i reminder-it të klientit (ose në një kohë tjetër e cila konfigurohet veç, p.sh. 10 min para), berberi merr push:
+  "Klienti [Emri] ka rezervim sot në [HH:mm]. Statusi: [Konfirmuar / Pa përgjigje ende]"
+Nëse klienti konfirmon/anulon PAS që berberi ka marrë njoftimin fillestar, dërgo një update push të dytë ("Klienti X konfirmoi" / "Klienti X anulloi").
+5.5 Cilësime globale (Admin/Berber Panel → Settings)
+Toggle: Aktivo Reminders për Klientët (ON/OFF global — fik gjithçka menjëherë nëse duhet)
+Default kohë reminder-i: 30 min / 60 min / e dyfishtë
+Toggle: Aktivo Reminder për Berberin
+Kohë reminder-i për berberin (p.sh. 15 min para)
+Kohë "timeout" pas së cilës rezervimi pa përgjigje bëhet no_response
+6. Paneli i Berberit (Admin)
+6.1 Dashboard/Kryefaqja
+Rezervimet e sotme, të renditura kronologjikisht, me status-badge (ngjyrë)
+Filtra: sipas datës, statusit, berberit (nëse janë disa)
+Klikim mbi rezervim → detaje (emër, telefon, shërbim, ora, historia e njoftimeve të dërguara)
+6.2 Menaxhimi i Rezervimeve
+Ndrysho manualisht statusin (p.sh. nëse klienti telefonon dhe konfirmon me gojë)
+Anulo/Fshi rezervim
+Krijo rezervim manual (klient që vjen direkt/telefonon)
+6.3 Menaxhimi i Orarit
+Cakto orët e punës për çdo ditë të javës (dhe përjashtime/pushime)
+Cakto kohëzgjatjen e sllotit (15/20/30 min)
+Buffer time midis rezervimeve (opsionale)
+6.4 Cilësimet (Settings) — siç u përshkrua në §5.5
+6.5 Menaxhimi i Berberëve (KA DISA BERBERË — konfirmuar)
+Shto/hiq berber, foto, specializim, oraret e tij individuale
+Secili berber ka orarin dhe listën e vet të rezervimeve; admin-i (pronari) sheh të gjithë, çdo berber (nëse login-on vetë) sheh vetëm të vetat
+Filtri "sipas berberit" duhet të jetë kudo ku shfaqet lista e rezervimeve
+6.6 Cilësimet e Integrimeve — Firebase & Messenger (ME UI, jo .env manual)
+
+Meqë këto janë pjesë "kritike por të mërzitshme", i duhen ekrane të dedikuara në panel — jo konfigurim nga file, por nga UI, që të mund t'i menaxhosh pa prekur kod.
+
+Ekrani "Integrime → Firebase (Push Notifications)"
+
+Fusha input: Firebase Project ID, Web API Key, VAPID Public Key, Service Account JSON (upload file ose paste)
+Status indikator: 🟢 Lidhur / 🔴 Jo i lidhur (ping test i thjeshtë te Firebase pas ruajtjes)
+Buton "Dërgo Njoftim Test" → zgjedh një device token ekzistues (të vetin, si admin) dhe dërgon një push provë, që të shohësh menjëherë nëse funksionon pa pritur rezervim real
+Tabelë me Device Tokens aktivë: telefoni/emri i klientit lidhur me token-in, platforma (web/android), data e regjistrimit, statusi (aktiv/skaduar)
+Toggle global: Aktivo Firebase Push (ON/OFF)
+
+Ekrani "Integrime → Facebook Messenger"
+
+Buton "Lidh Faqen e Facebook" (OAuth flow standarde Meta — zgjedh Page-in, jep access token, ruhet i enkriptuar)
+Status: 🟢 Faqja X e Lidhur / 🔴 Jo e Lidhur
+Fushë: Page Access Token (auto-plotësohet pas OAuth, por editable manualisht si fallback)
+Buton "Dërgo Mesazh Test" te një PSID (Page-Scoped ID) prove
+Toggle global: Aktivo Reminders via Messenger (ON/OFF)
+Shënim i rëndësishëm teknik (për Gemini agent): Facebook Messenger NUK lejon të dërgosh mesazh dikujt që s'ka biseduar kurrë me Faqen. Pra klienti duhet të "hapë bisedë" të paktën një herë. Rrugët praktike:
+Në hapin e formës së rezervimit (§4 Hapi 4), shto opsion "Konfirmo via Messenger" — buton që e çon klientin te m.me/EmriFaqes?ref={booking_uuid} (hapet Messenger app/web, klienti thjesht dërgon "Start"), kjo krijon automatikisht PSID-in që backend e kap përmes webhook-ut messaging_referrals dhe e lidh me booking_uuid.
+Për reminder-in që dërgohet PAS 24 orësh nga ai kontakt fillestar (rasti tipik këtu, se takimi mund të jetë ditë më vonë), përdor Message Tag CONFIRMED_EVENT_UPDATE të Meta-s — ky tag është pikërisht i dedikuar për njoftime/reminders për evente/rezervime të konfirmuara, dhe lejon dërgim jashtë dritares 24-orëshe standarde.
+Butonat "Po"/"Jo" në Messenger bëhen me Quick Replies ose Postback Buttons (Messenger Send API), dhe webhook-u i messages/postback përditëson të njëjtin status në DB si te push-i (§5.3).
+
+Ekrani "Integrime → Kanalet e Reminder-it" (zgjedhje globale) Meqë tani ka 2 kanale (Firebase Push + Messenger), shto këtu si menaxhohet zgjedhja:
+
+Në formën e rezervimit (klienti), në vend të thjesht "Dua reminder ON/OFF", tani zgjedh kanalin: [ ] Push Notification [ ] Messenger (mund të zgjedhë të dyja si redundancë, ose asnjë)
+Berberi, në panel, sheh statistikë: sa % e klientëve përdorin cilin kanal
+Nëse një kanal dështon (p.sh. token push i skaduar), sistemi provon automatikisht kanalin tjetër (nëse klienti ka dhënë të dy) — fallback logic, jo vetëm redundancë pasive
+6.7 Lista e Plotë e Ekraneve (UI Map) — Paneli Admin/Berber
+#	Ekrani	Përmbajtja kryesore
+1	Login	Email/telefon + fjalëkalim
+2	Dashboard	Rezervimet e sotme (të gjithë berberët), statistika të shpejta
+3	Rezervimet (Lista)	Filtro sipas date/berberit/statusit, kërko sipas emrit/telefonit
+4	Rezervimi (Detaje)	Info klienti, historik njoftimesh (push/messenger), ndrysho status manualisht
+5	Kalendari/Orari	Pamje javore/ditore për çdo berber, drag&drop ose click-to-block
+6	Berberët (Lista)	Shto/edito/hiq berber
+7	Berberi (Profili)	Foto, specializim, orari individual, shërbimet që ofron
+8	Shërbimet	Emri, çmimi, kohëzgjatja
+9	Integrime → Firebase	Siç u përshkrua në §6.6
+10	Integrime → Messenger	Siç u përshkrua në §6.6
+11	Cilësimet e Reminder-ave	Default minutat, timeout, toggle globale (§5.5)
+12	Raporte (v2, opsionale)	Sa rezervime u konfirmuan/anulluan/nuk u përgjigjën për periudhë
+7. Modeli i të Dhënave (Skeleton)
+Barbers
+- id, name, photo, specialization, active
+
+Services
+- id, name, duration_minutes, price, active
+
+Barber_Availability
+- id, barber_id, weekday, start_time, end_time
+- (ose një tabelë Exceptions për pushime/ditë të mbyllura)
+
+Bookings
+- id, uuid (public, përdoret në linkun e konfirmimit dhe në m.me/?ref=)
+- barber_id (nullable derisa auto-caktohet, nëse klienti zgjodhi "çfarëdo")
+- service_id
+- customer_name
+- customer_phone
+- appointment_datetime
+- reminder_enabled (bool)
+- reminder_minutes_before (int, 30/60)
+- reminder_channel_push (bool)
+- reminder_channel_messenger (bool)
+- status (enum: pending, awaiting_response, confirmed, cancelled, no_response, completed)
+- reminder_sent_at (nullable datetime)
+- reminder_channel_used (nullable enum: push, messenger — cili kanal dërgoi faktikisht, pas fallback logjikës)
+- responded_at (nullable datetime)
+- cancel_reason (nullable string)
+- created_at, updated_at
+
+Device_Tokens
+- id, owner_type (customer|barber), owner_ref (booking_id ose barber_id), fcm_token, platform (web|android|ios), created_at
+
+Messenger_Contacts
+- id, booking_id (nullable — mund të lidhet me shumë rezervime të të njëjtit klient), psid, page_id, linked_at
+
+Integration_Settings
+- id, type (firebase|messenger)
+- firebase: project_id, web_api_key, vapid_public_key, service_account_json (i enkriptuar)
+- messenger: page_id, page_access_token (i enkriptuar), connected_at
+- status (connected|disconnected), last_test_at, last_test_success (bool)
+
+Barber_Notification_Settings
+- barber_id, client_reminders_enabled, barber_reminders_enabled,
+  default_reminder_minutes, barber_reminder_minutes_before, no_response_timeout_minutes,
+  default_channel_push (bool), default_channel_messenger (bool)
+8. Arkitektura Teknike e Propozuar
+Shtresa	Teknologji e sugjeruar
+Backend / API	Laravel (PHP) — REST API + Livewire për panelin e berberit (nuk ka nevojë për SPA të veçantë)
+Frontend Klient	Blade + Livewire/Alpine.js, responsive, i ndërtuar si PWA që të mund të kërkojë leje push notifications në browser (pa pasur nevojë për app store)
+Push Notifications	Firebase Cloud Messaging (FCM) — Web Push për klientët nga browser, dhe (nëse duhet më vonë) FCM native për app mobile
+Scheduling i Reminder-ave	Laravel Scheduler (cron çdo minutë) → dispatch Queue Job që kontrollon Bookings me appointment_datetime - reminder_minutes_before ≈ now() dhe reminder_enabled = true
+Queue	Laravel Queue (database ose Redis driver) për dërgim async të njoftimeve, që të mos bllokojë request-e
+Database	MySQL/MariaDB
+Autentikim	Berberi/Admin login klasik (Laravel Breeze/Fortify); Klienti NUK ka nevojë për account — identifikohet me telefon + booking ID (link unik në notification)
+8.1 Si funksionon "Action Buttons" në Web Push (FCM)
+
+Web push (browser) nuk lejon gjithmonë 2 butona veprimi direkt brenda vetë notification-it në të gjitha platformat në mënyrë të njëjtë. Sugjerimi praktik:
+
+Dërgo FCM notification me link unik: https://domain.com/confirm/{booking_uuid}
+Kur klienti klikon njoftimin → hapet një faqe e vogël me 2 butona të mëdhenj "Po, konfirmoj" / "Jo, anuloj"
+Klikimi thërret endpoint POST /api/bookings/{uuid}/respond me {response: 'confirmed'|'cancelled'}
+Backend përditëson statusin dhe (nëse berberi e ka ON) i dërgon atij update push në kohë reale
+
+Alternativë (nëse duam veprim direkt në vetë notification, jo faqe): përdor Notification Actions API (mbështetet në Chrome/Android për service workers) — Gemini agent duhet ta testojë compatibility-n dhe të bjerë prapa te faqja e sipërme si fallback universal.
+
+9. State Machine i Statusit të Rezervimit
+pending
+  │  (reminder u dërgua)
+  ▼
+awaiting_response
+  ├── klienti klikon "Po"  → confirmed
+  ├── klienti klikon "Jo"  → cancelled (cancel_reason=client_declined)
+  └── s'ka përgjigje brenda timeout → no_response
+
+confirmed / no_response
+  └── berberi mund ta shënojë manualisht si → completed (pas takimit) ose cancelled
+
+cancelled / no_response → sllot-i lirohet automatikisht për rezervime të reja
+10. Reguj Biznesi për t'u Respektuar Patjetër
+Asnjë reminder s'dërgohet nëse reminder_enabled = false te ai rezervim specifik.
+Nëse berberi e fik globalisht reminder-at (§5.5), asnjë job nuk duhet të dërgojë asgjë, edhe nëse rezervime individuale e kanë ON.
+Klienti mund të ndryshojë përgjigjen VETËM brenda linkut unik të tij (uuid), jo duke hyrë diku me login.
+Kur nje sllot bëhet cancelled/no_response, duhet të bëhet menjëherë i disponueshëm në kalendar për klientë të tjerë (jo me vonesë manuale).
+"Çfarëdo Ore e Lirë" (auto-assign berber) nuk duhet të lejojë 2 klientë të zënë të njëjtin sllot të njëjtit berber njëkohësisht — përdor database transaction/lock kur konfirmohet rezervimi.
+Telefoni i klientit vlidohet (format) por s'kërkohet verifikim OTP në v1 (mund të shtohet më vonë si feature #2).
+11. Roadmap i Sugjeruar (Faza për Gemini Agent)
+Faza	Përmbajtja
+F1 — Baza	DB schema, modelet, migrations, seed berbers/services
+F2 — Landing + Booking Flow	Landing page, zgjedhje berber/orar, formë klienti, ruajtja e rezervimit
+F3 — Paneli i Berberit	Login, dashboard, menaxhim rezervime & orar
+F4 — Firebase Integration	Setup FCM (web push), ruajtja e device tokens, service worker + ekrani UI "Integrime → Firebase" (§6.6)
+F5 — Messenger Integration	OAuth me Facebook Page, webhook messaging_referrals/postback, dërgim me CONFIRMED_EVENT_UPDATE tag + ekrani UI "Integrime → Messenger" (§6.6)
+F6 — Reminder Engine	Scheduler + Queue Job që dërgon reminder-at (me fallback push↔messenger), faqja e konfirmimit uuid-based, postback handler i Messenger
+F7 — Settings & Toggle-at	Cilësimet e reminder-ave (klient + berber), zgjedhja e kanaleve, on/off globale
+F8 — Polish	Notifikime live drejt panelit, raporte bazë, UI/UX final, testim end-to-end

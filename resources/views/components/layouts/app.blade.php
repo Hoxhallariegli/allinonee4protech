@@ -7,6 +7,7 @@
     <title>@yield('title') {{ $title ?? null }} - {{ config('app.name', 'Laravel') }}</title>
     @stack('scripts')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
         // Theme Loader

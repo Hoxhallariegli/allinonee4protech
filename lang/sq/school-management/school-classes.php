@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'SchoolClass' => 'SchoolClass',
+  'SchoolClasses' => 'SchoolClasses',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add SchoolClass' => 'Add SchoolClass',
+  'Edit SchoolClass' => 'Edit SchoolClass',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'SchoolClass created.',
+  'updated' => 'SchoolClass updated.',
+  'deleted' => 'SchoolClass deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Teacher Id' => 'Teacher Id',
+  'Capacity' => 'Capacity',
+];

@@ -1,121 +1,339 @@
-### RREGULLAT PËR RELACIONET (DOT NOTATION) ###
-# Kur dëshiron të marrësh një fushë (p.sh 'name') nga një tabelë e lidhur (p.sh 'employees')
-# përmes një tabele ndërmjetëse (p.sh 'mechanics'), përdor rregullat e mëposhtme:
-#
-# 1. FORMATI: "relation_id`n8`nrelated_table`nRELATION.FIELD`nno"
-# 2. SHEMBULL (JobCard -> Mechanic -> Employee):
-#    Në vend të thjesht 'name', përdor 'employee.name'.
-#    Gjeneratori do të bëjë automatikisht:
-#    - Eager Loading: JobCard::with('mechanic.employee')
-#    - View Index: $item->mechanic?->employee?->name
-#    - Dropdown: Do të shfaqë emrin e punonjësit për çdo mekanik.
-#
-# 3. AUTO-LOAD (Cascading):
-#    Nëse në një formë ke dy dropdown-e të lidhura (p.sh Model dhe Brand),
-#    vendos Modelin pas Brand-it. Kur zgjedh Modelin, sistemi do të
-#    mbushë automatikisht Brand-in e duhur.
+### RREGULLAT E GJENERIMIT (GOD VERSION - TREE LOGIC) ###
+# 1. FORMATI: "field_id`n8`related_table`nDISPLAY_FIELD`nno"
+# 2. AUTO-ID: Grupi i parë merr ID 1 (prefix 1arm_), i dyti ID 2 (prefix 2ce_), etj.
+# 3. DOT NOTATION: Përdor 'employee.name' për lidhje 2-nivele (eager loading automatik).
+# 4. REMOVE: 'remove:view' pastron çdo gjë: DB, Files, Nav, Translation folders.
 
 -------------------------------------------------------------------------
 
+# --- 1. AUTO REPAIR MANAGEMENT SYSTEM (arm_) ---
+
 # Customer
-"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Customer --api
+"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Customer --api --group="Auto Repair Management"
 
 # VehicleBrand
-"name`n0`nno`n`ntag" | php artisan new:view VehicleBrand --api
+"name`n0`nno`n`ntag" | php artisan new:view VehicleBrand --api --group="Auto Repair Management"
 
 # VehicleModel
-"name`n0`nno`nbrand_id`n8`nvehicle_brands`nname`nno`n`ntag" | php artisan new:view VehicleModel --api
+"name`n0`nno`nbrand_id`n8`nvehicle_brands`nname`nno`n`ntag" | php artisan new:view VehicleModel --api --group="Auto Repair Management"
 
-# Vehicle (Auto-fill Brand kur zgjedh Model)
-"brand_id`n8`nvehicle_brands`nname`nno`nmodel_id`n8`nvehicle_models`nname`nno`nyear`n2`nyes`ncustomer_id`n8`ncustomers`nname`nno`nlicense_plate`n0`nyes`nvin`n0`nyes`n`ntruck" | php artisan new:view Vehicle --api
+# Vehicle
+"brand_id`n8`nvehicle_brands`nname`nno`nmodel_id`n8`nvehicle_models`nname`nno`nyear`n2`nyes`ncustomer_id`n8`ncustomers`nname`nno`nlicense_plate`n0`nyes`nvin`n0`nyes`n`ntruck" | php artisan new:view Vehicle --api --group="Auto Repair Management"
 
 # VehicleDocument
-"type`n0`nno`ndocument`n0`nno`nvehicle_id`n8`nvehicles`nlicense_plate`nno`n`ndocument" | php artisan new:view VehicleDocument --api
+"type`n0`nno`ndocument`n0`nno`nvehicle_id`n8`nvehicles`nlicense_plate`nno`n`ndocument" | php artisan new:view VehicleDocument --api --group="Auto Repair Management"
 
 # Employee
-"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Employee --api
+"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Employee --api --group="Auto Repair Management"
 
 # Mechanic
-"employee_id`n8`nemployees`nname`nno`nspecialization`n0`nyes`n`nuser" | php artisan new:view Mechanic --api
+"employee_id`n8`nemployees`nname`nno`nspecialization`n0`nyes`n`nuser" | php artisan new:view Mechanic --api --group="Auto Repair Management"
 
-# JobCard (Përdor employee.name për mekanikun - AUTO EAGER LOADING)
-"vehicle_id`n8`nvehicles`nlicense_plate`nno`ncustomer_id`n8`ncustomers`nname`nno`nmechanic_id`n8`nmechanics`nemployee.name`nno`nstatus`n0`nno`nopened_at`n7`nyes`nclosed_at`n7`nyes`n`nclipboard-document" | php artisan new:view JobCard --api
+# JobCard
+"vehicle_id`n8`nvehicles`nlicense_plate`nno`ncustomer_id`n8`ncustomers`nname`nno`nmechanic_id`n8`nmechanics`nemployee.name`nno`nstatus`n0`nno`nopened_at`n7`nyes`nclosed_at`n7`nyes`n`nclipboard-document" | php artisan new:view JobCard --api --group="Auto Repair Management"
 
 # Service
-"name`n0`nno`nprice`n5`nno`nduration`n2`nyes`n`ntag" | php artisan new:view Service --api
+"name`n0`nno`nprice`n5`nno`nduration`n2`nyes`n`ntag" | php artisan new:view Service --api --group="Auto Repair Management"
 
 # Part
-"name`n0`nno`nprice`n5`nno`nstock`n2`nyes`n`ntag" | php artisan new:view Part --api
-
-# JobCardService
-"job_card_id`n8`njob_cards`nid`nno`nservice_id`n8`nservices`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view JobCardService --api
-
-# JobCardPart
-"job_card_id`n8`njob_cards`nid`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view JobCardPart --api
+"name`n0`nno`nprice`n5`nno`nstock`n2`nyes`n`ntag" | php artisan new:view Part --api --group="Auto Repair Management"
 
 # Inventory
-"part_id`n8`nparts`nname`nno`nquantity`n2`nno`n`narchive-box" | php artisan new:view Inventory --api
+"part_id`n8`nparts`nname`nno`nquantity`n2`nno`n`narchive-box" | php artisan new:view Inventory --api --group="Auto Repair Management"
+
+# JobCardService
+"job_card_id`n8`njob_cards`nid`nno`nservice_id`n8`nservices`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view JobCardService --api --group="Auto Repair Management"
+
+# JobCardPart
+"job_card_id`n8`njob_cards`nid`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view JobCardPart --api --group="Auto Repair Management"
 
 # Supplier
-"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Supplier --api
+"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`ntruck" | php artisan new:view Supplier --api --group="Auto Repair Management"
 
 # PurchaseOrder
-"supplier_id`n8`nsuppliers`nname`nno`norder_date`n6`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view PurchaseOrder --api
+"supplier_id`n8`nsuppliers`nname`nno`norder_date`n6`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view PurchaseOrder --api --group="Auto Repair Management"
 
 # PurchaseOrderItem
-"purchase_order_id`n8`npurchase_orders`nid`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view PurchaseOrderItem --api
+"purchase_order_id`n8`npurchase_orders`nid`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`nclipboard-document" | php artisan new:view PurchaseOrderItem --api --group="Auto Repair Management"
 
 # Estimate
-"job_card_id`n8`njob_cards`nid`nno`nestimate_date`n6`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view Estimate --api
+"job_card_id`n8`njob_cards`nid`nno`nestimate_date`n6`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view Estimate --api --group="Auto Repair Management"
 
 # EstimateItem
-"estimate_id`n8`nestimates`nid`nno`nservice_id`n8`nservices`nname`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`n`ntag" | php artisan new:view EstimateItem --api
+"estimate_id`n8`nestimates`nid`nno`nservice_id`n8`nservices`nname`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`n`nclipboard-document" | php artisan new:view EstimateItem --api --group="Auto Repair Management"
 
 # Invoice
-"job_card_id`n8`njob_cards`nid`nno`ninvoice_date`n6`nno`ntotal`n5`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view Invoice --api
+"job_card_id`n8`njob_cards`nid`nno`ninvoice_date`n6`nno`ntotal`n5`nno`nstatus`n0`nno`n`nclipboard-document" | php artisan new:view Invoice --api --group="Auto Repair Management"
 
 # InvoiceItem
-"invoice_id`n8`ninvoices`nid`nno`nservice_id`n8`nservices`nname`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`ntag" | php artisan new:view InvoiceItem --api
+"invoice_id`n8`ninvoices`nid`nno`nservice_id`n8`nservices`nname`nno`npart_id`n8`nparts`nname`nno`nquantity`n2`nno`nprice`n5`nno`n`nclipboard-document" | php artisan new:view InvoiceItem --api --group="Auto Repair Management"
 
 # Appointment
-"vehicle_id`n8`nvehicles`nlicense_plate`nno`nappointment_date`n7`nno`nstatus`n0`nno`nnotes`n1`nyes`n`ncalendar" | php artisan new:view Appointment --api
+"vehicle_id`n8`nvehicles`nlicense_plate`nno`nappointment_date`n7`nno`nstatus`n0`nno`nnotes`n1`nyes`n`ncalendar" | php artisan new:view Appointment --api --group="Auto Repair Management"
 
 # Report
-"report_type`n0`nno`nreport_date`n6`nno`n`nchart-bar" | php artisan new:view Report --api
+"report_type`n0`nno`nreport_date`n6`nno`n`nchart-bar" | php artisan new:view Report --api --group="Auto Repair Management"
 
 
+# --- 2. CONSTRUCTION ERP (ce_) ---
+
+# Client
+"name`n0`nno`nemail`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Client --api --group="Construction ERP"
+
+# Supplier
+"name`n0`nno`nphone`n0`nyes`n`ntruck" | php artisan new:view Supplier --api --group="Construction ERP"
+
+# Employee
+"name`n0`nno`nposition`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Employee --api --group="Construction ERP"
+
+# Project
+"name`n0`nno`nclient_id`n8`nclients`nname`nno`nstart_date`n6`nno`nbudget`n5`nyes`nstatus`n9`nplanning,active,completed`nno`n`nbuilding-office" | php artisan new:view Project --api --group="Construction ERP"
+
+# Building
+"project_id`n8`nprojects`nname`nno`nname`n0`nno`nfloors`n2`nyes`n`nbuilding-office" | php artisan new:view Building --api --group="Construction ERP"
+
+# Apartment
+"building_id`n8`nbuildings`nname`nno`nnumber`n0`nno`narea`n5`nyes`nstatus`n9`navailable,sold,reserved`nno`n`nhome" | php artisan new:view Apartment --api --group="Construction ERP"
+
+# Material
+"name`n0`nno`nunit`n0`nyes`nprice`n5`nno`nstock`n2`nyes`n`narchive-box" | php artisan new:view Material --api --group="Construction ERP"
+
+# PurchaseOrder
+"supplier_id`n8`nsuppliers`nname`nno`nproject_id`n8`nprojects`nname`nno`norder_date`n6`nno`nstatus`n9`npending,delivered`nno`n`nclipboard-document" | php artisan new:view PurchaseOrder --api --group="Construction ERP"
+
+# Contract
+"project_id`n8`nprojects`nname`nno`nclient_id`n8`nclients`nname`nno`ncontract_date`n6`nno`namount`n5`nno`n`ndocument" | php artisan new:view Contract --api --group="Construction ERP"
+
+# ProgressReport
+"project_id`n8`nprojects`nname`nno`nreport_date`n6`nno`npercentage`n2`nno`n`nchart-bar" | php artisan new:view ProgressReport --api --group="Construction ERP"
+
+
+# --- 3. SCHOOL MANAGEMENT (sm_) ---
+
+# Guardian
+"name`n0`nno`nphone`n0`nyes`nemail`n0`nyes`n`nuser" | php artisan new:view Guardian --api --group="School Management"
+
+# Teacher
+"name`n0`nno`nsubject`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Teacher --api --group="School Management"
+
+# SchoolClass
+"name`n0`nno`nteacher_id`n8`nteachers`nname`nno`ncapacity`n2`nyes`n`nacademic-cap" | php artisan new:view SchoolClass --api --group="School Management"
+
+# Student
+"name`n0`nno`nguardian_id`n8`nguardians`nname`nno`nclass_id`n8`nschool_classes`nname`nno`nbirth_date`n6`nyes`n`nuser" | php artisan new:view Student --api --group="School Management"
+
+# Attendance
+"student_id`n8`nstudents`nname`nno`nclass_id`n8`nschool_classes`nname`nno`ndate`n6`nno`nstatus`n9`npresent,absent,late`nno`n`ncalendar" | php artisan new:view Attendance --api --group="School Management"
+
+# Exam
+"name`n0`nno`nclass_id`n8`nschool_classes`nname`nno`nexam_date`n6`nno`n`nclipboard-document" | php artisan new:view Exam --api --group="School Management"
+
+# Grade
+"student_id`n8`nstudents`nname`nno`nexam_id`n8`nexams`nname`nno`nscore`n2`nno`n`nchart-bar" | php artisan new:view Grade --api --group="School Management"
+
+# Payment
+"student_id`n8`nstudents`nname`nno`namount`n5`nno`npayment_date`n6`nno`n`nbanknotes" | php artisan new:view Payment --api --group="School Management"
+
+
+# --- 4. WAREHOUSE MANAGEMENT (wm_) ---
+
+# Category
+"name`n0`nno`ndescription`n1`nyes`n`ntag" | php artisan new:view Category --api --group="Warehouse Management"
+
+# Supplier
+"name`n0`nno`nphone`n0`nyes`n`ntruck" | php artisan new:view Supplier --api --group="Warehouse Management"
+
+# Customer
+"name`n0`nno`nphone`n0`nyes`nemail`n0`nyes`n`nuser" | php artisan new:view Customer --api --group="Warehouse Management"
+
+# Warehouse
+"name`n0`nno`naddress`n0`nyes`n`nbuilding-office" | php artisan new:view Warehouse --api --group="Warehouse Management"
+
+# Product
+"name`n0`nno`ncategory_id`n8`ncategories`nname`nno`nprice`n5`nno`nstock`n2`nyes`n`narchive-box" | php artisan new:view Product --api --group="Warehouse Management"
+
+# PurchaseOrder
+"supplier_id`n8`nsuppliers`nname`nno`norder_date`n6`nno`nstatus`n9`npending,received,cancelled`nno`n`nclipboard-document" | php artisan new:view PurchaseOrder --api --group="Warehouse Management"
+
+# Sale
+"customer_id`n8`ncustomers`nname`nno`nsale_date`n6`nno`ntotal`n5`nno`n`nbanknotes" | php artisan new:view Sale --api --group="Warehouse Management"
+
+# StockTransfer
+"product_id`n8`nproducts`nname`nno`nfrom_warehouse_id`n8`nwarehouses`nname`nno`nto_warehouse_id`n8`nwarehouses`nname`nno`nquantity`n2`nno`n`narrows-right-left" | php artisan new:view StockTransfer --api --group="Warehouse Management"
+
+
+# --- 5. CLINIC MANAGEMENT (cm_) ---
+
+# Doctor
+"name`n0`nno`nspecialization`n0`nyes`nphone`n0`nyes`n`nuser" | php artisan new:view Doctor --api --group="Clinic Management"
+
+# Patient
+"name`n0`nno`nphone`n0`nyes`nbirth_date`n6`nyes`n`nuser" | php artisan new:view Patient --api --group="Clinic Management"
+
+# Visit
+"patient_id`n8`npatients`nname`nno`ndoctor_id`n8`ndoctors`nname`nno`nvisit_date`n7`nno`ndiagnosis`n1`nyes`n`nclipboard-document" | php artisan new:view Visit --api --group="Clinic Management"
+
+# Prescription
+"visit_id`n8`nvisits`npatient.name`nno`nmedicine`n0`nno`ndosage`n0`nyes`n`ndocument" | php artisan new:view Prescription --api --group="Clinic Management"
+
+# ClinicInvoice
+"visit_id`n8`nvisits`npatient.name`nno`namount`n5`nno`nstatus`n9`npaid,pending`nno`n`nclipboard-document" | php artisan new:view ClinicInvoice --api --group="Clinic Management"
+
+
+# --- 6. RESTAURANT POS (rp_) ---
+
+# Waiter
+"name`n0`nno`nphone`n0`nyes`n`nuser" | php artisan new:view Waiter --api --group="Restaurant POS"
+
+# DiningTable
+"number`n0`nno`ncapacity`n2`nyes`nstatus`n9`nfree,occupied`nno`n`nsquares-2x2" | php artisan new:view DiningTable --api --group="Restaurant POS"
+
+# MenuItem
+"name`n0`nno`nprice`n5`nno`ncategory`n0`nyes`n`ntag" | php artisan new:view MenuItem --api --group="Restaurant POS"
+
+# Order
+"table_id`n8`ndining_tables`nnumber`nno`nwaiter_id`n8`nwaiters`nname`nno`norder_date`n7`nno`nstatus`n9`npending,ready,paid`nno`n`nclipboard-document" | php artisan new:view Order --api --group="Restaurant POS"
+
+# OrderItem
+"order_id`n8`norders`nid`nno`nmenu_item_id`n8`nmenu_items`nname`nno`nquantity`n2`nno`n`ntag" | php artisan new:view OrderItem --api --group="Restaurant POS"
+
+# Payment
+"order_id`n8`norders`nid`nno`namount`n5`nno`nmethod`n9`ncash,card`nno`n`nbanknotes" | php artisan new:view Payment --api --group="Restaurant POS"
+
+
+# --- 7. REAL ESTATE CRM (rec_) ---
+
+# Owner
+"name`n0`nno`nphone`n0`nyes`nemail`n0`nyes`n`nuser" | php artisan new:view Owner --api --group="Real Estate CRM"
+
+# Agent
+"name`n0`nno`nphone`n0`nyes`n`nuser" | php artisan new:view Agent --api --group="Real Estate CRM"
+
+# Client
+"name`n0`nno`nphone`n0`nyes`nemail`n0`nyes`n`nuser" | php artisan new:view Client --api --group="Real Estate CRM"
+
+# Property
+"title`n0`nno`nowner_id`n8`nowners`nname`nno`nagent_id`n8`nagents`nname`nno` price`n5`nno`ntype`n9`napartment,house,land`nno`n`nhome" | php artisan new:view Property --api --group="Real Estate CRM"
+
+# PropertyVisit
+"property_id`n8`nproperties`ntitle`nno`nclient_id`n8`nclients`nname`nno`nvisit_date`n7`nno`n`ncalendar" | php artisan new:view PropertyVisit --api --group="Real Estate CRM"
+
+# Contract
+"property_id`n8`nproperties`ntitle`nno`nclient_id`n8`nclients`nname`nno`namount`n5`nno`n`ndocument" | php artisan new:view Contract --api --group="Real Estate CRM"
+
+
+# --- 8. CRM (crm_) ---
+
+# Company
+"name`n0`nno`nindustry`n0`nyes`nphone`n0`nyes`n`nbuilding-office" | php artisan new:view Company --api --group="CRM"
+
+# Contact
+"name`n0`nno`ncompany_id`n8`ncompanies`nname`nno`nemail`n0`nyes`n`nuser" | php artisan new:view Contact --api --group="CRM"
+
+# Lead
+"name`n0`nno`ncompany_id`n8`ncompanies`nname`nno`nsource`n0`nyes`nstatus`n9`nnew,contacted,qualified`nno`n`ntag" | php artisan new:view Lead --api --group="CRM"
+
+# Deal
+"name`n0`nno`ncontact_id`n8`ncontacts`nname`nno`nvalue`n5`nno`nstage`n9`nprospecting,negotiation,won,lost`nno`n`nchart-bar" | php artisan new:view Deal --api --group="CRM"
+
+# Task
+"title`n0`nno`ndeal_id`n8`ndeals`nname`nno`ndue_date`n6`nno`ncompleted`n4`nyes`n`nclipboard-document" | php artisan new:view Task --api --group="CRM"
 
 
 ### HIQ (Ekzekuto këto nëse do të rinisësh nga zero)
 
-php artisan remove:view Report
-php artisan remove:view Appointment
-php artisan remove:view InvoiceItem
-php artisan remove:view Invoice
-php artisan remove:view EstimateItem
-php artisan remove:view Estimate
-php artisan remove:view PurchaseOrderItem
-php artisan remove:view PurchaseOrder
-php artisan remove:view Supplier
-php artisan remove:view Inventory
-php artisan remove:view Part
-php artisan remove:view Service
-php artisan remove:view JobCardPart
-php artisan remove:view JobCardService
-php artisan remove:view JobCard
-php artisan remove:view Mechanic
-php artisan remove:view Employee
-php artisan remove:view VehicleDocument
-php artisan remove:view Vehicle
-php artisan remove:view VehicleModel
-php artisan remove:view VehicleBrand
-php artisan remove:view Customer
+# Auto Repair Management
+php artisan remove:view Part --group="Auto Repair Management" --force
+php artisan remove:view Service --group="Auto Repair Management" --force
+php artisan remove:view JobCard --group="Auto Repair Management" --force
+php artisan remove:view Mechanic --group="Auto Repair Management" --force
+php artisan remove:view Employee --group="Auto Repair Management" --force
+php artisan remove:view VehicleDocument --group="Auto Repair Management" --force
+php artisan remove:view Vehicle --group="Auto Repair Management" --force
+php artisan remove:view VehicleModel --group="Auto Repair Management" --force
+php artisan remove:view VehicleBrand --group="Auto Repair Management" --force
+php artisan remove:view Customer --group="Auto Repair Management" --force
+php artisan remove:view Report --group="Auto Repair Management" --force
+php artisan remove:view Appointment --group="Auto Repair Management" --force
+php artisan remove:view InvoiceItem --group="Auto Repair Management" --force
+php artisan remove:view Invoice --group="Auto Repair Management" --force
+php artisan remove:view EstimateItem --group="Auto Repair Management" --force
+php artisan remove:view Estimate --group="Auto Repair Management" --force
+php artisan remove:view PurchaseOrderItem --group="Auto Repair Management" --force
+php artisan remove:view PurchaseOrder --group="Auto Repair Management" --force
+php artisan remove:view Supplier --group="Auto Repair Management" --force
+php artisan remove:view Inventory --group="Auto Repair Management" --force
+php artisan remove:view JobCardPart --group="Auto Repair Management" --force
+php artisan remove:view JobCardService --group="Auto Repair Management" --force
+
+# Construction ERP
+php artisan remove:view ProgressReport --group="Construction ERP" --force
+php artisan remove:view Contract --group="Construction ERP" --force
+php artisan remove:view PurchaseOrder --group="Construction ERP" --force
+php artisan remove:view Material --group="Construction ERP" --force
+php artisan remove:view Apartment --group="Construction ERP" --force
+php artisan remove:view Building --group="Construction ERP" --force
+php artisan remove:view Project --group="Construction ERP" --force
+php artisan remove:view Employee --group="Construction ERP" --force
+php artisan remove:view Supplier --group="Construction ERP" --force
+php artisan remove:view Client --group="Construction ERP" --force
+
+# School Management
+php artisan remove:view Payment --group="School Management" --force
+php artisan remove:view Grade --group="School Management" --force
+php artisan remove:view Exam --group="School Management" --force
+php artisan remove:view Attendance --group="School Management" --force
+php artisan remove:view Student --group="School Management" --force
+php artisan remove:view SchoolClass --group="School Management" --force
+php artisan remove:view Teacher --group="School Management" --force
+php artisan remove:view Guardian --group="School Management" --force
+
+# Warehouse Management
+php artisan remove:view StockTransfer --group="Warehouse Management" --force
+php artisan remove:view Sale --group="Warehouse Management" --force
+php artisan remove:view PurchaseOrder --group="Warehouse Management" --force
+php artisan remove:view Product --group="Warehouse Management" --force
+php artisan remove:view Warehouse --group="Warehouse Management" --force
+php artisan remove:view Customer --group="Warehouse Management" --force
+php artisan remove:view Supplier --group="Warehouse Management" --force
+php artisan remove:view Category --group="Warehouse Management" --force
+
+# Clinic Management
+php artisan remove:view ClinicInvoice --group="Clinic Management" --force
+php artisan remove:view Prescription --group="Clinic Management" --force
+php artisan remove:view Visit --group="Clinic Management" --force
+php artisan remove:view Patient --group="Clinic Management" --force
+php artisan remove:view Doctor --group="Clinic Management" --force
+
+# Restaurant POS
+php artisan remove:view Payment --group="Restaurant POS" --force
+php artisan remove:view OrderItem --group="Restaurant POS" --force
+php artisan remove:view Order --group="Restaurant POS" --force
+php artisan remove:view MenuItem --group="Restaurant POS" --force
+php artisan remove:view DiningTable --group="Restaurant POS" --force
+php artisan remove:view Waiter --group="Restaurant POS" --force
+
+# Real Estate CRM
+php artisan remove:view Contract --group="Real Estate CRM" --force
+php artisan remove:view PropertyVisit --group="Real Estate CRM" --force
+php artisan remove:view Property --group="Real Estate CRM" --force
+php artisan remove:view Client --group="Real Estate CRM" --force
+php artisan remove:view Agent --group="Real Estate CRM" --force
+php artisan remove:view Owner --group="Real Estate CRM" --force
+
+# CRM
+php artisan remove:view Task --group="CRM" --force
+php artisan remove:view Deal --group="CRM" --force
+php artisan remove:view Lead --group="CRM" --force
+php artisan remove:view Contact --group="CRM" --force
+php artisan remove:view Company --group="CRM" --force
 
 
+### TINKER SEEDER (PRO) ###
 
 php artisan tinker
 
-use App\Models\{Customer, VehicleBrand, VehicleModel, Vehicle, VehicleDocument, Employee, Mechanic, Service, Part, JobCard, JobCardService, JobCardPart, Inventory, Supplier, PurchaseOrder, PurchaseOrderItem, Estimate, EstimateItem, Invoice, InvoiceItem, Appointment, Report};
+use App\Models\AutoRepairManagement\{Customer, VehicleBrand, VehicleModel, Vehicle, VehicleDocument, Employee, Mechanic, Service, Part, JobCard, JobCardService, JobCardPart, Inventory, Supplier, PurchaseOrder, PurchaseOrderItem, Estimate, EstimateItem, Invoice, InvoiceItem, Appointment, Report};
 use Illuminate\Support\Str;
 
 echo "🚀 Duke nisur popullimin e plotë të sistemit Enterprise...\n";

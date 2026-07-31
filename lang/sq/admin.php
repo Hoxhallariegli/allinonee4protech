@@ -1,6 +1,6 @@
 <?php
 
-return [
+return array (
   'Back to List' => 'Kthehu te lista',
   'Dashboard' => 'Paneli',
   'Settings' => 'Cilësimet',
@@ -28,4 +28,18 @@ return [
   'Categories' => 'Kategoritë',
   'BlogPosts' => 'Artikujt',
   'View Current File' => 'View Current File',
-];
+  'Auto Repair Management' => 'Auto Repair Management',
+  'Construction ERP' => 'Construction ERP',
+  'School Management' => 'School Management',
+  'Warehouse Management' => 'Warehouse Management',
+  'Clinic Management' => 'Clinic Management',
+  'Restaurant POS' => 'Restaurant POS',
+  'Real Estate CRM' => 'Real Estate CRM',
+  'CRM' => 'CRM',
+  'Auto Repair Management Dashboard' => 'Auto Repair Management Dashboard',
+  'Construction ERP Dashboard' => 'Construction ERP Dashboard',
+  'School Management Dashboard' => 'School Management Dashboard',
+  'Berber App' => 'Berber App',
+  'Berber App Dashboard' => 'Paneli i Berber App',
+  'Landing Page' => 'Faqja Kryesore',
+);

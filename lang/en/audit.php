@@ -12,4 +12,9 @@ return [
   'Advanced Search' => 'Advanced Search',
   'Reset form' => 'Reset form',
   'Created Date Range' => 'Created Date Range',
+  'ID' => 'ID',
+  'Ref ID' => 'Ref ID',
+  'Changes' => 'Changes',
+  'Date' => 'Date',
+  'No specific changes' => 'No specific changes',
 ];

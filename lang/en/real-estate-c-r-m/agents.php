@@ -1,0 +1,27 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Agent' => 'Agent',
+  'Agents' => 'Agents',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Agent' => 'Add Agent',
+  'Edit Agent' => 'Edit Agent',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Agent created.',
+  'updated' => 'Agent updated.',
+  'deleted' => 'Agent deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Phone' => 'Phone',
+];

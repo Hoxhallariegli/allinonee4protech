@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Domain\BerberApp\Barber\Actions;
+
+use App\Models\BerberApp\Barber;
+use App\Models\BerberApp\BarberException;
+use App\Models\BerberApp\Booking;
+use App\Models\BerberApp\Reminder;
+use App\Services\FirebaseService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
+class HandleBarberAbsence
+{
+    public function __construct(
+        protected FirebaseService $firebaseService
+    ) {}
+
+    /**
+     * Handles barber absence (emergency or planned).
+     *
+     * @param int $barberId
+     * @param string $start (Y-m-d H:i)
+     * @param string $end (Y-m-d H:i)
+     * @param string $type (emergency|vacation)
+     * @param string|null $reason
+     * @return void
+     */
+    public function execute(int $barberId, string $start, string $end, string $type = 'emergency', ?string $reason = null)
+    {
+        $barber = Barber::findOrFail($barberId);
+        $startTime = Carbon::parse($start);
+        $endTime = Carbon::parse($end);
+
+        // 1. Create the exception
+        BarberException::create([
+            'barber_id' => $barberId,
+            'start_datetime' => $startTime,
+            'end_datetime' => $endTime,
+            'type' => $type,
+            'reason' => $reason,
+        ]);
+
+        // 2. Find affected bookings using overlap logic
+        $bookings = Booking::where('barber_id', $barberId)
+            ->whereIn('status', ['pending', 'confirmed', 'awaiting_response'])
+            ->join('ba_services', 'ba_bookings.service_id', '=', 'ba_services.id')
+            ->where(function ($query) use ($startTime, $endTime) {
+                // Conflict logic: Booking overlaps with Absence if:
+                // BookingStart < AbsenceEnd AND BookingEnd > AbsenceStart
+                $query->where('appointment_datetime', '<', $endTime->toDateTimeString())
+                      ->whereRaw('datetime(appointment_datetime, "+" || ba_services.duration_minutes || " minutes") > ?', [$startTime->toDateTimeString()]);
+            })
+            ->select('ba_bookings.*')
+            ->get();
+
+        foreach ($bookings as $booking) {
+            // Cancel the booking
+            $booking->update([
+                'status' => 'cancelled',
+                'cancel_reason' => "Absenca e berberit ({$type}): " . ($reason ?? 'Emergjencë'),
+            ]);
+
+            // 3. Cancel any pending reminders for this booking
+            Reminder::where('booking_id', $booking->id)
+                ->where('status', 'pending')
+                ->update(['status' => 'cancelled']);
+
+            // Notify the customer
+            $this->notifyCustomer($booking, $barber, $type);
+        }
+
+        Log::info("Handled absence for barber {$barber->name} from {$start} to {$end}. Affected bookings: " . $bookings->count());
+    }
+
+    protected function notifyCustomer(Booking $booking, Barber $barber, string $type)
+    {
+        $title = "Anullim Rezervimi - Emergjencë";
+        $message = "Përshëndetje {$booking->customer_name}. Na vjen keq, por berberi {$barber->name} nuk mund të jetë prezent sot për shkak të një emergjence. Rezervimi juaj u anullua automatikisht. Mund të rezervoni me berberët e tjerë të lirë në aplikacion.";
+
+        if ($type === 'vacation') {
+            $title = "Ndryshim në Rezervim";
+            $message = "Përshëndetje {$booking->customer_name}. Berberi {$barber->name} do të jetë me pushime gjatë orarit tuaj. Rezervimi u anullua. Ju lutem zgjidhni një berber tjetër ose një datë tjetër.";
+        }
+
+        // We target the booking topic or use device tokens if we had a mapping
+        // For now, using the topic "booking_{id}" as established before
+        $this->firebaseService->sendNotification($title, $message, "booking_{$booking->id}");
+    }
+}

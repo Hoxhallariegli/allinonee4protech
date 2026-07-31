@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Prescription' => 'Prescription',
+  'Prescriptions' => 'Prescriptions',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Prescription' => 'Add Prescription',
+  'Edit Prescription' => 'Edit Prescription',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Prescription created.',
+  'updated' => 'Prescription updated.',
+  'deleted' => 'Prescription deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Visit Id' => 'Visit Id',
+  'Medicine' => 'Medicine',
+  'Dosage' => 'Dosage',
+];

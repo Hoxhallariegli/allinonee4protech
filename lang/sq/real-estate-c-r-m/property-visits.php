@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'PropertyVisit' => 'PropertyVisit',
+  'PropertyVisits' => 'PropertyVisits',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add PropertyVisit' => 'Add PropertyVisit',
+  'Edit PropertyVisit' => 'Edit PropertyVisit',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'PropertyVisit created.',
+  'updated' => 'PropertyVisit updated.',
+  'deleted' => 'PropertyVisit deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Property Id' => 'Property Id',
+  'Client Id' => 'Client Id',
+  'Visit Date' => 'Visit Date',
+];

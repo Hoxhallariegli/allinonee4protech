@@ -1,0 +1,9 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up() { Schema::create('sm_school_classes', function (Blueprint $table) { $table->id();
+            $table->string('name');
+            $table->foreignId('teacher_id')->constrained('sm_teachers');
+            $table->integer('capacity')->nullable();
+            $table->timestamps(); }); } public function down() { Schema::dropIfExists('sm_school_classes'); } };

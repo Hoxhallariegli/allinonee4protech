@@ -12,4 +12,9 @@ return [
   'Advanced Search' => 'Kërkim i Avancuar',
   'Reset form' => 'Rivendos formën',
   'Created Date Range' => 'Gama e Datave të Krijimit',
+  'ID' => 'ID',
+  'Ref ID' => 'Ref ID',
+  'Changes' => 'Ndryshimet',
+  'Date' => 'Data',
+  'No specific changes' => 'Nuk ka ndryshime specifike',
 ];

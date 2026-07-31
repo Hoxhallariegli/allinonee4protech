@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'ProgressReport' => 'ProgressReport',
+  'ProgressReports' => 'ProgressReports',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add ProgressReport' => 'Add ProgressReport',
+  'Edit ProgressReport' => 'Edit ProgressReport',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'ProgressReport created.',
+  'updated' => 'ProgressReport updated.',
+  'deleted' => 'ProgressReport deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Project Id' => 'Project Id',
+  'Report Date' => 'Report Date',
+  'Percentage' => 'Percentage',
+];

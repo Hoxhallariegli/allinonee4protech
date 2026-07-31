@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Contract' => 'Contract',
+  'Contracts' => 'Contracts',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Contract' => 'Add Contract',
+  'Edit Contract' => 'Edit Contract',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Contract created.',
+  'updated' => 'Contract updated.',
+  'deleted' => 'Contract deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Property Id' => 'Property Id',
+  'Client Id' => 'Client Id',
+  'Amount' => 'Amount',
+];

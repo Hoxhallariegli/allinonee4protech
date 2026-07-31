@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'MenuItem' => 'MenuItem',
+  'MenuItems' => 'MenuItems',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add MenuItem' => 'Add MenuItem',
+  'Edit MenuItem' => 'Edit MenuItem',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'MenuItem created.',
+  'updated' => 'MenuItem updated.',
+  'deleted' => 'MenuItem deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Price' => 'Price',
+  'Category' => 'Category',
+];

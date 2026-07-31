@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'DiningTable' => 'DiningTable',
+  'DiningTables' => 'DiningTables',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add DiningTable' => 'Add DiningTable',
+  'Edit DiningTable' => 'Edit DiningTable',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'DiningTable created.',
+  'updated' => 'DiningTable updated.',
+  'deleted' => 'DiningTable deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Number' => 'Number',
+  'Capacity' => 'Capacity',
+  'Status' => 'Status',
+];
