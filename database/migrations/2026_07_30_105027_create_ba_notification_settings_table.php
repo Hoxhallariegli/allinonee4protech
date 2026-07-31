@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ba_notification_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->string('module');
             $table->string('event_type'); // e.g., 'created', 'reminder'
             $table->boolean('enabled')->default(true);
