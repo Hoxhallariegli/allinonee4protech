@@ -14,11 +14,6 @@ use App\Models\BerberApp\DeviceToken;
 
 class NotificationsMenu extends Component
 {
-    /**
-     * @var Collection<int, Notification>
-     */
-    public Collection $notifications;
-
     public int $unseenCount = 0;
 
     #[On('fcm-token-received')]
@@ -26,21 +21,32 @@ class NotificationsMenu extends Component
     {
         if (!auth()->check()) return;
 
+        // Handle both string and array (Livewire event payload)
+        $tokenValue = is_array($token) ? ($token['token'] ?? $token[0] ?? null) : $token;
+
+        if (!$tokenValue) return;
+
         DeviceToken::updateOrCreate(
-            ['user_id' => auth()->id(), 'fcm_token' => $token],
+            ['user_id' => auth()->id(), 'fcm_token' => $tokenValue],
             ['device_type' => 'web']
         );
     }
 
     public function mount(): void
     {
-        $this->notifications = Notification::where('assigned_to_user_id', auth()->id())->take(20)->get();
         $this->unseenCount = Notification::where('assigned_to_user_id', auth()->id())->where('viewed', 0)->count();
     }
 
     public function render(): View
     {
-        return view('livewire.admin.notifications-menu');
+        $notifications = Notification::where('assigned_to_user_id', auth()->id())
+            ->latest()
+            ->take(20)
+            ->get();
+
+        return view('livewire.admin.notifications-menu', [
+            'notifications' => $notifications
+        ]);
     }
 
     public function open(): void

@@ -81,7 +81,9 @@
                                             if (isDebug) console.log('🔑 FCM Token:', token);
 
                                             // Njoftojmë Livewire për token-in e ri
-                                            window.dispatchEvent(new CustomEvent('fcm-token-received', { detail: token }));
+                                            if (window.Livewire) {
+                                                window.Livewire.dispatch('fcm-token-received', { token: token });
+                                            }
                                         });
                                     }
                                 });

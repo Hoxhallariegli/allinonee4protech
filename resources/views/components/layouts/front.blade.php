@@ -49,7 +49,9 @@
                             if (permission === 'granted') {
                                 navigator.serviceWorker.ready.then((registration) => {
                                     messaging.getToken({ serviceWorkerRegistration: registration }).then((token) => {
-                                        window.dispatchEvent(new CustomEvent('fcm-token-received', { detail: token }));
+                                        if (window.Livewire) {
+                                            window.Livewire.dispatch('fcm-token-received', { token: token });
+                                        }
                                     }).catch((err) => {
                                         console.error('Token error:', err);
                                     });
@@ -61,7 +63,9 @@
                     if ('serviceWorker' in navigator) {
                         navigator.serviceWorker.register('/firebase-messaging-sw.js').then((registration) => {
                             messaging.getToken({ serviceWorkerRegistration: registration }).then((token) => {
-                                window.dispatchEvent(new CustomEvent('fcm-token-received', { detail: token }));
+                                if (window.Livewire) {
+                                    window.Livewire.dispatch('fcm-token-received', { token: token });
+                                }
                             });
                         });
                     }
