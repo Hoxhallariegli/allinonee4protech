@@ -9,17 +9,16 @@ class Barber extends Model
 {
     use HasFactory;
     protected $table = 'ba_barbers';
-    protected $fillable = ['name', 'photo', 'specialization', 'active'];
+    protected $fillable = ['user_id', 'name', 'photo', 'specialization', 'active'];
     protected function casts(): array { return [
+            'user_id' => 'string',
             'active' => 'boolean',
         ]; }
     public static function rules($id = null): array { return [
-            'name' => ['required', 'string', 'max:255'],
-            'photo' => ['nullable', 'string', 'max:255'],
-            'specialization' => ['nullable', 'string'],
             'active' => ['required', 'boolean'],
+            'user_id' => ['nullable', 'string'],
         ]; }
-    public static function sortable(): array { return ['id', 'name', 'photo', 'specialization', 'active']; }
+    public static function sortable(): array { return ['id', 'user_id', 'name', 'photo', 'specialization', 'active']; }
 
     public function exceptions()
     {
@@ -29,5 +28,10 @@ class Barber extends Model
     public function workingHours()
     {
         return $this->hasMany(BarberWorkingHour::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

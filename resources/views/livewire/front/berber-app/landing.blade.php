@@ -18,14 +18,26 @@
             </a>
 
             <nav class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[var(--ink)]/70 dark:text-[var(--paper)]/70">
-                <a href="#services" class="cursor-pointer hover:text-[var(--brass)]">Shërbimet</a>
-                <a href="#team" class="cursor-pointer hover:text-[var(--brass)]">Mjeshtrat</a>
+                <a href="#services" class="cursor-pointer hover:text-[var(--brass)]">{{ __('front/berber-app.our_services') }}</a>
+                <a href="#team" class="cursor-pointer hover:text-[var(--brass)]">{{ __('front/berber-app.meet_team') }}</a>
             </nav>
 
             <div class="flex items-center gap-3">
-                <a href="#services" class="inline-flex items-center px-5 py-2 rounded-full bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] font-semibold text-xs uppercase tracking-wider active:scale-95 cursor-pointer">
-                    Rezervo
+                <!-- Language Switcher -->
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" class="size-10 rounded-full border border-[var(--line-light)] dark:border-[var(--line-dark)] flex items-center justify-center text-[var(--ink)]/70 dark:text-[var(--paper)]/70 bg-[var(--paper-soft)] dark:bg-[var(--ink-elevated)] cursor-pointer text-[10px] font-black uppercase">
+                        {{ app()->getLocale() }}
+                    </button>
+                    <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-24 bg-[var(--paper)] dark:bg-[var(--ink-elevated)] rounded-2xl shadow-xl border border-[var(--line-light)] dark:border-[var(--line-dark)] z-50 overflow-hidden">
+                        <a href="{{ route('language.switch', 'en') }}" class="block px-4 py-2 text-[10px] font-black uppercase hover:bg-[var(--brass)]/10 {{ app()->getLocale() == 'en' ? 'text-[var(--brass)]' : '' }}">English</a>
+                        <a href="{{ route('language.switch', 'sq') }}" class="block px-4 py-2 text-[10px] font-black uppercase hover:bg-[var(--brass)]/10 {{ app()->getLocale() == 'sq' ? 'text-[var(--brass)]' : '' }}">Shqip</a>
+                    </div>
+                </div>
+
+                <a href="#services" class="hidden sm:inline-flex items-center px-5 py-2 rounded-full bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] font-semibold text-xs uppercase tracking-wider active:scale-95 cursor-pointer">
+                    {{ __('front/berber-app.book_now') }}
                 </a>
+
                 <button id="theme-toggle-front" aria-label="Ndrysho temën" class="size-10 rounded-full border border-[var(--line-light)] dark:border-[var(--line-dark)] flex items-center justify-center text-[var(--ink)]/70 dark:text-[var(--paper)]/70 bg-[var(--paper-soft)] dark:bg-[var(--ink-elevated)] cursor-pointer">
                     <x-heroicon-o-sun class="size-4 dark:hidden" />
                     <x-heroicon-o-moon class="size-4 hidden dark:block" />
@@ -70,15 +82,15 @@
                     <div class="grid grid-cols-3 gap-6 mt-14 pt-10 border-t border-[var(--line-light)] dark:border-[var(--line-dark)] max-w-lg">
                         <div>
                             <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">{{ $barbers->count() ?: '—' }}</p>
-                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Mjeshtra</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">{{ __('front/berber-app.barber') }}s</p>
                         </div>
                         <div>
                             <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">{{ $services->count() ?: '—' }}</p>
-                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Shërbime</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">{{ __('front/berber-app.our_services') }}</p>
                         </div>
                         <div>
                             <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">4.9</p>
-                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Vlerësim</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Rating</p>
                         </div>
                     </div>
                 </div>
@@ -91,19 +103,19 @@
                                 <span class="size-3 rounded-full bg-amber-500/80"></span>
                                 <span class="size-3 rounded-full bg-emerald-500/80"></span>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40"></span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40">Studio Canvas v2.4</span>
                         </div>
 
                         <div class="my-auto p-6 text-center space-y-4">
                             <div class="size-20 mx-auto rounded-3xl bg-[var(--brass)]/10 text-[var(--brass)] flex items-center justify-center">
                                 <x-heroicon-o-scissors class="size-10"/>
                             </div>
-                            <p class="font-serif italic text-xl text-[var(--ink)]/80 dark:text-[var(--paper)]/80 leading-snug">"Nuk presim vetëm flokë, kurojmë identitetin tuaj estetik."</p>
+                            <p class="font-serif italic text-xl text-[var(--ink)]/80 dark:text-[var(--paper)]/80 leading-snug">"{{ __('front/berber-app.footer_text') }}"</p>
                         </div>
 
                         <div class="p-5 rounded-2xl bg-[var(--paper)] dark:bg-[var(--ink-elevated)] border border-[var(--line-light)] dark:border-[var(--line-dark)] flex items-center justify-between text-xs font-semibold">
-                            <span class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 uppercase tracking-wider">Statusi i Barberisë</span>
-                            <span class="flex items-center gap-1.5 text-emerald-500"><span class="size-2 rounded-full bg-emerald-500"></span> Hapur & Gati</span>
+                            <span class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 uppercase tracking-wider">Status</span>
+                            <span class="flex items-center gap-1.5 text-emerald-500"><span class="size-2 rounded-full bg-emerald-500"></span> Open</span>
                         </div>
                     </div>
                 </div>
@@ -119,11 +131,11 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
                 <div>
-                    <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-base">Katalogu i punës</span>
-                    <h2 class="font-display text-5xl sm:text-6xl tracking-wide mt-1">SHËRBIMET</h2>
+                    <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-base">{{ __('front/berber-app.our_services') }}</span>
+                    <h2 class="font-display text-5xl sm:text-6xl tracking-wide mt-1 uppercase">{{ __('front/berber-app.our_services') }}</h2>
                 </div>
                 <p class="text-[var(--ink)]/55 dark:text-[var(--paper)]/55 max-w-sm text-sm leading-relaxed">
-                    Zgjidhni shërbimin tuaj për të nisur menjëherë fashën e preferuar kohore.
+                    {{ __('front/berber-app.services_subtitle') }}
                 </p>
             </div>
 
@@ -144,13 +156,13 @@
                             </span>
                         </div>
 
-                        <h3 class="font-display text-2xl tracking-wide mb-2">{{ $item->name }}</h3>
+                        <h3 class="font-display text-2xl tracking-wide mb-2 uppercase">{{ $item->name }}</h3>
                         <p class="text-[var(--ink)]/55 dark:text-[var(--paper)]/55 text-sm leading-relaxed mb-8">
-                            Përjetim i kuruar me saktësi maksimale për çdo lloj stili.
+                            {{ __('front/berber-app.services_subtitle') }}
                         </p>
 
                         <div class="flex items-center gap-2 text-xs font-bold text-[var(--brass-deep)] dark:text-[var(--brass)] uppercase tracking-widest">
-                            Rezervo Tani
+                            {{ __('front/berber-app.book_now') }}
                             <x-heroicon-o-arrow-right class="size-4"/>
                         </div>
                     </button>
@@ -163,10 +175,10 @@
     <section id="team" class="py-24 px-6 bg-[var(--paper-elevated)] dark:bg-[var(--ink-soft)] relative grain transition-colors duration-300">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-lg">Mjeshtrat tanë</span>
-                <h2 class="font-display text-6xl tracking-wider mt-2 mb-4 text-[var(--ink)] dark:text-white uppercase">EKIPI</h2>
+                <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-lg">{{ __('front/berber-app.meet_team') }}</span>
+                <h2 class="font-display text-6xl tracking-wider mt-2 mb-4 text-[var(--ink)] dark:text-white uppercase">{{ __('front/berber-app.meet_team') }}</h2>
                 <div class="flex flex-col items-center gap-2">
-                    <p class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 text-[10px] font-black uppercase tracking-[0.3em]">By @xheksilushka & @robert_b4rber</p>
+                    <p class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 text-[10px] font-black uppercase tracking-[0.3em]">{{ __('front/berber-app.team_subtitle') }}</p>
                     <div class="h-1 w-12 bg-[var(--brass)] rounded-full"></div>
                 </div>
             </div>
@@ -209,7 +221,7 @@
                 </a>
             </div>
             <p class="text-xs text-[var(--ink)]/50 dark:text-[var(--paper)]/50 font-medium">
-                © {{ date('Y') }} The Station Barbers.
+                © {{ date('Y') }} THE STATION BARBERS.
             </p>
         </div>
     </footer>
@@ -217,34 +229,23 @@
     {{-- ============ BOOKING MODAL (Zero Delay, Pure Instant) ============ --}}
     <div x-show="showBooking"
          x-cloak
-         x-init="$watch('showBooking', value => { if(value && window.requestNotificationPermission) window.requestNotificationPermission() })"
          class="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-4">
 
-        {{-- Backdrop pa asnjë lloj transition, shfaqet/zhduket menjëherë --}}
         <div x-show="showBooking" class="absolute inset-0 bg-[var(--ink)]/80 backdrop-blur-sm" @click="showBooking = false"></div>
 
         <div x-show="showBooking"
              class="relative w-full md:max-w-xl max-h-[92vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar bg-[var(--paper-soft)] dark:bg-[var(--ink-elevated)] rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-2xl border border-[var(--line-light)] dark:border-[var(--line-dark)] z-10">
 
-            {{-- Loading State --}}
-            <div wire:loading wire:target="selectService, confirmTime, submitBooking" class="absolute inset-0 z-50 bg-[var(--paper-soft)]/50 dark:bg-[var(--ink-elevated)]/50 backdrop-blur-[2px] flex items-center justify-center">
-                <div class="size-10 border-4 border-[var(--brass)]/20 border-t-[var(--brass)] rounded-full animate-spin"></div>
-            </div>
-
-            <div class="md:hidden flex justify-center pt-3 pb-1">
-                <span class="h-1.5 w-10 rounded-full bg-[var(--ink)]/20 dark:bg-[var(--paper)]/20"></span>
-            </div>
-
             <div class="p-8">
                 <div wire:loading.flex wire:target="selectService" class="absolute inset-0 z-[60] bg-[var(--paper-soft)]/80 dark:bg-[var(--ink-elevated)]/80 backdrop-blur-sm items-center justify-center flex-col gap-4">
                     <div class="size-12 border-4 border-[var(--brass)]/20 border-t-[var(--brass)] rounded-full animate-spin"></div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brass-deep)]">Duke kërkuar oraret...</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brass-deep)]">{{ __('front/berber-app.loading_slots') }}</p>
                 </div>
 
                 <div class="flex items-center justify-between pb-6 mb-6 border-b border-[var(--line-light)] dark:border-[var(--line-dark)]">
                     <div>
-                        <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-xs">Sistemi i Rezervimit</span>
-                        <h2 class="font-display text-3xl tracking-wide mt-0.5">TAKIMI JUAJ</h2>
+                        <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-xs">{{ __('front/berber-app.booking_system') }}</span>
+                        <h2 class="font-display text-3xl tracking-wide mt-0.5 uppercase">{{ __('front/berber-app.your_appointment') }}</h2>
                     </div>
                     <button @click="showBooking = false" class="size-10 rounded-full bg-[var(--ink)]/5 dark:bg-[var(--paper)]/5 flex items-center justify-center cursor-pointer hover:bg-[var(--ink)]/10 dark:hover:bg-[var(--paper)]/10">
                         <x-heroicon-o-x-mark class="size-5 text-[var(--ink)]/60 dark:text-[var(--paper)]/60"/>
@@ -254,15 +255,31 @@
                 {{-- Step 2: Date & Time Selection --}}
                 @if($step == 2)
                     <div class="space-y-6">
+                        {{-- Custom Notification Prompt --}}
+                        @if(!$fcmToken)
+                            <div class="bg-[var(--brass)]/10 p-6 rounded-3xl border border-[var(--brass)]/20 flex items-center justify-between gap-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="size-12 bg-[var(--brass)]/20 text-[var(--brass-deep)] dark:text-[var(--brass)] rounded-2xl flex items-center justify-center shrink-0">
+                                        <x-heroicon-o-bell-alert class="size-6"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-[var(--ink)] dark:text-white font-bold text-sm leading-tight italic">{{ __('front/berber-app.allow_notifications') }}</p>
+                                        <p class="text-[var(--ink)]/50 dark:text-gray-400 text-xs mt-1">{{ __('front/berber-app.notification_description') }}</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="window.requestNotificationPermission()" class="px-6 py-3 bg-[var(--brass)] text-[var(--ink)] dark:text-[var(--paper)] rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all">Lejo</button>
+                            </div>
+                        @endif
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Data</label>
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">{{ __('front/berber-app.date') }}</label>
                                 <input type="date" wire:model.live="selectedDate" min="{{ date('Y-m-d') }}" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl font-semibold text-sm cursor-pointer">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Berberi</label>
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">{{ __('front/berber-app.barber') }}</label>
                                 <select wire:model.live="selectedBarberId" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl font-semibold text-sm cursor-pointer">
-                                    <option value="">Cilido Berber</option>
+                                    <option value="">{{ __('front/berber-app.any_barber') }}</option>
                                     @foreach($barbers as $b)
                                         <option value="{{ $b->id }}">{{ $b->name }}</option>
                                     @endforeach
@@ -271,14 +288,14 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Orarët e Lira</label>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">{{ __('front/berber-app.available_slots') }}</label>
                             <div class="grid grid-cols-3 gap-2.5 max-h-52 overflow-y-auto pr-1 custom-scrollbar">
                                 @forelse($this->availableSlots as $time)
-                                    <button type="button" wire:click="confirmTime('{{ $time }}')" class="p-3 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] font-bold text-sm rounded-xl cursor-pointer hover:border-[var(--brass)]">
+                                    <button type="button" wire:click="confirmTime('{{ $time }}')" class="p-3 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] font-bold text-sm rounded-xl cursor-pointer hover:border-[var(--brass)] transition-all">
                                         {{ $time }}
                                     </button>
                                 @empty
-                                    <div class="col-span-full py-8 text-center text-xs text-[var(--ink)]/40 dark:text-[var(--paper)]/40 italic">Nuk u gjet asnjë orar i lirë.</div>
+                                    <div class="col-span-full py-8 text-center text-xs text-[var(--ink)]/40 dark:text-[var(--paper)]/40 italic">{{ __('front/berber-app.no_slots') }}</div>
                                 @endforelse
                             </div>
                         </div>
@@ -293,27 +310,27 @@
                                 <x-heroicon-o-calendar class="size-5"/>
                             </div>
                             <div>
-                                <h4 class="font-bold text-sm">{{ $selectedService->name }}</h4>
+                                <h4 class="font-bold text-sm uppercase">{{ $selectedService->name }}</h4>
                                 <p class="text-[var(--ink)]/60 dark:text-[var(--paper)]/60 text-xs">{{ Carbon\Carbon::parse($selectedDate)->format('d M Y') }} - {{ $selectedTime }}</p>
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Emri dhe Mbiemri</label>
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">{{ __('front/berber-app.full_name') }}</label>
                                 <input type="text" wire:model="customerName" placeholder="sh. Filan Fisteku" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl text-sm font-semibold">
                                 @error('customerName') <span class="text-rose-500 text-xs mt-1 ml-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Numri i Telefonit</label>
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">{{ __('front/berber-app.phone_number') }}</label>
                                 <input type="tel" wire:model="customerPhone" placeholder="069 XX XX XXX" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl text-sm font-semibold">
                                 @error('customerPhone') <span class="text-rose-500 text-xs mt-1 ml-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div class="flex items-center gap-3 pt-2">
-                            <button type="button" wire:click="$set('step', 2)" class="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--ink)]/50 cursor-pointer">Mbrapa</button>
-                            <button type="button" wire:click="submitBooking" class="flex-1 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-2xl font-bold text-xs uppercase tracking-wider cursor-pointer">Konfirmo Takimin</button>
+                            <button type="button" wire:click="$set('step', 2)" class="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--ink)]/50 cursor-pointer">{{ __('front/berber-app.back') }}</button>
+                            <button type="button" wire:click="submitBooking" class="flex-1 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-2xl font-bold text-xs uppercase tracking-wider cursor-pointer shadow-lg active:scale-95 transition-all">{{ __('front/berber-app.confirm_booking') }}</button>
                         </div>
                     </div>
                 @endif
@@ -325,10 +342,10 @@
                             <x-heroicon-o-check-circle class="size-10"/>
                         </div>
                         <div>
-                            <h2 class="font-display text-3xl tracking-wide mb-2">REZERVIMI U KRYE</h2>
-                            <p class="text-sm text-[var(--ink)]/60 dark:text-[var(--paper)]/60 max-w-sm mx-auto">Faleminderit <strong class="text-[var(--ink)] dark:text-[var(--paper)]">{{ $customerName }}</strong>. Takimi juaj u regjistrua me sukses.</p>
+                            <h2 class="font-display text-3xl tracking-wide mb-2 uppercase">{{ __('front/berber-app.booking_completed') }}</h2>
+                            <p class="text-sm text-[var(--ink)]/60 dark:text-[var(--paper)]/60 max-w-sm mx-auto">{{ __('front/berber-app.thank_you', ['name' => $customerName]) }}</p>
                         </div>
-                        <button type="button" wire:click="resetBooking" class="px-8 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer">Mbyll Dritaren</button>
+                        <button type="button" wire:click="resetBooking" class="px-8 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer">{{ __('front/berber-app.close_window') }}</button>
                     </div>
                 @endif
             </div>
