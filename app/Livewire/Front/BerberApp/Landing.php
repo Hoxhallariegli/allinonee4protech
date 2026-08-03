@@ -11,7 +11,7 @@ use App\Models\BerberApp\BarberException;
 use App\Models\BerberApp\BarberWorkingHour;
 use Carbon\Carbon;
 
-#[Title('Berber App')]
+#[Title('The Station Barbers')]
 class Landing extends Component
 {
     // Booking Flow State
@@ -44,6 +44,8 @@ class Landing extends Component
     {
         $this->selectedServiceId = $id;
         $this->step = 2;
+
+        // Only open modal AFTER data is potentially ready (Livewire will handle the state)
         $this->showBookingModal = true;
     }
 

@@ -1,136 +1,267 @@
-<div class="bg-white dark:bg-slate-900 selection:bg-blue-100 selection:text-blue-900 min-h-screen" x-data="{ showBooking: @entangle('showBookingModal') }">
+<div
+    class="relative min-h-screen bg-[var(--paper)] dark:bg-[var(--ink)] text-[var(--ink)] dark:text-[var(--paper)] selection:bg-[var(--brass)]/30 selection:text-[var(--ink)] overflow-x-hidden"
+    x-data="{ showBooking: @entangle('showBookingModal'), scrolled: false }"
+    x-init="window.addEventListener('scroll', () => scrolled = window.scrollY > 40)"
+>
 
-    {{-- Theme Toggle for Client Side --}}
-    <div class="fixed top-6 right-6 z-[110]">
-        <button id="theme-toggle-front" class="p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:scale-110 transition-all">
-            <x-heroicon-o-sun class="size-6 dark:hidden" />
-            <x-heroicon-o-moon class="size-6 hidden dark:block" />
-        </button>
-    </div>
+    {{-- Figma / Canva Style Floating Nav Bar --}}
+    <header class="fixed top-4 inset-x-0 z-[110] px-6">
+        <div class="max-w-6xl mx-auto h-16 px-6 rounded-full flex items-center justify-between"
+             :class="scrolled ? 'bg-[var(--paper-soft)]/90 dark:bg-[var(--ink-elevated)]/90 backdrop-blur-md border border-[var(--line-light)] dark:border-[var(--line-dark)] shadow-sm' : 'bg-transparent'">
 
-    {{-- Hero Section --}}
-    <section class="relative pt-32 pb-20 overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-50/50 dark:from-blue-900/20 via-transparent to-transparent -z-10"></div>
-        <div class="container mx-auto px-6 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-xs font-black uppercase tracking-widest mb-8">
-                <span class="size-2 rounded-full bg-blue-600 animate-pulse"></span>
-                {{ __('front/berber-app.welcome_to') }} Berber App
+            <a href="#top" class="flex items-center gap-3 cursor-pointer">
+                <img src="{{ asset('images/STATION.jpg') }}" class="size-10 rounded-full object-cover border border-[var(--brass)]/30">
+                <div class="font-display text-xl tracking-wider leading-none uppercase">
+                    <span class="text-[var(--ink)] dark:text-white">THE STATION</span>
+                    <span class="text-[var(--brass)]">BARBERS</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[var(--ink)]/70 dark:text-[var(--paper)]/70">
+                <a href="#services" class="cursor-pointer hover:text-[var(--brass)]">Shërbimet</a>
+                <a href="#team" class="cursor-pointer hover:text-[var(--brass)]">Mjeshtrat</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="#services" class="inline-flex items-center px-5 py-2 rounded-full bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] font-semibold text-xs uppercase tracking-wider active:scale-95 cursor-pointer">
+                    Rezervo
+                </a>
+                <button id="theme-toggle-front" aria-label="Ndrysho temën" class="size-10 rounded-full border border-[var(--line-light)] dark:border-[var(--line-dark)] flex items-center justify-center text-[var(--ink)]/70 dark:text-[var(--paper)]/70 bg-[var(--paper-soft)] dark:bg-[var(--ink-elevated)] cursor-pointer">
+                    <x-heroicon-o-sun class="size-4 dark:hidden" />
+                    <x-heroicon-o-moon class="size-4 hidden dark:block" />
+                </button>
             </div>
-            <h1 class="text-6xl md:text-8xl font-black text-slate-900 dark:text-white tracking-tighter mb-8 leading-[0.9]">
-                Elevate your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Style.</span>
-            </h1>
-            <p class="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                Unlock the full potential of your look with our premium barber services. Quality, precision, and passion in every cut.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#services" class="px-10 py-5 bg-slate-900 dark:bg-blue-600 text-white rounded-[2rem] font-bold text-lg hover:scale-105 transition-all duration-300 shadow-xl shadow-slate-200 dark:shadow-blue-900/20">Rezervo Tani</a>
-                <button class="px-10 py-5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-100 dark:border-slate-700 rounded-[2rem] font-bold text-lg hover:border-slate-300 dark:hover:border-slate-500 transition-all">Galeria</button>
+        </div>
+    </header>
+
+    {{-- ============ HERO ============ --}}
+    <section id="top" class="relative pt-36 pb-24 lg:pt-48 lg:pb-32 grain overflow-hidden">
+        <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_rgba(198,161,91,0.12),transparent_65%)]"></div>
+
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+
+                <div class="lg:col-span-7">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--brass)]/10 border border-[var(--brass)]/20 mb-8">
+                        <span class="size-1.5 rounded-full bg-[var(--brass)]"></span>
+                        <span class="font-serif italic text-xs tracking-wide text-[var(--brass-deep)] dark:text-[var(--brass)] font-medium">{{ __('front/berber-app.welcome_to') }} The Station Barbers</span>
+                    </div>
+
+                    <h1 class="font-display text-[4rem] leading-[0.9] sm:text-[5.5rem] lg:text-[6.5rem] tracking-wide mb-6">
+                        THE STATION<br>
+                        <span class="text-[var(--brass)]">BARBERS</span><br>
+                        TIRANA
+                    </h1>
+
+                    <p class="font-serif italic text-lg sm:text-xl text-[var(--ink)]/60 dark:text-[var(--paper)]/60 max-w-xl mb-10 leading-relaxed">
+                        {{ __('front/berber-app.hero_subtitle') }}
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                        <a href="#services" class="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-2xl font-bold text-sm uppercase tracking-wider active:scale-95 shadow-sm cursor-pointer">
+                            {{ __('front/berber-app.book_now') }}
+                            <x-heroicon-o-arrow-up-right class="size-4"/>
+                        </a>
+                        <a href="https://www.instagram.com/thestationbarbers/" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-[var(--paper-soft)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl font-bold text-sm uppercase tracking-wider cursor-pointer">
+                            Instagram
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6 mt-14 pt-10 border-t border-[var(--line-light)] dark:border-[var(--line-dark)] max-w-lg">
+                        <div>
+                            <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">{{ $barbers->count() ?: '—' }}</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Mjeshtra</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">{{ $services->count() ?: '—' }}</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Shërbime</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-3xl sm:text-4xl text-[var(--brass)]">4.9</p>
+                            <p class="text-[11px] uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40 font-bold mt-1">Vlerësim</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 relative">
+                    <div class="relative w-full aspect-[4/5] rounded-[2.5rem] bg-[var(--paper-soft)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] p-4 shadow-xl overflow-hidden flex flex-col justify-between">
+                        <div class="flex items-center justify-between p-4 border-b border-[var(--line-light)] dark:border-[var(--line-dark)]">
+                            <div class="flex items-center gap-2">
+                                <span class="size-3 rounded-full bg-rose-500/80"></span>
+                                <span class="size-3 rounded-full bg-amber-500/80"></span>
+                                <span class="size-3 rounded-full bg-emerald-500/80"></span>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40"></span>
+                        </div>
+
+                        <div class="my-auto p-6 text-center space-y-4">
+                            <div class="size-20 mx-auto rounded-3xl bg-[var(--brass)]/10 text-[var(--brass)] flex items-center justify-center">
+                                <x-heroicon-o-scissors class="size-10"/>
+                            </div>
+                            <p class="font-serif italic text-xl text-[var(--ink)]/80 dark:text-[var(--paper)]/80 leading-snug">"Nuk presim vetëm flokë, kurojmë identitetin tuaj estetik."</p>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-[var(--paper)] dark:bg-[var(--ink-elevated)] border border-[var(--line-light)] dark:border-[var(--line-dark)] flex items-center justify-between text-xs font-semibold">
+                            <span class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 uppercase tracking-wider">Statusi i Barberisë</span>
+                            <span class="flex items-center gap-1.5 text-emerald-500"><span class="size-2 rounded-full bg-emerald-500"></span> Hapur & Gati</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <div class="container mx-auto px-6 space-y-32 pb-32">
+    <div class="blade-stripe"></div>
 
-        {{-- Services Section --}}
-        <section id="services" class="pt-20">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Shërbimet Tona</h2>
-                <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg italic">Zgjidh shërbimin që dëshiron dhe lër takimin tënd në pak sekonda.</p>
+    {{-- ============ SERVICES GRID ============ --}}
+    <section id="services" class="py-24 px-6 bg-[var(--paper-soft)] dark:bg-[var(--ink-soft)]/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+                <div>
+                    <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-base">Katalogu i punës</span>
+                    <h2 class="font-display text-5xl sm:text-6xl tracking-wide mt-1">SHËRBIMET</h2>
+                </div>
+                <p class="text-[var(--ink)]/55 dark:text-[var(--paper)]/55 max-w-sm text-sm leading-relaxed">
+                    Zgjidhni shërbimin tuaj për të nisur menjëherë fashën e preferuar kohore.
+                </p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($services as $item)
-                    <div class="group p-10 bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:-translate-y-2 flex flex-col justify-between">
-                        <div>
-                            <div class="mb-8 flex items-center justify-between">
-                                <div class="p-4 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-[1.5rem] group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm">
-                                    <x-heroicon-o-scissors class="size-8"/>
-                                </div>
-                                <div class="text-xs font-black uppercase tracking-widest text-slate-400">{{ $item->duration_minutes }} Minuta</div>
+                    <button
+                        type="button"
+                        wire:click="selectService({{ $item->id }})"
+                        wire:loading.attr="disabled"
+                        class="tap-card group relative text-left p-8 rounded-[2rem] bg-[var(--paper)] dark:bg-[var(--ink-elevated)] border border-[var(--line-light)] dark:border-[var(--line-dark)] overflow-hidden active:scale-[0.98] cursor-pointer hover:border-[var(--brass)]/50"
+                    >
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="size-12 rounded-2xl bg-[var(--brass)]/10 text-[var(--brass-deep)] dark:text-[var(--brass)] flex items-center justify-center">
+                                <x-heroicon-o-scissors class="size-5"/>
                             </div>
-                            <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ $item->name }}</h3>
-                            <p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-10 text-lg">Përjetoni një eksperiencë unike të kujdesit ndaj vetes me mjeshtrat tanë.</p>
+                            <span class="px-3 py-1 rounded-full bg-[var(--ink)]/5 dark:bg-[var(--paper)]/5 text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/60 dark:text-[var(--paper)]/60">
+                                {{ $item->duration_minutes }} min
+                            </span>
                         </div>
-                        <button wire:click="selectService({{ $item->id }})" class="w-full py-5 text-lg font-black text-slate-900 dark:text-white group-hover:text-white group-hover:bg-blue-600 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-700 group-hover:border-blue-600">Zgjidh Shërbimin</button>
-                    </div>
+
+                        <h3 class="font-display text-2xl tracking-wide mb-2">{{ $item->name }}</h3>
+                        <p class="text-[var(--ink)]/55 dark:text-[var(--paper)]/55 text-sm leading-relaxed mb-8">
+                            Përjetim i kuruar me saktësi maksimale për çdo lloj stili.
+                        </p>
+
+                        <div class="flex items-center gap-2 text-xs font-bold text-[var(--brass-deep)] dark:text-[var(--brass)] uppercase tracking-widest">
+                            Rezervo Tani
+                            <x-heroicon-o-arrow-right class="size-4"/>
+                        </div>
+                    </button>
                 @endforeach
             </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- Team Section --}}
-        <section id="team">
+    {{-- ============ TEAM SECTION ============ --}}
+    <section id="team" class="py-24 px-6 bg-[var(--paper-elevated)] dark:bg-[var(--ink-soft)] relative grain transition-colors duration-300">
+        <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Mjeshtrat Tanë</h2>
-                <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg">Ekipi ynë i profesionistëve është këtu për t'ju ofruar stilin që meritoni.</p>
+                <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-lg">Mjeshtrat tanë</span>
+                <h2 class="font-display text-6xl tracking-wider mt-2 mb-4 text-[var(--ink)] dark:text-white uppercase">EKIPI</h2>
+                <div class="flex flex-col items-center gap-2">
+                    <p class="text-[var(--ink)]/50 dark:text-[var(--paper)]/50 text-[10px] font-black uppercase tracking-[0.3em]">By @xheksilushka & @robert_b4rber</p>
+                    <div class="h-1 w-12 bg-[var(--brass)] rounded-full"></div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 @foreach($barbers as $item)
-                    <div class="flex flex-col items-center group">
-                        <div class="size-56 rounded-[4rem] overflow-hidden mb-8 shadow-xl group-hover:scale-105 border-4 border-white dark:border-slate-800 ring-1 ring-slate-100 dark:ring-slate-700">
+                    <div class="group text-center p-10 rounded-[3rem] bg-[var(--paper)] dark:bg-[var(--ink-elevated)] border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:border-[var(--brass)]/40 transition-all duration-300 shadow-sm hover:shadow-xl">
+                        <div class="relative size-44 mx-auto mb-8 rounded-[2.5rem] overflow-hidden ring-1 ring-[var(--line-light)] dark:ring-[var(--line-dark)] group-hover:ring-[var(--brass)]/50 transition-all duration-500">
                             @if($item->photo)
-                                <img src="{{ asset('storage/'.$item->photo) }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                                <img src="{{ asset('storage/'.$item->photo) }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
                             @else
-                                <div class="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-5xl font-black text-slate-300 dark:text-slate-600 uppercase tracking-tighter">{{ substr($item->name, 0, 1) }}</div>
+                                <div class="w-full h-full bg-[var(--paper-soft)] dark:bg-[var(--ink-soft)] flex items-center justify-center font-display text-7xl text-[var(--brass)]/40">{{ substr($item->name, 0, 1) }}</div>
                             @endif
+                            <div class="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ $item->name }}</h3>
-                        <p class="text-blue-600 dark:text-blue-400 font-bold text-sm uppercase tracking-[0.2em]">{{ $item->specialization }}</p>
+
+                        <h3 class="font-display text-3xl tracking-wider mb-2 text-[var(--ink)] dark:text-white group-hover:text-[var(--brass)] transition-colors">{{ $item->name }}</h3>
+                        <p class="text-[var(--brass-deep)] dark:text-[var(--brass)] font-black text-[10px] uppercase tracking-[0.25em] leading-relaxed max-w-[200px] mx-auto opacity-80">{{ $item->specialization }}</p>
                     </div>
                 @endforeach
             </div>
-        </section>
+        </div>
+    </section>
 
-    </div>
+    <div class="blade-stripe"></div>
 
+    {{-- ============ FOOTER ============ --}}
+    <footer class="py-12 px-6 bg-[var(--paper-elevated)] dark:bg-[var(--ink-soft)] border-t border-[var(--line-light)] dark:border-[var(--line-dark)]">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="flex items-center gap-3 text-left">
+                    <img src="{{ asset('images/STATION.jpg') }}" class="size-9 rounded-full object-cover">
+                    <div class="font-display text-lg tracking-wider uppercase">
+                        <span class="text-[var(--ink)] dark:text-white">THE STATION</span>
+                        <span class="text-[var(--brass)]">BARBERS</span>
+                    </div>
+                </div>
+                <a href="https://maps.app.goo.gl/w1fP4XX5uehTN6t68" target="_blank" class="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--ink)]/50 dark:text-[var(--paper)]/50 hover:text-[var(--brass)] transition-colors">
+                    📍 Rruga e Kavajës, Tiranë
+                </a>
+            </div>
+            <p class="text-xs text-[var(--ink)]/50 dark:text-[var(--paper)]/50 font-medium">
+                © {{ date('Y') }} The Station Barbers.
+            </p>
+        </div>
+    </footer>
+
+    {{-- ============ BOOKING MODAL (Zero Delay, Pure Instant) ============ --}}
     <div x-show="showBooking"
          x-cloak
          x-init="$watch('showBooking', value => { if(value && window.requestNotificationPermission) window.requestNotificationPermission() })"
-         class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+         class="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-0 md:p-4">
 
-        <div class="absolute inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md" @click="showBooking = false"></div>
+        {{-- Backdrop pa asnjë lloj transition, shfaqet/zhduket menjëherë --}}
+        <div x-show="showBooking" class="absolute inset-0 bg-[var(--ink)]/80 backdrop-blur-sm" @click="showBooking = false"></div>
 
-        <div class="relative bg-white dark:bg-slate-800 w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden">
+        <div x-show="showBooking"
+             class="relative w-full md:max-w-xl max-h-[92vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar bg-[var(--paper-soft)] dark:bg-[var(--ink-elevated)] rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-2xl border border-[var(--line-light)] dark:border-[var(--line-dark)] z-10">
 
-            <div class="p-8 sm:p-12">
-                {{-- Header --}}
-                <div class="flex items-center justify-between mb-10">
+            {{-- Loading State --}}
+            <div wire:loading wire:target="selectService, confirmTime, submitBooking" class="absolute inset-0 z-50 bg-[var(--paper-soft)]/50 dark:bg-[var(--ink-elevated)]/50 backdrop-blur-[2px] flex items-center justify-center">
+                <div class="size-10 border-4 border-[var(--brass)]/20 border-t-[var(--brass)] rounded-full animate-spin"></div>
+            </div>
+
+            <div class="md:hidden flex justify-center pt-3 pb-1">
+                <span class="h-1.5 w-10 rounded-full bg-[var(--ink)]/20 dark:bg-[var(--paper)]/20"></span>
+            </div>
+
+            <div class="p-8">
+                <div wire:loading.flex wire:target="selectService" class="absolute inset-0 z-[60] bg-[var(--paper-soft)]/80 dark:bg-[var(--ink-elevated)]/80 backdrop-blur-sm items-center justify-center flex-col gap-4">
+                    <div class="size-12 border-4 border-[var(--brass)]/20 border-t-[var(--brass)] rounded-full animate-spin"></div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--brass-deep)]">Duke kërkuar oraret...</p>
+                </div>
+
+                <div class="flex items-center justify-between pb-6 mb-6 border-b border-[var(--line-light)] dark:border-[var(--line-dark)]">
                     <div>
-                        <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Rezervo Takimin</h2>
-                        @if($step < 4)
-                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Hapi {{ $step }} nga 3</p>
-                        @endif
+                        <span class="font-serif italic text-[var(--brass-deep)] dark:text-[var(--brass)] text-xs">Sistemi i Rezervimit</span>
+                        <h2 class="font-display text-3xl tracking-wide mt-0.5">TAKIMI JUAJ</h2>
                     </div>
-                    <button @click="showBooking = false" class="p-3 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-colors">
-                        <x-heroicon-o-x-mark class="size-6 text-slate-400 dark:text-slate-500"/>
+                    <button @click="showBooking = false" class="size-10 rounded-full bg-[var(--ink)]/5 dark:bg-[var(--paper)]/5 flex items-center justify-center cursor-pointer hover:bg-[var(--ink)]/10 dark:hover:bg-[var(--paper)]/10">
+                        <x-heroicon-o-x-mark class="size-5 text-[var(--ink)]/60 dark:text-[var(--paper)]/60"/>
                     </button>
                 </div>
 
-                {{-- Step 2: Date & Time --}}
+                {{-- Step 2: Date & Time Selection --}}
                 @if($step == 2)
-                    <div class="space-y-10">
-                        {{-- Custom Notification Prompt --}}
-                        @if(!$fcmToken)
-                            <div class="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-3xl border border-amber-100 dark:border-amber-800 flex items-center justify-between gap-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="size-12 bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center shrink-0">
-                                        <x-heroicon-o-bell-alert class="size-6"/>
-                                    </div>
-                                    <div>
-                                        <p class="text-slate-900 dark:text-white font-bold text-sm leading-tight italic">Njoftimet e Rezervimit</p>
-                                        <p class="text-slate-500 dark:text-gray-400 text-xs mt-1">Lejoni njoftimet që t'ju njoftojmë në rast emergjence.</p>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="window.requestNotificationPermission()" class="px-6 py-3 bg-amber-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-200 dark:shadow-none">Lejo</button>
-                            </div>
-                        @endif
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 ml-1">Zgjidh Datën</label>
-                                <input type="date" wire:model.live="selectedDate" min="{{ date('Y-m-d') }}" class="w-full p-5 bg-slate-50 dark:bg-slate-900 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 font-bold text-slate-900 dark:text-white">
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Data</label>
+                                <input type="date" wire:model.live="selectedDate" min="{{ date('Y-m-d') }}" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl font-semibold text-sm cursor-pointer">
                             </div>
                             <div>
-                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 ml-1">Zgjidh Berberin (Opsionale)</label>
-                                <select wire:model.live="selectedBarberId" class="w-full p-5 bg-slate-50 dark:bg-slate-900 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 font-bold text-slate-900 dark:text-white appearance-none">
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Berberi</label>
+                                <select wire:model.live="selectedBarberId" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl font-semibold text-sm cursor-pointer">
                                     <option value="">Cilido Berber</option>
                                     @foreach($barbers as $b)
                                         <option value="{{ $b->id }}">{{ $b->name }}</option>
@@ -140,113 +271,79 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 ml-1">Orarët e Lirë</label>
-                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                            <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Orarët e Lira</label>
+                            <div class="grid grid-cols-3 gap-2.5 max-h-52 overflow-y-auto pr-1 custom-scrollbar">
                                 @forelse($this->availableSlots as $time)
-                                    <button wire:click="confirmTime('{{ $time }}')" class="p-4 bg-slate-50 dark:bg-slate-900 hover:bg-blue-600 hover:text-white rounded-2xl font-black text-slate-900 dark:text-white border border-transparent hover:scale-105 active:scale-95 shadow-sm">
+                                    <button type="button" wire:click="confirmTime('{{ $time }}')" class="p-3 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] font-bold text-sm rounded-xl cursor-pointer hover:border-[var(--brass)]">
                                         {{ $time }}
                                     </button>
                                 @empty
-                                    <div class="col-span-full py-10 text-center bg-slate-50 dark:bg-slate-900/50 rounded-3xl text-slate-400 dark:text-slate-500 font-bold italic border border-dashed border-slate-200 dark:border-slate-700">Nuk u gjet asnjë orar i lirë për këtë datë.</div>
+                                    <div class="col-span-full py-8 text-center text-xs text-[var(--ink)]/40 dark:text-[var(--paper)]/40 italic">Nuk u gjet asnjë orar i lirë.</div>
                                 @endforelse
                             </div>
                         </div>
                     </div>
                 @endif
 
-                {{-- Step 3: Info --}}
+                {{-- Step 3: Customer Information Input --}}
                 @if($step == 3 && $selectedService)
-                    <div class="space-y-8">
-                        <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-3xl border border-blue-100 dark:border-blue-800 flex items-center gap-6">
-                            <div class="size-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
-                                <x-heroicon-o-calendar class="size-8"/>
+                    <div class="space-y-6">
+                        <div class="p-4 rounded-2xl bg-[var(--brass)]/10 border border-[var(--brass)]/20 flex items-center gap-4">
+                            <div class="size-10 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--brass)] dark:text-[var(--ink)] rounded-xl flex items-center justify-center shrink-0">
+                                <x-heroicon-o-calendar class="size-5"/>
                             </div>
                             <div>
-                                <p class="text-blue-600 dark:text-blue-400 font-black uppercase text-[10px] tracking-widest mb-0.5">Përmbledhja e rezervimit</p>
-                                <h4 class="text-slate-900 dark:text-white font-bold text-lg leading-tight">{{ $selectedService->name }}</h4>
-                                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">{{ Carbon\Carbon::parse($selectedDate)->format('d M Y') }} në orën {{ $selectedTime }} me {{ $selectedBarber->name ?? 'Mjeshtrin e parë të lirë' }}</p>
+                                <h4 class="font-bold text-sm">{{ $selectedService->name }}</h4>
+                                <p class="text-[var(--ink)]/60 dark:text-[var(--paper)]/60 text-xs">{{ Carbon\Carbon::parse($selectedDate)->format('d M Y') }} - {{ $selectedTime }}</p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-6">
+                        <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 ml-1">Emri dhe Mbiemri</label>
-                                <input type="text" wire:model="customerName" placeholder="Emri juaj" class="w-full p-5 bg-slate-50 dark:bg-slate-900 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700">
-                                @error('customerName') <span class="text-red-500 text-xs font-bold mt-1 ml-1">{{ $message }}</span> @enderror
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Emri dhe Mbiemri</label>
+                                <input type="text" wire:model="customerName" placeholder="sh. Filan Fisteku" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl text-sm font-semibold">
+                                @error('customerName') <span class="text-rose-500 text-xs mt-1 ml-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
-                                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 ml-1">Numri i Telefonit</label>
-                                <input type="tel" wire:model="customerPhone" placeholder="069 XX XX XXX" class="w-full p-5 bg-slate-50 dark:bg-slate-900 border-none rounded-3xl focus:ring-4 focus:ring-blue-500/10 font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700">
-                                @error('customerPhone') <span class="text-red-500 text-xs font-bold mt-1 ml-1">{{ $message }}</span> @enderror
+                                <label class="block text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/45 dark:text-[var(--paper)]/45 mb-2 ml-1">Numri i Telefonit</label>
+                                <input type="tel" wire:model="customerPhone" placeholder="069 XX XX XXX" class="w-full p-3.5 bg-[var(--paper)] dark:bg-[var(--ink-soft)] border border-[var(--line-light)] dark:border-[var(--line-dark)] rounded-2xl text-sm font-semibold">
+                                @error('customerPhone') <span class="text-rose-500 text-xs mt-1 ml-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
-                        <div class="flex items-center p-2">
-                            <input type="checkbox" id="notify" wire:model="allowNotifications"
-                                x-on:change="if($el.checked) window.requestNotificationPermission()"
-                                class="size-6 rounded-lg text-blue-600 focus:ring-blue-500 border-slate-200 dark:bg-slate-900 dark:border-slate-700">
-                            <label for="notify" class="ml-4 text-slate-600 dark:text-slate-400 font-bold cursor-pointer select-none">Dua të marr njoftime për takimin tim</label>
-                        </div>
-
-                        <div class="pt-4 flex gap-4">
-                            <button wire:click="$set('step', 2)" class="px-8 py-5 text-slate-400 dark:text-slate-500 font-bold hover:text-slate-900 dark:hover:text-white transition-colors">Mbrapa</button>
-                            <button wire:click="submitBooking" class="flex-1 px-10 py-5 bg-blue-600 text-white rounded-3xl font-black text-lg hover:bg-blue-700 shadow-xl shadow-blue-200 dark:shadow-none transition-all active:scale-95">Konfirmo Rezervimin</button>
+                        <div class="flex items-center gap-3 pt-2">
+                            <button type="button" wire:click="$set('step', 2)" class="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--ink)]/50 cursor-pointer">Mbrapa</button>
+                            <button type="button" wire:click="submitBooking" class="flex-1 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-2xl font-bold text-xs uppercase tracking-wider cursor-pointer">Konfirmo Takimin</button>
                         </div>
                     </div>
                 @endif
 
-                {{-- Step 4: Success --}}
+                {{-- Step 4: Success State --}}
                 @if($step == 4)
-                    <div class="text-center py-10 space-y-8">
-                        <div class="size-32 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 dark:text-emerald-400 rounded-[3rem] flex items-center justify-center mx-auto shadow-sm">
-                            <x-heroicon-o-check-circle class="size-20"/>
+                    <div class="text-center py-6 space-y-6">
+                        <div class="size-20 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto">
+                            <x-heroicon-o-check-circle class="size-10"/>
                         </div>
                         <div>
-                            <h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Rezervimi u krye!</h2>
-                            <p class="text-slate-500 dark:text-slate-400 text-lg leading-relaxed px-4">Faleminderit <strong>{{ $customerName }}</strong>. Takimi juaj u konfirmua me sukses. Ju presim!</p>
+                            <h2 class="font-display text-3xl tracking-wide mb-2">REZERVIMI U KRYE</h2>
+                            <p class="text-sm text-[var(--ink)]/60 dark:text-[var(--paper)]/60 max-w-sm mx-auto">Faleminderit <strong class="text-[var(--ink)] dark:text-[var(--paper)]">{{ $customerName }}</strong>. Takimi juaj u regjistrua me sukses.</p>
                         </div>
-                        <button wire:click="resetBooking" class="px-12 py-5 bg-slate-900 dark:bg-blue-600 text-white rounded-[2rem] font-bold text-lg hover:scale-105 transition-all">Mbyll</button>
+                        <button type="button" wire:click="resetBooking" class="px-8 py-3.5 bg-[var(--ink)] dark:bg-[var(--brass)] text-[var(--paper)] dark:text-[var(--ink)] rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer">Mbyll Dritaren</button>
                     </div>
                 @endif
-
             </div>
         </div>
     </div>
 
-    <footer class="py-20 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-            <div class="col-span-1 md:col-span-2">
-                <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Berber App</h2>
-                <p class="text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed font-medium">Përjetoni kujdesin më të lartë për pamjen tuaj me teknologjinë më të fundit të rezervimeve online.</p>
-            </div>
-            <div>
-                <h4 class="font-bold mb-6 uppercase tracking-widest text-xs text-slate-400 dark:text-slate-600">Linqe</h4>
-                <ul class="space-y-4 text-slate-500 dark:text-slate-400 font-bold">
-                    <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Rreth Nesh</a></li>
-                    <li><a href="#services" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Shërbimet</a></li>
-                    <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Kontakt</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold mb-6 uppercase tracking-widest text-xs text-slate-400 dark:text-slate-600">Kontakt</h4>
-                <ul class="space-y-4 text-slate-500 dark:text-slate-400 font-bold text-sm">
-                    <li class="flex items-center gap-3"><x-heroicon-o-map-pin class="size-5 text-blue-500"/> Tiranë, Shqipëri</li>
-                    <li class="flex items-center gap-3"><x-heroicon-o-phone class="size-5 text-blue-500"/> +355 6X XXX XXXX</li>
-                </ul>
-            </div>
-        </div>
-    </footer>
-
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 20px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--brass); opacity: 0.3; border-radius: 10px; }
+        .tap-card { -webkit-tap-highlight-color: transparent; }
     </style>
 
     <script>
-        document.getElementById('theme-toggle-front').addEventListener('click', function() {
+        document.getElementById('theme-toggle-front')?.addEventListener('click', function() {
             let isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });

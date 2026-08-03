@@ -2,17 +2,17 @@
 
 return [
   'welcome_to' => 'Mirësevini në',
-  'elevate_experience' => 'Lartësoni Eksperiencën Tuaj.',
-  'hero_subtitle' => 'Zbuloni potencialin e plotë të stilit tuaj të jetesës me shërbimet tona premium të përshtatura vetëm për ju. Cilësi, saktësi dhe pasion në çdo detaj.',
+  'elevate_experience' => 'THE STATION BARBERS.',
+  'hero_subtitle' => '📍Rruga e Kavajës, përballë poliklinikës nr.9. Një stacion i dedikuar për stilin dhe kujdesin tuaj.',
   'book_now' => 'Rezervo Tani',
-  'view_portfolio' => 'Shiko Portofolin',
+  'view_portfolio' => 'Shiko Punimet',
   'our_services' => 'Shërbimet Tona',
-  'services_subtitle' => 'Përjetoni shërbimet më të mira me çmime transparente dhe prekje profesionale.',
+  'services_subtitle' => 'Zgjidhni shërbimin tuaj dhe përjetoni saktësinë e mjeshtrave tanë.',
   'meet_team' => 'Njihuni me Ekipin',
-  'team_subtitle' => 'Profesionistët tanë janë të përkushtuar për të ofruar ekselencë dhe stil.',
+  'team_subtitle' => 'By @xheksilushka & @robert_b4rber',
   'select_service' => 'Zgjidh Shërbimin',
   'about_us' => 'Rreth Nesh',
   'contact' => 'Kontakt',
   'links' => 'Linqe',
-  'footer_text' => 'Ndërtojmë të ardhmen e menaxhimit të shërbimeve me dizajn minimalist dhe teknologji të fuqishme.',
+  'footer_text' => 'The Station Barbers — Ku tradita dhe stili modern takohen në një pikë.',
 ];

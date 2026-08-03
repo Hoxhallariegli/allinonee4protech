@@ -31,9 +31,8 @@ class BerberAppSeeder extends Seeder
 
         // 3. Create Barbers
         $barberData = [
-            ['name' => 'Arben Krasniqi', 'specialization' => 'Mjeshtër për mjekër dhe prerje klasike', 'active' => true],
-            ['name' => 'Besnik Leka', 'specialization' => 'Stilime moderne dhe ngjyrosje', 'active' => true],
-            ['name' => 'Ilir Meta', 'specialization' => 'Prerje për fëmijë dhe nxënës', 'active' => true],
+            ['name' => 'Xheksi Lushka', 'specialization' => 'Mjeshtër Stilist / Founder', 'active' => true],
+            ['name' => 'Robert Barber', 'specialization' => 'Mjeshtër i Brisqeve / Founder', 'active' => true],
         ];
 
         foreach ($barberData as $b) {

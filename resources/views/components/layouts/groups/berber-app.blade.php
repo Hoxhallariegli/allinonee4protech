@@ -163,7 +163,7 @@
             @if(view()->exists($navInclude))
                 @include($navInclude)
             @else
-                @include('components.layouts.app.navigation')
+                @include('components.layouts.groups.berber-app.navigation')
             @endif
         </nav>
       </div>
