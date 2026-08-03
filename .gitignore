@@ -17,3 +17,12 @@ yarn-error.log
 /.idea
 /.vscode
 ssh.text
+.htaccess
+/.fleet
+/.idea
+/.vscode
+ssh.text
+.htaccess
+
+/bootstrap/cache/*
+/storage/*
