@@ -14,7 +14,7 @@ class CreateBarberAction
         $data = $dto->toArray();
 
         if (isset($data['photo']) && is_object($data['photo'])) {
-            $data['photo'] = $data['photo']->store('barbers', 'public');
+            $data['photo'] = $data['photo']->store('barbers', 'uploads');
         }
 
         $item = Barber::create($data);

@@ -459,7 +459,7 @@ class NewView extends Command
                 $renderFilters .= "            '{$f['name']}' => \$this->{$f['name']},\n";
             }
             if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
-                $fileHandlers .= "        if (\$this->{$f['name']} && !is_string(\$this->{$f['name']})) { \$this->{$f['name']} = \$this->{$f['name']}->store('uploads/$pluralKebab', 'public'); }\n";
+                $fileHandlers .= "        if (\$this->{$f['name']} && !is_string(\$this->{$f['name']})) { \$this->{$f['name']} = \$this->{$f['name']}->store('uploads/$pluralKebab', 'uploads'); }\n";
             }
         }
 
@@ -571,7 +571,7 @@ class NewView extends Command
                 return "<td class=\"px-6 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->".Str::camel(str_replace('_id', '', $f['name']))."?->{$labelPath} ?? '-' }}</td>";
             }
             if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
-                return "<td class=\"px-6 py-5\">@if(\$item->{$f['name']}) <a href=\"{{ asset('storage/'.\$item->{$f['name']}) }}\" target=\"_blank\" rel=\"noopener\"><x-heroicon-o-arrow-down-tray class=\"w-5 h-5 text-blue-500\" /></a> @else - @endif</td>";
+                return "<td class=\"px-6 py-5\">@if(\$item->{$f['name']}) <a href=\"{{ asset('uploads/'.\$item->{$f['name']}) }}\" target=\"_blank\" rel=\"noopener\"><x-heroicon-o-arrow-down-tray class=\"w-5 h-5 text-blue-500\" /></a> @else - @endif</td>";
             }
             if (in_array($f['type'], ['date', 'datetime'])) {
                 return "<td class=\"px-6 py-5 text-gray-600 dark:text-gray-300\">{{ \$item->{$f['name']}?->format('d/m/Y H:i') ?? '-' }}</td>";

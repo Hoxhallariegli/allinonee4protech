@@ -16,9 +16,9 @@ class UpdateBarberAction
         if (isset($data['photo']) && is_object($data['photo'])) {
             // Delete old photo if exists
             if ($model->photo) {
-                Storage::disk('public')->delete($model->photo);
+                Storage::disk('uploads')->delete($model->photo);
             }
-            $data['photo'] = $data['photo']->store('barbers', 'public');
+            $data['photo'] = $data['photo']->store('barbers', 'uploads');
         }
 
         $model->fill($data);

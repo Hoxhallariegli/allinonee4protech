@@ -3,7 +3,7 @@
     <td class="px-6 py-5 text-gray-900 dark:text-white font-bold">{{ $item->name }}</td>
     <td class="px-6 py-5">
         @if($item->photo)
-            <img src="{{ asset('storage/'.$item->photo) }}" class="size-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700">
+            <img src="{{ asset('uploads/'.$item->photo) }}" class="size-10 rounded-xl object-cover border border-gray-100 dark:border-gray-700">
         @else
             <div class="size-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-black text-gray-400 uppercase tracking-tighter">{{ substr($item->name, 0, 1) }}</div>
         @endif

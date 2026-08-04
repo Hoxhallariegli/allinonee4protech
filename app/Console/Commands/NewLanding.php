@@ -195,7 +195,7 @@ class NewLanding extends Command
                     <div class=\"flex flex-col items-center group\">
                         <div class=\"size-48 rounded-[3rem] overflow-hidden mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform\">
                             @if(\$item->$photoField)
-                                <img src=\"{{ asset('storage/'.\$item->$photoField) }}\" class=\"w-full h-full object-cover\">
+                                <img src=\"{{ asset('uploads/'.\$item->$photoField) }}\" class=\"w-full h-full object-cover\">
                             @else
                                 <div class=\"w-full h-full bg-gray-100 flex items-center justify-center text-4xl font-black text-gray-300\">{{ substr(\$item->$nameField, 0, 1) }}</div>
                             @endif
