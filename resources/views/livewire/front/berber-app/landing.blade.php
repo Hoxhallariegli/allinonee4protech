@@ -103,7 +103,7 @@
                                 <span class="size-3 rounded-full bg-amber-500/80"></span>
                                 <span class="size-3 rounded-full bg-emerald-500/80"></span>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40">Studio Canvas v2.4</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--ink)]/40 dark:text-[var(--paper)]/40"></span>
                         </div>
 
                         <div class="my-auto p-6 text-center space-y-4">

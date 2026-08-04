@@ -50,6 +50,10 @@
         <x-nav.link route="admin.berber-app.services.index" icon="tag">{{ __('berber-app/services.Services') }}</x-nav.link>
     @endcan
 
+    @can('view_customers')
+        <x-nav.link route="admin.berber-app.customers.index" icon="users">{{ __('berber-app/customers.Customers') }}</x-nav.link>
+    @endcan
+
     @can('view_bookings')
         <x-nav.link route="admin.berber-app.bookings.index" icon="clipboard-document">{{ __('berber-app/bookings.Bookings') }}</x-nav.link>
     @endcan

@@ -24,14 +24,27 @@
                         </x-modal>
                     </div>
                 </div>
-                <div><x-form.input name="customer_name" type="text" wire:model="customer_name" :label="__('berber-app/bookings.Customer Name')" class="dark:bg-gray-900" /></div>
-                <div><x-form.input name="customer_phone" type="text" wire:model="customer_phone" :label="__('berber-app/bookings.Customer Phone')" class="dark:bg-gray-900" /></div>
+                <div>
+                    <div class="flex items-end gap-2">
+                        <div class="flex-1"><x-form.dropdown-search name="customer_id" wire:model.live="customer_id" :label="__('berber-app/bookings.Customer')" :data="$customers" /></div>
+                        <x-modal>
+                            <x-slot name="trigger"><button type="button" @click="on = true" class="mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform"><x-heroicon-o-plus class="size-5" /></button></x-slot>
+                            <x-slot name="modalTitle"><div class="dark:text-white px-6 pt-6">Add New Customer</div></x-slot>
+                            <x-slot name="content"><livewire:admin.berber-app.customers.quick-create /></x-slot>
+                        </x-modal>
+                    </div>
+                </div>
+                <div class="hidden">
+                    {{-- Hidden but kept for any legacy logic that might expect them --}}
+                    <x-form.input name="customer_name" type="text" wire:model="customer_name" />
+                    <x-form.input name="customer_phone" type="text" wire:model="customer_phone" />
+                </div>
 
                 <div class="md:col-span-2 border-t border-gray-100 dark:border-gray-700 pt-8 mt-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
                             <label class="block mb-2 text-[10px] font-black uppercase tracking-widest text-gray-400">1. Zgjidh Datën</label>
-                            <input type="date" wire:model.live="selected_date" class="w-full p-4 bg-gray-50 dark:bg-gray-900 border-none rounded-2xl font-bold text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500/20">
+                            <input type="date" wire:model.live="selected_date" min="{{ date('Y-m-d') }}" class="w-full p-4 bg-gray-50 dark:bg-gray-900 border-none rounded-2xl font-bold text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500/20">
                         </div>
                         <div class="md:col-span-2">
                             <label class="block mb-2 text-[10px] font-black uppercase tracking-widest text-gray-400">2. Zgjidh Orarin (Sipas kohëzgjatjes)</label>

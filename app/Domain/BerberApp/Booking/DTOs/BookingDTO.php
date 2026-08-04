@@ -7,6 +7,7 @@ class BookingDTO
     public function __construct(
         public readonly mixed $barber_id,
         public readonly mixed $service_id,
+        public readonly mixed $customer_id,
         public readonly mixed $customer_name,
         public readonly mixed $customer_phone,
         public readonly mixed $appointment_datetime,
@@ -16,9 +17,11 @@ class BookingDTO
         public readonly mixed $cancel_reason = null,
         public readonly ?string $fcm_token = null,
     ) {}
+
     public static function fromArray(array $data): self { return new self(
             barber_id: $data['barber_id'] ?? null,
             service_id: $data['service_id'] ?? null,
+            customer_id: $data['customer_id'] ?? null,
             customer_name: $data['customer_name'] ?? null,
             customer_phone: $data['customer_phone'] ?? null,
             appointment_datetime: $data['appointment_datetime'] ?? null,
@@ -28,9 +31,11 @@ class BookingDTO
             cancel_reason: $data['cancel_reason'] ?? null,
             fcm_token: $data['fcm_token'] ?? null,
         ); }
+
     public function toArray(): array { return [
             'barber_id' => $this->barber_id,
             'service_id' => $this->service_id,
+            'customer_id' => $this->customer_id,
             'customer_name' => $this->customer_name,
             'customer_phone' => $this->customer_phone,
             'appointment_datetime' => $this->appointment_datetime,

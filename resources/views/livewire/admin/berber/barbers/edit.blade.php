@@ -5,7 +5,13 @@
         <form wire:submit.prevent="update" class="space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                 <div><x-form.input name="name" wire:model="name" :label="__('berber/barbers.Name')" class="dark:bg-gray-900" /></div>
-                <div><x-form.file-upload name="photo" wire:model="photo" :label="__('berber/barbers.Photo')" id="photo" :isEditing="true" /></div>
+                <div><x-form.file-upload
+                         name="photo"
+                         wire:model="photo"
+                         :label="__('berber/barbers.Photo')"
+                         id="photo"
+                         :isEditing="true"
+                     /></div>
                 <div class="md:col-span-2"><x-form.textarea name="specialization" wire:model="specialization" :label="__('berber/barbers.Specialization')" class="dark:bg-gray-900" /></div>
                 <div><x-form.checkbox name="active" wire:model="active" :label="__('berber/barbers.Active')" /></div>
             </div>

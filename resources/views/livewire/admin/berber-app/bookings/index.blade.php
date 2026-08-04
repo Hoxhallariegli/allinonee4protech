@@ -51,7 +51,19 @@
                                 <td class="px-6 py-5 font-bold text-blue-600 dark:text-blue-400">{{ $item->id }}</td>
                                 <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->barber?->name ?? '-' }}</td>
                                 <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->service?->name ?? '-' }}</td>
-                                <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->customer_name }}</td>
+                                <td class="px-6 py-5 text-gray-600 dark:text-gray-300">
+                                    @if($item->customer_id)
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-gray-900 dark:text-white">{{ $item->customer?->name }}</span>
+                                            <span class="text-[10px]">{{ $item->customer?->phone }}</span>
+                                        </div>
+                                    @else
+                                        <div class="flex flex-col">
+                                            <span class="font-bold">{{ $item->customer_name }}</span>
+                                            <span class="text-[10px]">{{ $item->customer_phone }}</span>
+                                        </div>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->appointment_datetime?->format('d/m/Y H:i') ?? '-' }}</td>
                                 <td class="px-6 py-5">
                                     <div class="flex flex-col gap-1">

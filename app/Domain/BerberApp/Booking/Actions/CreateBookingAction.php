@@ -18,7 +18,19 @@ class CreateBookingAction
 
     public function execute(BookingDTO $dto): Booking
     {
-        $item = Booking::create($dto->toArray());
+        $data = $dto->toArray();
+
+        // If customer_id is missing but name/phone are present (e.g. from Front Landing)
+        // Find or Create the customer record to maintain the relationship
+        if (empty($data['customer_id']) && $data['customer_phone']) {
+            $customer = \App\Models\BerberApp\Customer::firstOrCreate(
+                ['phone' => $data['customer_phone']],
+                ['name' => $data['customer_name']]
+            );
+            $data['customer_id'] = $customer->id;
+        }
+
+        $item = Booking::create($data);
         AuditTrail::log($item, 'create', 'Bookings');
 
         // Ensure barber relationship is loaded for notification logic

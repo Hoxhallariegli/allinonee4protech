@@ -16,6 +16,10 @@
         <div class="ml-1.5 size-1.5 rounded-full shrink-0 bg-gray-300 dark:bg-gray-700"></div>
         <span class="truncate">{{ __('berber-app/services.Services') }}</span>
     </a>
+    <a href="/modular/berber-app/berber-app/customers" class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-white transition-all duration-200">
+        <div class="ml-1.5 size-1.5 rounded-full shrink-0 bg-gray-300 dark:bg-gray-700"></div>
+        <span class="truncate">{{ __('berber-app/customers.Customers') }}</span>
+    </a>
     <a href="/modular/berber-app/berber-app/bookings" class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-900 dark:hover:text-white transition-all duration-200">
         <div class="ml-1.5 size-1.5 rounded-full shrink-0 bg-gray-300 dark:bg-gray-700"></div>
         <span class="truncate">{{ __('berber-app/bookings.Bookings') }}</span>

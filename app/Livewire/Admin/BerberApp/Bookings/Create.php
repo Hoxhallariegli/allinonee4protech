@@ -22,7 +22,8 @@ class Create extends Component
     use WithPagination;
     public $barber_id = '';
     public $service_id = '';
-    public $customer_name = '';
+    public $customer_id = '';
+    public $customer_name = ''; // Keeping for compatibility with Action if needed
     public $customer_phone = '';
     public $appointment_datetime = '';
     public $status = 'pending';
@@ -56,26 +57,32 @@ class Create extends Component
 
         $selectedService = Service::find($this->service_id);
         if (!$selectedService) return [];
-        $newDuration = $selectedService->duration_minutes;
+        $newDuration = (int) ($selectedService->duration_minutes ?: 30);
 
         $slots = [];
         $start = Carbon::parse($this->selected_date . ' 09:00');
+        $end = Carbon::parse($this->selected_date . ' 19:00');
 
         // Ensure we don't show past slots for today
         if ($start->isToday()) {
             $now = now();
-            if ($now->minute > 0 && $now->minute <= 30) {
-                $start->minute(30);
-            } elseif ($now->minute > 30) {
-                $start->addHour()->minute(0);
+            if ($now->gt($start)) {
+                $start = $now->copy();
+                if ($start->minute > 30) {
+                    $start = $start->addHour()->minute(0)->second(0);
+                } elseif ($start->minute > 0) {
+                    $start = $start->minute(30)->second(0);
+                } else {
+                    $start = $start->second(0);
+                }
             }
         }
 
-        $end = Carbon::parse($this->selected_date . ' 19:00');
-
         $activeBarbers = Barber::where('active', true)->get();
+        $safety_limit = 100;
 
-        while ($start->copy()->addMinutes($newDuration) <= $end) {
+        while ($start->copy()->addMinutes($newDuration) <= $end && $safety_limit > 0) {
+            $safety_limit--;
             $slotStart = $start->copy();
             $slotEnd = $start->copy()->addMinutes($newDuration);
             $timeString = $slotStart->format('H:i');
@@ -117,7 +124,7 @@ class Create extends Component
                 $slots[] = $timeString;
             }
 
-            $start->addMinutes(30);
+            $start = $start->addMinutes(30);
         }
 
         return $slots;
@@ -128,6 +135,9 @@ class Create extends Component
 
     #[On('service-created')]
     public function refreshServices($id) { $this->service_id = $id; $this->updatedServiceId($id); }
+
+    #[On('customer-created')]
+    public function refreshCustomers($id) { $this->customer_id = $id; }
 
     public function updatedBarberId($value)
     {
@@ -153,20 +163,35 @@ class Create extends Component
         return \App\Models\BerberApp\Service::pluck('name', 'id')->toArray();
     }
 
+    protected function getcustomersList() {
+        return \App\Models\BerberApp\Customer::pluck('name', 'id')->toArray();
+    }
+
     public function render() { abort_if_cannot('add_bookings'); return view('livewire.admin.berber-app.bookings.create', [
             'barbers' => $this->getbarbersList(),
             'services' => $this->getservicesList(),
+            'customers' => $this->getcustomersList(),
         ])->layout('components.layouts.app'); }
-    public function store(CreateBookingAction $action) { $this->validate();  $dto = BookingDTO::fromArray([
+    public function store(CreateBookingAction $action) {
+        $this->validate();
+
+        $customer = \App\Models\BerberApp\Customer::find($this->customer_id);
+
+        $dto = BookingDTO::fromArray([
             'barber_id' => $this->barber_id,
             'service_id' => $this->service_id,
-            'customer_name' => $this->customer_name,
-            'customer_phone' => $this->customer_phone,
+            'customer_id' => $this->customer_id,
+            'customer_name' => $customer->name,
+            'customer_phone' => $customer->phone,
             'appointment_datetime' => $this->appointment_datetime,
             'status' => $this->status,
             'reminder_enabled' => $this->reminder_enabled,
             'reminder_minutes' => $this->reminder_minutes,
             'cancel_reason' => $this->cancel_reason,
-        ]); $action->execute($dto); session()->flash('success', __('berber-app/bookings.created')); return to_route('admin.berber-app.bookings.index'); }
+        ]);
+        $action->execute($dto);
+        session()->flash('success', __('berber-app/bookings.created'));
+        return to_route('admin.berber-app.bookings.index');
+    }
     protected function rules(): array { return Booking::rules(); }
 }
