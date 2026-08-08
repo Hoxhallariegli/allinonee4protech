@@ -148,9 +148,12 @@
     </script>
 @endif
 
-{{-- Top auth nav intentionally removed — this is a standalone landing page, no login/register clutter at the top --}}
+{{-- Top auth nav --}}
+<x-layouts.landing-header />
 
-{{ $slot }}
+<div class="pt-20">
+    {{ $slot }}
+</div>
 
 </body>
 </html>

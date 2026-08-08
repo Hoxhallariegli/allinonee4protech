@@ -26,4 +26,5 @@ return [
   'Waiter Id' => 'Waiter Id',
   'Order Date' => 'Order Date',
   'Status' => 'Status',
+  'Total Amount' => 'Total Amount',
 ];

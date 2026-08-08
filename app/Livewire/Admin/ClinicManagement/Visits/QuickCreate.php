@@ -30,7 +30,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Patient::find($value);
         if (!$related) return;
-        if (isset($related->doctor_id)) { $this->doctor_id = $related->doctor_id; }
     }
 
     public function updatedDoctorId($value)
@@ -38,7 +37,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Doctor::find($value);
         if (!$related) return;
-        if (isset($related->patient_id)) { $this->patient_id = $related->patient_id; }
     }
  
     protected function getpatientsList() {

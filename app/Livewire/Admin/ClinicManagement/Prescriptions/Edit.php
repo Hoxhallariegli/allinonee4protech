@@ -31,13 +31,16 @@ class Edit extends Component
     }
  
     protected function getvisitsList() {
-        return \App\Models\ClinicManagement\Visit::with('patient')->get()->pluck('patient.name', 'id')->toArray();
+        return \App\Models\ClinicManagement\Visit::pluck('id', 'id')->toArray();
     }
 
     public function mount(Prescription $prescription) { $this->item = $prescription; $this->fill($prescription->toArray());  }
-    public function render() { abort_if_cannot('edit_prescriptions'); return view('livewire.admin.clinic-management.prescriptions.edit', [
+    public function render() {
+        abort_if_cannot('edit_prescriptions');
+        return view('livewire.admin.clinic-management.prescriptions.edit', [
             'visits' => $this->getvisitsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePrescriptionAction $action) { $this->validate();  $dto = PrescriptionDTO::fromArray([
             'visit_id' => $this->visit_id,
             'medicine' => $this->medicine,

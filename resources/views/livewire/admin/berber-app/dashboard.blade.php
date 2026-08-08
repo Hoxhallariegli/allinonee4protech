@@ -1,88 +1,112 @@
-
-<div class="space-y-8"
-     x-data="{
-        chart: null,
-        init() {
-            if (typeof ApexCharts === 'undefined') {
-                console.error('ApexCharts is not loaded yet');
-                return;
-            }
-            this.chart = new ApexCharts(this.$refs.chart, {
-                series: [{ name: 'Barbers', data: @js($chartData['barbers']) }, { name: 'Bookings', data: @js($chartData['bookings']) }, { name: 'Reminders', data: @js($chartData['reminders']) }, { name: 'Services (€)', data: @js($chartData['services']) }, ],
-                chart: { height: 350, type: 'area', toolbar: {show:false}, zoom: {enabled:false}, fontFamily: 'inherit' },
-                stroke: { curve: 'smooth', width: 3 },
-                dataLabels: { enabled: false },
-                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.2, opacityTo: 0 } },
-                xaxis: { categories: @js($days), axisBorder: {show:false}, axisTicks: {show:false} },
-                yaxis: { labels: { show: false } },
-                grid: { borderColor: '#f1f1f1', strokeDashArray: 4, padding: {left:10, right:10} },
-                colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1'],
-                legend: { position: 'top', horizontalAlign: 'right', fontWeight: 600, fontSize: '12px' }
-            });
-            this.chart.render();
-        }
-     }">
-
-    <div class="flex items-end justify-between">
+<div class="space-y-6">
+    <div class="flex items-center justify-between gap-4 px-1">
         <div>
-            <x-h1>{{ __('admin.Berber App Dashboard') }}</x-h1>
-            <x-short-description class="dark:text-gray-400">{{ __('Operational and financial insights for') }} Berber App</x-short-description>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('admin.Berber App Dashboard') }}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('admin.module_desc_berber-app') }}</p>
         </div>
-        <div class="hidden md:block">
-            <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl text-[10px] font-black uppercase text-gray-400 tracking-widest">
-                <span class="size-2 rounded-full bg-blue-500 animate-pulse"></span>
-                {{ __('Real-time Analytics') }}
+        <div class="flex items-center gap-3">
+            <x-btn href="/berber-app" target="_blank" icon="globe-alt" variant="secondary">{{ __('admin.View Landing Page') }}</x-btn>
+            <x-btn route="admin.berber-app.bookings.index" icon="plus">{{ __('admin.Add Booking') }}</x-btn>
+        </div>
+    </div>
+
+    {{-- Stats Grid --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card p-6 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-[2rem]">
+            <div class="flex items-center gap-4">
+                <div class="size-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                    <x-heroicon-o-calendar class="size-6" />
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{ __('admin.Total Bookings') }}</p>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $totalBookings }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-6 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-[2rem]">
+            <div class="flex items-center gap-4">
+                <div class="size-12 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <x-heroicon-o-user class="size-6" />
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{ __('admin.Active Barbers') }}</p>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $totalBarbers }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-6 bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-[2rem]">
+            <div class="flex items-center gap-4">
+                <div class="size-12 rounded-2xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                    <x-heroicon-o-tag class="size-6" />
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{ __('admin.Services') }}</p>
+                    <p class="text-2xl font-black text-gray-900 dark:text-white">{{ $totalServices }}</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-l-4 border-blue-500 shadow-sm border-y border-r border-gray-100 dark:border-gray-700/50">
-                    <p class="text-[10px] font-black uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500 mb-1">Services Total</p>
-                    <p class="text-2xl font-bold dark:text-white tracking-tight">€{{ number_format($stats['services_sum'] ?? 0, 2) }}</p>
-                </div></div>
-
-    <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 shadow-sm">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">{{ __('Growth Trend (Last 7 Days)') }}</h3>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- Recent Bookings --}}
+        <div class="lg:col-span-2 card !p-0 overflow-hidden bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 rounded-[2.5rem]">
+            <div class="p-6 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ __('admin.Recent Bookings') }}</h3>
+                <x-a route="admin.berber-app.bookings.index" class="text-xs font-bold text-blue-600">{{ __('admin.View All') }}</x-a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50/50 dark:bg-gray-700/50 text-[10px] font-black uppercase text-gray-400 tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4">{{ __('admin.Customer') }}</th>
+                            <th class="px-6 py-4">{{ __('admin.Barber') }}</th>
+                            <th class="px-6 py-4">{{ __('admin.Service') }}</th>
+                            <th class="px-6 py-4">{{ __('admin.Date/Time') }}</th>
+                            <th class="px-6 py-4 text-right">{{ __('admin.Status') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">
+                        @foreach($recentBookings as $booking)
+                            <tr class="hover:bg-gray-50/30 dark:hover:bg-gray-900/30 transition-colors">
+                                <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">{{ $booking->customer?->name }}</td>
+                                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $booking->barber?->name ?? 'Any' }}</td>
+                                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $booking->service?->name }}</td>
+                                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $booking->appointment_datetime->format('d/m H:i') }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600">
+                                        Active
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div x-ref="chart" class="min-h-[350px]"></div>
-    </div>
 
-    <div class="space-y-6">
-        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('Operational Metrics') }}</h4>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            <a href="{{ route('admin.berber-app.barbers.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+        {{-- Quick Actions --}}
+        <div class="card p-8 bg-gray-900 text-white rounded-[2.5rem] flex flex-col justify-between">
+            <div>
+                <h3 class="text-xl font-black uppercase tracking-tight mb-4 text-blue-400">{{ __('admin.Quick Actions') }}</h3>
+                <p class="text-gray-400 text-sm mb-8 leading-relaxed italic font-serif">"{{ __('admin.Manage your salon with ease. Every confirmed booking automatically sends a push notification to the client.') }}"</p>
+                <div class="space-y-4">
+                    <a href="/berber-app" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="size-10 rounded-xl bg-blue-500 flex items-center justify-center"><x-heroicon-o-globe-alt class="size-5 text-white" /></div>
+                        <span class="font-bold text-sm uppercase tracking-widest">{{ __('admin.Public Page') }}</span>
+                    </a>
+                    <x-a route="admin.berber-app.barbers.index" class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors !text-white !border-none !px-0 !py-0">
+                         <div class="flex items-center gap-4 w-full">
+                            <div class="size-10 rounded-xl bg-emerald-500 flex items-center justify-center"><x-heroicon-o-user-group class="size-5 text-white" /></div>
+                            <span class="font-bold text-sm uppercase tracking-widest">{{ __('admin.Manage Team') }}</span>
+                         </div>
+                    </x-a>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Barbers</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['barbers'] }}</p>
-            </a>
-            <a href="{{ route('admin.berber-app.bookings.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
-                </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Bookings</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['bookings'] }}</p>
-            </a>
-            <a href="{{ route('admin.berber-app.reminders.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
-                </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Reminders</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['reminders'] }}</p>
-            </a>
-            <a href="{{ route('admin.berber-app.services.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
-                </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Services</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['services'] }}</p>
-            </a></div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">The Station Barbers • v1.0</p>
+            </div>
+        </div>
     </div>
 </div>

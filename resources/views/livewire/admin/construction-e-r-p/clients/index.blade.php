@@ -16,7 +16,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                         <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">{{ __('construction-e-r-p/clients.Search') }}</label>
-                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Name, Email, Phone" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
+                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Name, Email, Phone, Photo" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
                     </div>
                     
                 </div>
@@ -29,7 +29,8 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="bg-gray-100/50 dark:bg-gray-700/50"><tr><x-table.th name="id" :label="__('construction-e-r-p/clients.ID')" :$sortField :$sortAsc :sortable="true" /><x-table.th name="name" :label="__('construction-e-r-p/clients.Name')" :$sortField :$sortAsc :sortable="in_array('name', $sortableFields)" />
 <x-table.th name="email" :label="__('construction-e-r-p/clients.Email')" :$sortField :$sortAsc :sortable="in_array('email', $sortableFields)" />
-<x-table.th name="phone" :label="__('construction-e-r-p/clients.Phone')" :$sortField :$sortAsc :sortable="in_array('phone', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('construction-e-r-p/clients.Action') }}</th></tr></thead>
+<x-table.th name="phone" :label="__('construction-e-r-p/clients.Phone')" :$sortField :$sortAsc :sortable="in_array('phone', $sortableFields)" />
+<x-table.th name="photo" :label="__('construction-e-r-p/clients.Photo')" :$sortField :$sortAsc :sortable="in_array('photo', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('construction-e-r-p/clients.Action') }}</th></tr></thead>
                 <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">@forelse($items as $item) <livewire:admin.construction-e-r-p.clients.row :$item :key="$item->id" /> @empty <tr><td colspan="100" class="px-6 py-10 text-center text-sm text-gray-400">{{ __('construction-e-r-p/clients.No records found.') }}</td></tr> @endforelse</tbody>
             </table>
         </div>

@@ -32,9 +32,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Part::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_inventories'); return view('livewire.admin.auto-repair-management.inventories.create', [
+    public function render() {
+        abort_if_cannot('add_inventories');
+        return view('livewire.admin.auto-repair-management.inventories.create', [
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateInventoryAction $action) { $this->validate();  $dto = InventoryDTO::fromArray([
             'part_id' => $this->part_id,
             'quantity' => $this->quantity,

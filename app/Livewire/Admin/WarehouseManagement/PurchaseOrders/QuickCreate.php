@@ -24,12 +24,12 @@ class QuickCreate extends Component
     public function updatedSupplierId($value)
     {
         if (!$value) return;
-        $related = \App\Models\AutoRepairManagement\Supplier::find($value);
+        $related = \App\Models\WarehouseManagement\Supplier::find($value);
         if (!$related) return;
     }
  
     protected function getsuppliersList() {
-        return \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray();
+        return \App\Models\WarehouseManagement\Supplier::pluck('name', 'id')->toArray();
     }
 
     public bool $created = false;

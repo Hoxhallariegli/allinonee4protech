@@ -29,7 +29,7 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="visit_date" type="datetime-local" wire:model="visit_date" :label="__('real-estate-c-r-m/property-visits.Visit Date')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="visit_date" type="date" wire:model="visit_date" :label="__('real-estate-c-r-m/property-visits.Visit Date')" class="dark:bg-gray-900" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('real-estate-c-r-m/property-visits.Save') }}</x-button></div>
     @endif
 </div>

@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(ProgressReport $progressReport) { $this->item = $progressReport; $this->fill($progressReport->toArray()); $this->report_date = $progressReport->report_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_progress_reports'); return view('livewire.admin.construction-e-r-p.progress-reports.edit', [
+    public function render() {
+        abort_if_cannot('edit_progress_reports');
+        return view('livewire.admin.construction-e-r-p.progress-reports.edit', [
             'projects' => $this->getprojectsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateProgressReportAction $action) { $this->validate();  $dto = ProgressReportDTO::fromArray([
             'project_id' => $this->project_id,
             'report_date' => $this->report_date,

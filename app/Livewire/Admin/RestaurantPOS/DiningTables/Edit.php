@@ -21,8 +21,11 @@ class Edit extends Component
     public $status = '';
    
     public function mount(DiningTable $diningTable) { $this->item = $diningTable; $this->fill($diningTable->toArray());  }
-    public function render() { abort_if_cannot('edit_dining_tables'); return view('livewire.admin.restaurant-p-o-s.dining-tables.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_dining_tables');
+        return view('livewire.admin.restaurant-p-o-s.dining-tables.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateDiningTableAction $action) { $this->validate();  $dto = DiningTableDTO::fromArray([
             'number' => $this->number,
             'capacity' => $this->capacity,

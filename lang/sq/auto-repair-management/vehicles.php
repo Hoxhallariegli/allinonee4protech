@@ -28,4 +28,5 @@ return [
   'Customer Id' => 'Customer Id',
   'License Plate' => 'License Plate',
   'Vin' => 'Vin',
+  'Photo' => 'Photo',
 ];

@@ -26,4 +26,5 @@ return [
   'Number' => 'Number',
   'Area' => 'Area',
   'Status' => 'Status',
+  'Price' => 'Price',
 ];

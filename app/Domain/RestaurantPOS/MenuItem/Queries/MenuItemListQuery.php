@@ -14,7 +14,9 @@ class MenuItemListQuery
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
-                $query->orWhere('category', 'like', '%' . $params['search'] . '%');
+                $query->orWhereHas('category', function($q) use ($params) {
+                    $q->where('name', 'like', '%' . $params['search'] . '%');
+                });
             });
         }
 

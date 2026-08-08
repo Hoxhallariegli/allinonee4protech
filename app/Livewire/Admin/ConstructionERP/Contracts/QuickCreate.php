@@ -30,7 +30,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Project::find($value);
         if (!$related) return;
-        if (isset($related->client_id)) { $this->client_id = $related->client_id; }
     }
 
     public function updatedClientId($value)
@@ -38,7 +37,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Client::find($value);
         if (!$related) return;
-        if (isset($related->project_id)) { $this->project_id = $related->project_id; }
     }
  
     protected function getprojectsList() {

@@ -25,4 +25,5 @@ return [
   'Visit Id' => 'Visit Id',
   'Amount' => 'Amount',
   'Status' => 'Status',
+  'Total Amount' => 'Total Amount',
 ];

@@ -21,7 +21,7 @@
     </div>
 </div>
 <div><x-form.input name="source" type="text" wire:model="source" :label="__('c-r-m/leads.Source')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('c-r-m/leads.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"new\">new</option><option value=\"contacted\">contacted</option><option value=\"qualified\">qualified</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('c-r-m/leads.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="new">new</option><option value="contacted">contacted</option><option value="qualified">qualified</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('c-r-m/leads.Save') }}</x-button></div>
     @endif
 </div>

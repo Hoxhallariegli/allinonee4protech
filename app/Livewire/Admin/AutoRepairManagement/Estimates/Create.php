@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\JobCard::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_estimates'); return view('livewire.admin.auto-repair-management.estimates.create', [
+    public function render() {
+        abort_if_cannot('add_estimates');
+        return view('livewire.admin.auto-repair-management.estimates.create', [
             'jobCards' => $this->getjobCardsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateEstimateAction $action) { $this->validate();  $dto = EstimateDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'estimate_date' => $this->estimate_date,

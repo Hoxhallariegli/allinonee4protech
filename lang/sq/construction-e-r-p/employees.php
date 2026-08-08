@@ -25,4 +25,12 @@ return [
   'Name' => 'Name',
   'Position' => 'Position',
   'Phone' => 'Phone',
+  'Photo' => 'Photo',
+  'User Id' => 'User Id',
+  'Salary' => 'Salary',
+  'Hire Date' => 'Hire Date',
+  'Email' => 'Email',
+  'Department' => 'Department',
+  'Employment Type' => 'Employment Type',
+  'Status' => 'Status',
 ];

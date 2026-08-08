@@ -31,7 +31,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\DiningTable::find($value);
         if (!$related) return;
-        if (isset($related->waiter_id)) { $this->waiter_id = $related->waiter_id; }
     }
 
     public function updatedWaiterId($value)
@@ -39,7 +38,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\Waiter::find($value);
         if (!$related) return;
-        if (isset($related->table_id)) { $this->table_id = $related->table_id; }
     }
  
     protected function gettablesList() {
@@ -50,10 +48,13 @@ class Create extends Component
         return \App\Models\RestaurantPOS\Waiter::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_orders'); return view('livewire.admin.restaurant-p-o-s.orders.create', [
+    public function render() {
+        abort_if_cannot('add_orders');
+        return view('livewire.admin.restaurant-p-o-s.orders.create', [
             'tables' => $this->gettablesList(),
             'waiters' => $this->getwaitersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateOrderAction $action) { $this->validate();  $dto = OrderDTO::fromArray([
             'table_id' => $this->table_id,
             'waiter_id' => $this->waiter_id,

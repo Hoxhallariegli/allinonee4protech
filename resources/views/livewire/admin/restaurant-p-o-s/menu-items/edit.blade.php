@@ -3,5 +3,6 @@
     @include('errors.errors')
     <div class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700"><form wire:submit.prevent="update" class="space-y-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('restaurant-p-o-s/menu-items.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="price" type="text" wire:model="price" :label="__('restaurant-p-o-s/menu-items.Price')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="category" type="text" wire:model="category" :label="__('restaurant-p-o-s/menu-items.Category')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('restaurant-p-o-s/menu-items.Update') }}</x-button></div></form></div>
+<div><x-form.select name="category_id" wire:model="category_id" :label="__('restaurant-p-o-s/menu-items.Category')" :options="$categories->pluck('name', 'id')->toArray()" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('restaurant-p-o-s/menu-items.Photo')" id="photo" :isEditing="true" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('restaurant-p-o-s/menu-items.Update') }}</x-button></div></form></div>
 </div>

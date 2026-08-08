@@ -25,4 +25,5 @@ return [
   'Name' => 'Name',
   'Phone' => 'Phone',
   'Email' => 'Email',
+  'Photo' => 'Photo',
 ];

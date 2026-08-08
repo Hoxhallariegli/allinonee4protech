@@ -10,23 +10,30 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Edit Teacher')]
 class Edit extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
  public Teacher $item;
     public $name = '';
     public $subject = '';
     public $phone = '';
+    public $photo = '';
    
     public function mount(Teacher $teacher) { $this->item = $teacher; $this->fill($teacher->toArray());  }
-    public function render() { abort_if_cannot('edit_teachers'); return view('livewire.admin.school-management.teachers.edit', [
-        ])->layout('components.layouts.app'); }
-    public function update(UpdateTeacherAction $action) { $this->validate();  $dto = TeacherDTO::fromArray([
+    public function render() {
+        abort_if_cannot('edit_teachers');
+        return view('livewire.admin.school-management.teachers.edit', [
+        ])->layout('components.layouts.app');
+    }
+    public function update(UpdateTeacherAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/teachers', 'uploads'); }
+ $dto = TeacherDTO::fromArray([
             'name' => $this->name,
             'subject' => $this->subject,
             'phone' => $this->phone,
+            'photo' => $this->photo,
         ]); $action->execute($this->item, $dto); session()->flash('success', __('school-management/teachers.updated')); return to_route('admin.school-management.teachers.index'); }
     protected function rules(): array { return Teacher::rules($this->item->id); }
 }

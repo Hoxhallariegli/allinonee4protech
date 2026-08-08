@@ -25,4 +25,5 @@ return [
   'Property Id' => 'Property Id',
   'Client Id' => 'Client Id',
   'Visit Date' => 'Visit Date',
+  'Notes' => 'Notes',
 ];

@@ -11,7 +11,7 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="number" type="text" wire:model="number" :label="__('restaurant-p-o-s/dining-tables.Number')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="capacity" type="text" wire:model="capacity" :label="__('restaurant-p-o-s/dining-tables.Capacity')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/dining-tables.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"free\">free</option><option value=\"occupied\">occupied</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/dining-tables.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="free">free</option><option value="occupied">occupied</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('restaurant-p-o-s/dining-tables.Save') }}</x-button></div>
     @endif
 </div>

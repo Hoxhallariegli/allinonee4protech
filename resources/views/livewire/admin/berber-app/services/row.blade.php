@@ -1,9 +1,8 @@
 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none">
     <td class="px-6 py-5 font-bold text-blue-600 dark:text-blue-400">{{ $item->id }}</td>
     <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->name }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->duration_minutes }}</td>
 <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->price }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->active }}</td>
+<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->duration_minutes }}</td>
     <td class="px-6 py-5 text-right !transition-none">
         <div class="flex justify-end gap-3 !transition-none">
             @can('edit_services')

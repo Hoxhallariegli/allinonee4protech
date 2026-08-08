@@ -25,4 +25,6 @@ return [
   'Order Id' => 'Order Id',
   'Menu Item Id' => 'Menu Item Id',
   'Quantity' => 'Quantity',
+  'Rp Menu Items' => 'Rp Menu Items',
+  'Price' => 'Price',
 ];

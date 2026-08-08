@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Equipment' => 'Equipment',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Equipment' => 'Add Equipment',
+  'Edit Equipment' => 'Edit Equipment',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Equipment created.',
+  'updated' => 'Equipment updated.',
+  'deleted' => 'Equipment deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Type' => 'Type',
+  'Hourly Rate' => 'Hourly Rate',
+  'Fuel Consumption Liters H' => 'Fuel Consumption Liters H',
+];

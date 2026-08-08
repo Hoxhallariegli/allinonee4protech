@@ -9,7 +9,7 @@ class Patient extends Model
 {
     use HasFactory;
     protected $table = 'cm_patients';
-    protected $fillable = ['name', 'phone', 'birth_date'];
+    protected $fillable = ['name', 'phone', 'birth_date', 'photo'];
     protected function casts(): array { return [
             'birth_date' => 'datetime',
         ]; }
@@ -17,7 +17,8 @@ class Patient extends Model
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date'],
+            'photo' => ['nullable', 'max:255'],
         ]; }
-    public static function sortable(): array { return ['id', 'name', 'phone', 'birth_date']; }
+    public static function sortable(): array { return ['id', 'name', 'phone', 'birth_date', 'photo']; }
 
 }

@@ -14,7 +14,7 @@ class VehicleDocument extends Model
         ]; }
     public static function rules($id = null): array { return [
             'type' => ['required', 'string', 'max:255'],
-            'document' => ['required', 'string', 'max:255'],
+            'document' => ['required', 'max:255'],
             'vehicle_id' => ['required', 'integer'],
         ]; }
     public static function sortable(): array { return ['id', 'type', 'document', 'vehicle_id']; }

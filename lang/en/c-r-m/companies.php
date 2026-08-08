@@ -25,4 +25,5 @@ return [
   'Name' => 'Name',
   'Industry' => 'Industry',
   'Phone' => 'Phone',
+  'Logo' => 'Logo',
 ];

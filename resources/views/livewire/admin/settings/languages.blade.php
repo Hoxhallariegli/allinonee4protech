@@ -50,12 +50,29 @@
 
             <div class="card !my-0">
                 <label class="block text-xs font-bold uppercase tracking-wider mb-3 text-gray-500">{{ __('languages.Select File') }}</label>
-                <div class="space-y-1">
-                    @foreach($files as $file)
-                        <button wire:click="$set('selectedFile', '{{ $file }}')"
-                                class="w-full text-left px-4 py-2 text-sm rounded transition-all {{ $selectedFile === $file ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 font-bold border-l-4 border-sky-600' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
-                            {{ str_replace('.php', '', $file) }}
-                        </button>
+                <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 text-gray-500">
+                    @php
+                        $groupedFiles = collect($files)->groupBy(function($file) {
+                            return str_contains($file, '/') ? explode('/', $file)[0] : 'General';
+                        })->sortKeys();
+                    @endphp
+
+                    @foreach($groupedFiles as $group => $groupFiles)
+                        <div x-data="{ open: {{ $loop->first ? 'true' : 'false' }} }">
+                            <button @click="open = !open" class="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 hover:text-primary transition-colors">
+                                <span>{{ str_replace('-', ' ', $group) }}</span>
+                                <x-heroicon-o-chevron-down x-show="open" class="size-3" />
+                                <x-heroicon-o-chevron-right x-show="!open" class="size-3" />
+                            </button>
+                            <div x-show="open" class="space-y-1 ml-2 border-l border-gray-100 dark:border-gray-700 pl-2">
+                                @foreach($groupFiles as $file)
+                                    <button wire:click="$set('selectedFile', '{{ $file }}')"
+                                            class="w-full text-left px-3 py-1.5 text-xs rounded transition-all {{ $selectedFile === $file ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 font-bold border-l-2 border-sky-600' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
+                                        {{ str_replace(['.php', $group . '/'], '', $file) }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -67,7 +84,12 @@
                 <div class="card !my-0">
                     <div class="flex items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
                         <div>
-                            <h2 class="!py-0 text-xl font-bold text-gray-900 dark:text-white uppercase">{{ str_replace('.php', '', $selectedFile) }}</h2>
+                            <h2 class="!py-0 text-xl font-bold text-gray-900 dark:text-white uppercase">
+                                @if(str_contains($selectedFile, '/'))
+                                    <span class="text-gray-400">{{ explode('/', $selectedFile)[0] }} /</span>
+                                @endif
+                                {{ str_replace('.php', '', basename($selectedFile)) }}
+                            </h2>
                             <small class="text-gray-500 uppercase tracking-widest">{{ $selectedLang }} / {{ $selectedFile }}</small>
                         </div>
                         <x-button wire:click="saveTranslations" size="sm">

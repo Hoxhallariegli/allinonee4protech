@@ -20,8 +20,11 @@ class Edit extends Component
     public $address = '';
    
     public function mount(Warehouse $warehouse) { $this->item = $warehouse; $this->fill($warehouse->toArray());  }
-    public function render() { abort_if_cannot('edit_warehouses'); return view('livewire.admin.warehouse-management.warehouses.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_warehouses');
+        return view('livewire.admin.warehouse-management.warehouses.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateWarehouseAction $action) { $this->validate();  $dto = WarehouseDTO::fromArray([
             'name' => $this->name,
             'address' => $this->address,

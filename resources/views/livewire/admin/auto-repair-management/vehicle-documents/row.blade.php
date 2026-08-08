@@ -1,7 +1,7 @@
 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none">
     <td class="px-6 py-5 font-bold text-blue-600 dark:text-blue-400">{{ $item->id }}</td>
     <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->type }}</td>
-<td class="px-6 py-5">@if($item->document) <a href="{{ asset('storage/'.$item->document) }}" target="_blank" rel="noopener"><x-heroicon-o-arrow-down-tray class="w-5 h-5 text-blue-500" /></a> @else - @endif</td>
+<td class="px-6 py-5">@if($item->document) <a href="{{ asset('uploads/'.$item->document) }}" target="_blank" rel="noopener"><x-heroicon-o-arrow-down-tray class="w-5 h-5 text-blue-500" /></a> @else - @endif</td>
 <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->vehicle?->license_plate ?? '-' }}</td>
     <td class="px-6 py-5 text-right !transition-none">
         <div class="flex justify-end gap-3 !transition-none">

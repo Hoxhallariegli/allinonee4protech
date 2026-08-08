@@ -22,7 +22,7 @@ Livewire::setUpdateRoute(function ($handle) {
     return Route::post('livewire/update', $handle);
 });
 
-Route::get('/', WelcomeController::class);
+Route::get('/', \App\Livewire\Public\Welcome::class);
 Route::get('language/{locale}', function ($locale) {
     session()->put('locale', $locale);
     return redirect()->back();
@@ -47,6 +47,7 @@ Route::prefix(config('admintw.prefix'))->middleware(['auth', 'verified', 'active
         Route::get('ai-assistant', \App\Livewire\Admin\AiAssistant::class)->name('admin.settings.ai-assistant');
         Route::get('languages', Languages::class)->name('admin.settings.languages.index');
         Route::get('notifications', NotificationSettings::class)->name('admin.settings.notifications');
+        Route::get('module-management', \App\Livewire\Admin\Settings\ModuleManagement::class)->name('admin.settings.module-management');
         Route::get('notification-preferences', \App\Livewire\Admin\Settings\UserNotificationSettings::class)->name('admin.settings.notification-preferences');
         Route::get('roles', Roles::class)->name('admin.settings.roles.index');
         Route::get('roles/{role}/edit', Edit::class)->name('admin.settings.roles.edit');

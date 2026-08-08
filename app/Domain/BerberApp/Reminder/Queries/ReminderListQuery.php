@@ -13,8 +13,7 @@ class ReminderListQuery
         if (isset($params['search']) && $params['search']) {
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
-                $query->orWhere('type', 'like', '%' . $params['search'] . '%');
-                $query->orWhere('status', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('reminder_type', 'like', '%' . $params['search'] . '%');
             });
         }
         if (isset($params['booking_id']) && $params['booking_id']) $query->where('booking_id', $params['booking_id']);

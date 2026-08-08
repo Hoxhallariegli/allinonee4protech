@@ -21,6 +21,6 @@ class Sale extends Model
         ]; }
     public static function sortable(): array { return ['id', 'customer_id', 'sale_date', 'total']; }
 
-    public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\AutoRepairManagement\Customer::class, 'customer_id'); }
+    public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\WarehouseManagement\Customer::class, 'customer_id'); }
 
 }

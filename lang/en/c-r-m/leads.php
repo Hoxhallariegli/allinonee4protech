@@ -26,4 +26,5 @@ return [
   'Company Id' => 'Company Id',
   'Source' => 'Source',
   'Status' => 'Status',
+  'Notes' => 'Notes',
 ];

@@ -11,12 +11,22 @@ class ModularLayoutMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('modular/*')) {
-            $group = $request->segment(2); // e.g., 'berber-app'
+        $path = $request->path();
 
-            // This is the Magic: We override the layout for ANY Livewire component
-            // called within this request lifecycle.
-            config(['livewire.layout' => "components.layouts.groups.{$group}"]);
+        $modules = [
+            'berber-app', 'clinic-management', 'auto-repair-management', 'construction-e-r-p',
+            'warehouse-management', 'restaurant-p-o-s', 'school-management', 'real-estate-c-r-m',
+            'c-r-m', 'hotel-management', 'human-resources', 'e--commerce', 'fleet-management',
+            'gym-management', 'finance', 'legal-management', 'pharmacy-management',
+            'event-management', 'travel-agency', 'facility-management', 'agriculture-management'
+        ];
+
+        foreach ($modules as $module) {
+            if (str_contains($path, $module)) {
+                // Since our base app layout is now self-transforming, we just force it.
+                config(['livewire.layout' => 'components.layouts.app']);
+                break;
+            }
         }
 
         return $next($request);

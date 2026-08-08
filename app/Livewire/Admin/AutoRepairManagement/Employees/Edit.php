@@ -21,8 +21,11 @@ class Edit extends Component
     public $phone = '';
    
     public function mount(Employee $employee) { $this->item = $employee; $this->fill($employee->toArray());  }
-    public function render() { abort_if_cannot('edit_employees'); return view('livewire.admin.auto-repair-management.employees.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_employees');
+        return view('livewire.admin.auto-repair-management.employees.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateEmployeeAction $action) { $this->validate();  $dto = EmployeeDTO::fromArray([
             'name' => $this->name,
             'email' => $this->email,

@@ -18,8 +18,11 @@ class Create extends Component
      public $report_type = '';
     public $report_date = '';
    
-    public function render() { abort_if_cannot('add_reports'); return view('livewire.admin.auto-repair-management.reports.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_reports');
+        return view('livewire.admin.auto-repair-management.reports.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateReportAction $action) { $this->validate();  $dto = ReportDTO::fromArray([
             'report_type' => $this->report_type,
             'report_date' => $this->report_date,

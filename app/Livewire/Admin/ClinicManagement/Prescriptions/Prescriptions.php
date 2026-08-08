@@ -34,7 +34,7 @@ class Prescriptions extends Component
         return view('livewire.admin.clinic-management.prescriptions.index', [
             'items' => $query->paginate($this->paginate),
             'sortableFields' => Prescription::sortable(),
-            'visits' => \App\Models\ClinicManagement\Visit::with('patient')->get()->pluck('patient.name', 'id')->toArray(),
+            'visits' => \App\Models\ClinicManagement\Visit::pluck('id', 'id')->toArray(),
         ])->layout('components.layouts.app');
     }
 

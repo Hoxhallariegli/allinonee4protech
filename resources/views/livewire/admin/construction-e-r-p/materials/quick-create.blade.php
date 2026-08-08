@@ -12,7 +12,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('construction-e-r-p/materials.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="unit" type="text" wire:model="unit" :label="__('construction-e-r-p/materials.Unit')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="price" type="text" wire:model="price" :label="__('construction-e-r-p/materials.Price')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="stock" type="text" wire:model="stock" :label="__('construction-e-r-p/materials.Stock')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="stock" type="text" wire:model="stock" :label="__('construction-e-r-p/materials.Stock')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('construction-e-r-p/materials.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('construction-e-r-p/materials.Save') }}</x-button></div>
     @endif
 </div>

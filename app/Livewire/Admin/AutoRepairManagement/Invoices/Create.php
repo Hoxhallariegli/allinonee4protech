@@ -34,9 +34,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\JobCard::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_invoices'); return view('livewire.admin.auto-repair-management.invoices.create', [
+    public function render() {
+        abort_if_cannot('add_invoices');
+        return view('livewire.admin.auto-repair-management.invoices.create', [
             'jobCards' => $this->getjobCardsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateInvoiceAction $action) { $this->validate();  $dto = InvoiceDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'invoice_date' => $this->invoice_date,

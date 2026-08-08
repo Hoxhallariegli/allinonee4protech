@@ -1,6 +1,7 @@
 <?php
 
 return [
+  'title' => 'Barber App',
   'welcome_to' => 'Welcome to',
   'elevate_experience' => 'THE STATION BARBERS.',
   'hero_subtitle' => '📍Rruga e Kavajës, opposite polyclinic nr.9. A station dedicated to your style and grooming.',

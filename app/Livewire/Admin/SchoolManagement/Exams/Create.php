@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\SchoolManagement\SchoolClass::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_exams'); return view('livewire.admin.school-management.exams.create', [
+    public function render() {
+        abort_if_cannot('add_exams');
+        return view('livewire.admin.school-management.exams.create', [
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateExamAction $action) { $this->validate();  $dto = ExamDTO::fromArray([
             'name' => $this->name,
             'class_id' => $this->class_id,

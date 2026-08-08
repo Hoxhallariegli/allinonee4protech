@@ -16,7 +16,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                         <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">{{ __('school-management/students.Search') }}</label>
-                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Name" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
+                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Name, Photo" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
                     </div>
                     <div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">Guardian Id</label><x-form.dropdown-search name="guardian_id" wire:model.live="guardian_id" label="none" :data="$guardians" placeholder="Filter Guardian Id" /></div>
 <div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">Class Id</label><x-form.dropdown-search name="class_id" wire:model.live="class_id" label="none" :data="$classes" placeholder="Filter Class Id" /></div>
@@ -31,7 +31,8 @@
                 <thead class="bg-gray-100/50 dark:bg-gray-700/50"><tr><x-table.th name="id" :label="__('school-management/students.ID')" :$sortField :$sortAsc :sortable="true" /><x-table.th name="name" :label="__('school-management/students.Name')" :$sortField :$sortAsc :sortable="in_array('name', $sortableFields)" />
 <x-table.th name="guardian_id" :label="__('school-management/students.Guardian Id')" :$sortField :$sortAsc :sortable="in_array('guardian_id', $sortableFields)" />
 <x-table.th name="class_id" :label="__('school-management/students.Class Id')" :$sortField :$sortAsc :sortable="in_array('class_id', $sortableFields)" />
-<x-table.th name="birth_date" :label="__('school-management/students.Birth Date')" :$sortField :$sortAsc :sortable="in_array('birth_date', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('school-management/students.Action') }}</th></tr></thead>
+<x-table.th name="birth_date" :label="__('school-management/students.Birth Date')" :$sortField :$sortAsc :sortable="in_array('birth_date', $sortableFields)" />
+<x-table.th name="photo" :label="__('school-management/students.Photo')" :$sortField :$sortAsc :sortable="in_array('photo', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('school-management/students.Action') }}</th></tr></thead>
                 <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">@forelse($items as $item) <livewire:admin.school-management.students.row :$item :key="$item->id" /> @empty <tr><td colspan="100" class="px-6 py-10 text-center text-sm text-gray-400">{{ __('school-management/students.No records found.') }}</td></tr> @endforelse</tbody>
             </table>
         </div>

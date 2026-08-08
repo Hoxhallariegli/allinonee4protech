@@ -34,9 +34,12 @@ class Create extends Component
         return \App\Models\CRM\Contact::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_deals'); return view('livewire.admin.c-r-m.deals.create', [
+    public function render() {
+        abort_if_cannot('add_deals');
+        return view('livewire.admin.c-r-m.deals.create', [
             'contacts' => $this->getcontactsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateDealAction $action) { $this->validate();  $dto = DealDTO::fromArray([
             'name' => $this->name,
             'contact_id' => $this->contact_id,

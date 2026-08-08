@@ -15,10 +15,9 @@ class QuickCreate extends Component
 {
         use WithPagination;
      public $name = '';
-    public $duration_minutes = '';
     public $price = '';
-    public $active = '';
-   
+    public $duration_minutes = '';
+
     public bool $created = false;
     public ?int $createdId = null;
     public string $createdLabel = '';
@@ -31,9 +30,8 @@ class QuickCreate extends Component
         $this->validate();
         $dto = ServiceDTO::fromArray([
             'name' => $this->name,
-            'duration_minutes' => $this->duration_minutes,
             'price' => $this->price,
-            'active' => $this->active,
+            'duration_minutes' => $this->duration_minutes,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('service-created', id: $item->id);
@@ -42,7 +40,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'duration_minutes', 'price', 'active']);
+        $this->reset(['name', 'price', 'duration_minutes']);
     }
 
     public function addAnother()

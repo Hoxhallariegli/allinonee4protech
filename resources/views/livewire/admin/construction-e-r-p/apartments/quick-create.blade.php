@@ -21,7 +21,7 @@
 </div>
 <div><x-form.input name="number" type="text" wire:model="number" :label="__('construction-e-r-p/apartments.Number')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="area" type="text" wire:model="area" :label="__('construction-e-r-p/apartments.Area')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/apartments.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"available\">available</option><option value=\"sold\">sold</option><option value=\"reserved\">reserved</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/apartments.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="available">available</option><option value="sold">sold</option><option value="reserved">reserved</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('construction-e-r-p/apartments.Save') }}</x-button></div>
     @endif
 </div>

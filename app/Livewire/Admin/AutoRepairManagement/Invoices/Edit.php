@@ -36,9 +36,12 @@ class Edit extends Component
     }
 
     public function mount(Invoice $invoice) { $this->item = $invoice; $this->fill($invoice->toArray()); $this->invoice_date = $invoice->invoice_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_invoices'); return view('livewire.admin.auto-repair-management.invoices.edit', [
+    public function render() {
+        abort_if_cannot('edit_invoices');
+        return view('livewire.admin.auto-repair-management.invoices.edit', [
             'jobCards' => $this->getjobCardsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateInvoiceAction $action) { $this->validate();  $dto = InvoiceDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'invoice_date' => $this->invoice_date,

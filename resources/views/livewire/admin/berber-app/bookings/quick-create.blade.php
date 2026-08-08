@@ -9,74 +9,37 @@
             <button type="button" wire:click="addAnother" class="mt-6 text-xs font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">{{ __('berber-app/bookings.Add Booking') }}</button>
         </div>
     @else
-        <div class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('berber-app/bookings.Barber') }}</label>
-                    <x-form.dropdown-search name="barber_id" wire:model.live="barber_id" label="none" :data="$barbers" />
-                    @php
-                        $selectedBarber = \App\Models\BerberApp\Barber::with('exceptions')->find($barber_id);
-                        $currentAbsence = $selectedBarber ? $selectedBarber->exceptions->where('start_datetime', '<=', now())->where('end_datetime', '>=', now())->first() : null;
-                    @endphp
-                    @if($currentAbsence)
-                        <div class="mt-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl flex items-center gap-2">
-                            <span class="size-2 bg-red-500 rounded-full animate-ping"></span>
-                            <span class="text-[10px] font-bold text-red-600 uppercase tracking-tighter">Në Absencë: {{ $currentAbsence->type }}</span>
-                        </div>
-                    @endif
-                </div>
-                <div>
-                    <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('berber-app/bookings.Service') }}</label>
-                    <x-form.dropdown-search name="service_id" wire:model.live="service_id" label="none" :data="$services" />
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">Customer</label>
-                    <div class="flex items-end gap-2">
-                        <div class="flex-1"><x-form.dropdown-search name="customer_id" wire:model.live="customer_id" label="none" :data="$customers" /></div>
-                        <x-modal>
-                            <x-slot name="trigger"><button type="button" @click="on = true" class="p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform"><x-heroicon-o-plus class="size-5" /></button></x-slot>
-                            <x-slot name="modalTitle"><div class="dark:text-white px-6 pt-6">Add New Customer</div></x-slot>
-                            <x-slot name="content"><livewire:admin.berber-app.customers.quick-create /></x-slot>
-                        </x-modal>
-                    </div>
-                </div>
-                <div class="hidden">
-                    <x-form.input name="customer_name" type="text" wire:model="customer_name" />
-                    <x-form.input name="customer_phone" type="text" wire:model="customer_phone" />
-                </div>
-            </div>
-
-            <div class="border-t border-gray-100 dark:border-gray-700 pt-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block mb-2 text-[10px] font-black uppercase tracking-widest text-gray-400">Data</label>
-                        <input type="date" wire:model.live="selected_date" class="w-full p-4 bg-gray-50 dark:bg-gray-900 border-none rounded-2xl font-bold text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-                    <div>
-                        <label class="block mb-2 text-[10px] font-black uppercase tracking-widest text-gray-400">Orari</label>
-                        <div class="grid grid-cols-3 gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar text-center">
-                            @forelse($this->availableSlots as $time)
-                                <button type="button" wire:click="selectTime('{{ $time }}')"
-                                    class="p-2 text-[10px] rounded-lg font-bold transition-all {{ $selected_time === $time ? 'bg-blue-600 text-white' : 'bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
-                                    {{ $time }}
-                                </button>
-                            @empty
-                                <div class="col-span-full py-4 text-center text-gray-400 text-[10px] italic">Zgjidh shërbimin dhe datën...</div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-                @if($appointment_datetime)
-                    <div class="mt-4 p-2 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-xl flex items-center gap-3">
-                        <x-heroicon-o-check-circle class="size-4 text-green-500" />
-                        <span class="text-[10px] font-bold text-green-700 dark:text-green-400">Zgjedhur: {{ Carbon\Carbon::parse($appointment_datetime)->format('d/m H:i') }}</span>
-                    </div>
-                @endif
-            </div>
-
-            <div class="flex justify-end pt-4">
-                <x-button wire:click="store" variant="blue" class="w-full !py-4 !rounded-2xl">Ruaj Rezervimin</x-button>
-            </div>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div>
+    <div class="flex items-end gap-2">
+        <div class="flex-1"><x-form.dropdown-search name="customer_id" wire:model.live="customer_id" :label="__('berber-app/bookings.Customer Id')" :data="$customers" /></div>
+        <x-modal>
+            <x-slot name="trigger"><button type="button" @click="on = true" class="mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform"><x-heroicon-o-plus class="w-5 h-5" /></button></x-slot>
+            <x-slot name="modalTitle"><div class="dark:text-white px-6 pt-6">Add New Customer</div></x-slot>
+            <x-slot name="content"><livewire:admin.berber-app.customers.quick-create /></x-slot>
+        </x-modal>
+    </div>
+</div>
+<div>
+    <div class="flex items-end gap-2">
+        <div class="flex-1"><x-form.dropdown-search name="barber_id" wire:model.live="barber_id" :label="__('berber-app/bookings.Barber Id')" :data="$barbers" /></div>
+        <x-modal>
+            <x-slot name="trigger"><button type="button" @click="on = true" class="mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform"><x-heroicon-o-plus class="w-5 h-5" /></button></x-slot>
+            <x-slot name="modalTitle"><div class="dark:text-white px-6 pt-6">Add New Barber</div></x-slot>
+            <x-slot name="content"><livewire:admin.berber-app.barbers.quick-create /></x-slot>
+        </x-modal>
+    </div>
+</div>
+<div>
+    <div class="flex items-end gap-2">
+        <div class="flex-1"><x-form.dropdown-search name="service_id" wire:model.live="service_id" :label="__('berber-app/bookings.Service Id')" :data="$services" /></div>
+        <x-modal>
+            <x-slot name="trigger"><button type="button" @click="on = true" class="mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform"><x-heroicon-o-plus class="w-5 h-5" /></button></x-slot>
+            <x-slot name="modalTitle"><div class="dark:text-white px-6 pt-6">Add New Service</div></x-slot>
+            <x-slot name="content"><livewire:admin.berber-app.services.quick-create /></x-slot>
+        </x-modal>
+    </div>
+</div>
+<div><x-form.input name="appointment_datetime" type="datetime-local" wire:model="appointment_datetime" :label="__('berber-app/bookings.Appointment Datetime')" class="dark:bg-gray-900" /></div></div>
+        <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('berber-app/bookings.Save') }}</x-button></div>
     @endif
 </div>

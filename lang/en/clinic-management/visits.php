@@ -26,4 +26,6 @@ return [
   'Doctor Id' => 'Doctor Id',
   'Visit Date' => 'Visit Date',
   'Diagnosis' => 'Diagnosis',
+  'Fee' => 'Fee',
+  'Status' => 'Status',
 ];

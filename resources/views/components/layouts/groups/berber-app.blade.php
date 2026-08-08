@@ -138,13 +138,12 @@
     class="fixed top-0 bottom-0 left-0 z-50 flex h-full w-full -translate-x-full flex-col border-r border-gray-200 bg-white transition-transform duration-500 ease-out lg:w-64 lg:translate-x-0 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-200"
     aria-label="Main Sidebar Navigation"
   >
-    <div class="flex h-16 w-full flex-none items-center justify-between px-4 lg:justify-center dark:bg-gray-600/25">
-      <x-a href="{{ route('dashboard') }}" class="group inline-flex items-center gap-2 text-lg font-bold tracking-wide text-gray-900 hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300">
-        <span>{{ config('app.name') }}</span>
-      </x-a>
-      <div class="lg:hidden">
-        <button x-on:click="mobileSidebarOpen = false" type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm leading-5 font-semibold text-gray-800 hover:border-gray-300 hover:text-gray-900 hover:shadow-xs focus:ring-3 focus:ring-gray-300/25 active:border-gray-200 active:shadow-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:text-gray-200 dark:focus:ring-gray-600/40 dark:active:border-gray-700">
-          <x-heroicon-o-x-mark class="size-5" />
+    <div class="flex h-16 w-full flex-none items-center justify-between px-6 lg:justify-start gap-3 bg-blue-600 dark:bg-blue-900">
+      <x-heroicon-o-scissors class="size-6 text-white" />
+      <span class="text-lg font-black tracking-widest text-white uppercase">Berber App</span>
+      <div class="lg:hidden ml-auto">
+        <button x-on:click="mobileSidebarOpen = false" type="button" class="text-white">
+          <x-heroicon-o-x-mark class="size-6" />
         </button>
       </div>
     </div>
@@ -153,18 +152,27 @@
       <div class="w-full p-4">
         <nav class="space-y-1">
             @php
-                $isModular = request()->is('modular/*');
-                $group = $isModular ? request()->segment(2) : null;
-                $navInclude = ($isModular && $group)
-                    ? "components.layouts.groups.{$group}.navigation"
+                $path = request()->path();
+                $modules = [
+                    'berber-app', 'clinic-management', 'auto-repair-management', 'construction-e-r-p',
+                    'warehouse-management', 'restaurant-p-o-s', 'school-management', 'real-estate-c-r-m',
+                    'c-r-m', 'hotel-management', 'human-resources', 'e--commerce', 'fleet-management',
+                    'gym-management', 'finance', 'legal-management', 'pharmacy-management',
+                    'event-management', 'travel-agency', 'facility-management', 'agriculture-management'
+                ];
+                $activeModule = null;
+                foreach ($modules as $m) {
+                    if (str_contains($path, $m)) {
+                        $activeModule = $m;
+                        break;
+                    }
+                }
+                $navInclude = $activeModule
+                    ? "components.layouts.groups.{$activeModule}.navigation"
                     : "components.layouts.app.navigation";
             @endphp
 
-            @if(view()->exists($navInclude))
-                @include($navInclude)
-            @else
-                @include('components.layouts.groups.berber-app.navigation')
-            @endif
+            @include($navInclude)
         </nav>
       </div>
     </div>

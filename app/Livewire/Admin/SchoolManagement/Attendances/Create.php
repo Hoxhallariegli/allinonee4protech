@@ -31,7 +31,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Student::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -39,7 +38,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->student_id)) { $this->student_id = $related->student_id; }
     }
  
     protected function getstudentsList() {
@@ -50,10 +48,13 @@ class Create extends Component
         return \App\Models\SchoolManagement\SchoolClass::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_attendances'); return view('livewire.admin.school-management.attendances.create', [
+    public function render() {
+        abort_if_cannot('add_attendances');
+        return view('livewire.admin.school-management.attendances.create', [
             'students' => $this->getstudentsList(),
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateAttendanceAction $action) { $this->validate();  $dto = AttendanceDTO::fromArray([
             'student_id' => $this->student_id,
             'class_id' => $this->class_id,

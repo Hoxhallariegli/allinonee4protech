@@ -31,7 +31,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\JobCard::find($value);
         if (!$related) return;
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
     }
 
     public function updatedServiceId($value)
@@ -39,7 +38,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Service::find($value);
         if (!$related) return;
-        if (isset($related->job_card_id)) { $this->job_card_id = $related->job_card_id; }
     }
  
     protected function getjobCardsList() {
@@ -50,10 +48,13 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Service::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_job_card_services'); return view('livewire.admin.auto-repair-management.job-card-services.create', [
+    public function render() {
+        abort_if_cannot('add_job_card_services');
+        return view('livewire.admin.auto-repair-management.job-card-services.create', [
             'jobCards' => $this->getjobCardsList(),
             'services' => $this->getservicesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateJobCardServiceAction $action) { $this->validate();  $dto = JobCardServiceDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'service_id' => $this->service_id,

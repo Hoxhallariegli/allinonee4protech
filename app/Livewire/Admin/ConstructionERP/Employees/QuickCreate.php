@@ -10,13 +10,15 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class QuickCreate extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $position = '';
     public $phone = '';
+    public $photo = '';
    
     public bool $created = false;
     public ?int $createdId = null;
@@ -28,10 +30,12 @@ class QuickCreate extends Component
     public function store(CreateEmployeeAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/employees', 'uploads'); }
         $dto = EmployeeDTO::fromArray([
             'name' => $this->name,
             'position' => $this->position,
             'phone' => $this->phone,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('employee-created', id: $item->id);
@@ -40,7 +44,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'position', 'phone']);
+        $this->reset(['name', 'position', 'phone', 'photo']);
     }
 
     public function addAnother()

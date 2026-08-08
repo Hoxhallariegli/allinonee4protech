@@ -26,3 +26,5 @@ ssh.text
 
 /bootstrap/cache/*
 /storage/*
+/DB_RULES.txt
+/DB_STRUCTURE.txt

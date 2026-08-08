@@ -10,9 +10,10 @@
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('berber-app/barbers.Name')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="photo" type="text" wire:model="photo" :label="__('berber-app/barbers.Photo')" class="dark:bg-gray-900" /></div>
-<div class="md:col-span-2"><x-form.textarea name="specialization" wire:model="specialization" :label="__('berber-app/barbers.Specialization')" class="dark:bg-gray-900" /></div>
-<div><x-form.checkbox name="active" wire:model="active" :label="__('berber-app/barbers.Active')" /></div></div>
+<div><x-form.input name="specialization" type="text" wire:model="specialization" :label="__('berber-app/barbers.Specialization')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('berber-app/barbers.Phone')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="commission_rate" type="text" wire:model="commission_rate" :label="__('berber-app/barbers.Commission Rate')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('berber-app/barbers.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('berber-app/barbers.Save') }}</x-button></div>
     @endif
 </div>

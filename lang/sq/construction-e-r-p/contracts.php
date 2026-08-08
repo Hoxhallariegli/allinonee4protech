@@ -26,4 +26,7 @@ return [
   'Client Id' => 'Client Id',
   'Contract Date' => 'Contract Date',
   'Amount' => 'Amount',
+  'Document File' => 'Document File',
+  'Document' => 'Document',
+  'Date' => 'Date',
 ];

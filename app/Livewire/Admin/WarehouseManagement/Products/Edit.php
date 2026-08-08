@@ -36,9 +36,12 @@ class Edit extends Component
     }
 
     public function mount(Product $product) { $this->item = $product; $this->fill($product->toArray());  }
-    public function render() { abort_if_cannot('edit_products'); return view('livewire.admin.warehouse-management.products.edit', [
+    public function render() {
+        abort_if_cannot('edit_products');
+        return view('livewire.admin.warehouse-management.products.edit', [
             'categories' => $this->getcategoriesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateProductAction $action) { $this->validate();  $dto = ProductDTO::fromArray([
             'name' => $this->name,
             'category_id' => $this->category_id,

@@ -1,6 +1,6 @@
 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none">
     <td class="px-6 py-5 font-bold text-blue-600 dark:text-blue-400">{{ $item->id }}</td>
-    <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->visit?->patient?->name ?? '-' }}</td>
+    <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->visit?->id ?? '-' }}</td>
 <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->medicine }}</td>
 <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->dosage }}</td>
     <td class="px-6 py-5 text-right !transition-none">

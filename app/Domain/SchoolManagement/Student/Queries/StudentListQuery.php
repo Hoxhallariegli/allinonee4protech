@@ -14,6 +14,7 @@ class StudentListQuery
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
         if (isset($params['guardian_id']) && $params['guardian_id']) $query->where('guardian_id', $params['guardian_id']);

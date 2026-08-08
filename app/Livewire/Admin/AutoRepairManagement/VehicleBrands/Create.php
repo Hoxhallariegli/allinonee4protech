@@ -17,8 +17,11 @@ class Create extends Component
         use WithPagination;
      public $name = '';
    
-    public function render() { abort_if_cannot('add_vehicle_brands'); return view('livewire.admin.auto-repair-management.vehicle-brands.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_vehicle_brands');
+        return view('livewire.admin.auto-repair-management.vehicle-brands.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateVehicleBrandAction $action) { $this->validate();  $dto = VehicleBrandDTO::fromArray([
             'name' => $this->name,
         ]); $action->execute($dto); session()->flash('success', __('auto-repair-management/vehicle-brands.created')); return to_route('admin.auto-repair-management.vehicle-brands.index'); }

@@ -16,6 +16,7 @@ class TeacherListQuery
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('subject', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('phone', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
 

@@ -32,7 +32,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Project::find($value);
         if (!$related) return;
-        if (isset($related->client_id)) { $this->client_id = $related->client_id; }
     }
 
     public function updatedClientId($value)
@@ -40,7 +39,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Client::find($value);
         if (!$related) return;
-        if (isset($related->project_id)) { $this->project_id = $related->project_id; }
     }
  
     protected function getprojectsList() {
@@ -52,10 +50,13 @@ class Edit extends Component
     }
 
     public function mount(Contract $contract) { $this->item = $contract; $this->fill($contract->toArray()); $this->contract_date = $contract->contract_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_contracts'); return view('livewire.admin.construction-e-r-p.contracts.edit', [
+    public function render() {
+        abort_if_cannot('edit_contracts');
+        return view('livewire.admin.construction-e-r-p.contracts.edit', [
             'projects' => $this->getprojectsList(),
             'clients' => $this->getclientsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateContractAction $action) { $this->validate();  $dto = ContractDTO::fromArray([
             'project_id' => $this->project_id,
             'client_id' => $this->client_id,

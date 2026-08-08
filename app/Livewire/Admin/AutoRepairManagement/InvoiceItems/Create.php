@@ -35,8 +35,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Invoice::find($value);
         if (!$related) return;
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedServiceId($value)
@@ -44,8 +42,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Service::find($value);
         if (!$related) return;
-        if (isset($related->invoice_id)) { $this->invoice_id = $related->invoice_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -53,8 +49,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->invoice_id)) { $this->invoice_id = $related->invoice_id; }
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
     }
  
     protected function getinvoicesList() {
@@ -69,11 +63,14 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Part::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_invoice_items'); return view('livewire.admin.auto-repair-management.invoice-items.create', [
+    public function render() {
+        abort_if_cannot('add_invoice_items');
+        return view('livewire.admin.auto-repair-management.invoice-items.create', [
             'invoices' => $this->getinvoicesList(),
             'services' => $this->getservicesList(),
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateInvoiceItemAction $action) { $this->validate();  $dto = InvoiceItemDTO::fromArray([
             'invoice_id' => $this->invoice_id,
             'service_id' => $this->service_id,

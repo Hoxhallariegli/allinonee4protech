@@ -402,8 +402,9 @@ class NewView extends Command
             }
 
             $req = $f['nullable'] ? "'nullable'" : "'required'";
+            $isMediaField = Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo', 'picture', 'logo', 'avatar']);
             $typeRule = match ($f['type']) {
-                'string' => "'string', 'max:255'",
+                'string' => $isMediaField ? "'max:255'" : "'string', 'max:255'",
                 'text' => "'string'",
                 'integer', 'bigInteger' => "'integer'",
                 'boolean' => "'boolean'",
@@ -436,7 +437,7 @@ class NewView extends Command
         File::makeDirectory($dir, 0755, true, true);
         $viewPath = "livewire.admin.{$groupViewPath}" . Str::kebab($pluralName);
 
-        $hasFile = collect($fields)->contains(fn ($f) => Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo']));
+        $hasFile = collect($fields)->contains(fn ($f) => Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo', 'picture', 'logo', 'avatar']));
         $availableListsIndex = ''; $availableListsForm = ''; $props = ''; $dataMap = ''; $fileHandlers = '';
         $filterReset = ''; $filterProps = ''; $renderFilters = '';
 
@@ -458,7 +459,7 @@ class NewView extends Command
                 $filterProps .= "    #[Url(history: true)] public \${$f['name']} = '';\n";
                 $renderFilters .= "            '{$f['name']}' => \$this->{$f['name']},\n";
             }
-            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
+            if (Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo', 'picture', 'logo', 'avatar'])) {
                 $fileHandlers .= "        if (\$this->{$f['name']} && !is_string(\$this->{$f['name']})) { \$this->{$f['name']} = \$this->{$f['name']}->store('uploads/$pluralKebab', 'uploads'); }\n";
             }
         }
@@ -478,9 +479,16 @@ class NewView extends Command
                 // Add updated hook for auto-filling related fields
                 $updatedHooks .= "\n    public function updated" . Str::studly($f['name']) . "(\$value)\n    {\n        if (!\$value) return;\n        \$related = \\{$f['relatedFQCN']}::find(\$value);\n        if (!\$related) return;\n";
                 foreach ($fields as $otherField) {
-                    if ($otherField['name'] !== $f['name'] && $otherField['type'] === 'foreignId') {
-                        // If the related model has a field with the same name as our other field, auto-fill it
-                        $updatedHooks .= "        if (isset(\$related->{$otherField['name']})) { \$this->{$otherField['name']} = \$related->{$otherField['name']}; }\n";
+                    if ($otherField['name'] !== $f['name']) {
+                        // Auto-fill foreign keys
+                        if ($otherField['type'] === 'foreignId') {
+                            if (isset($related->{$otherField['name']})) { $this->{$otherField['name']} = $related->{$otherField['name']}; }
+                        }
+                        // Auto-fill amount or price from related price/amount
+                        if (in_array($otherField['name'], ['amount', 'price'])) {
+                            if (isset($related->price)) { $this->{$otherField['name']} = $related->price; }
+                            elseif (isset($related->amount)) { $this->{$otherField['name']} = $related->amount; }
+                        }
                     }
                 }
                 $updatedHooks .= "    }\n";
@@ -499,13 +507,13 @@ class NewView extends Command
         $indexStub = "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse App\Domain{$groupNamespace}\\$name\Queries\\{$name}ListQuery;\nuse App\Domain{$groupNamespace}\\$name\Actions\\Delete{$name}Action;\n$imports\n#[Title('$pluralName')]\nclass $pluralName extends Component\n{\n    $traits\n    public int \$paginate = 10;\n    #[Url(history: true)] public string \$search = '';\n$filterProps    public bool \$openFilter = false;\n    public string \$sortField = 'id';\n    public bool \$sortAsc = true;\n\n    public function resetFilters() { \$this->reset(['search', 'openFilter', $filterReset]); \$this->resetPage(); }\n\n    public function render()\n    {\n        abort_if_cannot('view_{$pluralSnake}');\n        \$query = (new {$name}ListQuery())->handle(['search' => \$this->search, $renderFilters], \$this->sortField, \$this->sortAsc ? 'asc' : 'desc');\n\n        return view('$viewPath.index', [\n            'items' => \$query->paginate(\$this->paginate),\n            'sortableFields' => $name::sortable(),\n$availableListsIndex        ])->layout('components.layouts.app');\n    }\n\n    public function sortBy(\$field) { if (!in_array(\$field, $name::sortable(), true)) return; if (\$this->sortField === \$field) { \$this->sortAsc = ! \$this->sortAsc; } \$this->sortField = \$field; }\n\n    public function delete$name(\$id, Delete{$name}Action \$action) \n    {\n        abort_if_cannot('delete_{$pluralSnake}');\n        \$item = $name::find(\$id);\n        if (!\$item) { \$this->dispatch('toast', message: __('$transPk.not_found'), type: 'error'); return; }\n        try { \$action->execute(\$item); \$this->dispatch('toast', message: __('$transPk.deleted'), type: 'success'); \$this->resetPage(); } \n        catch (\\Illuminate\\Database\\QueryException \$e) { \$this->dispatch('toast', message: __('$transPk.delete_error_referenced'), type: 'error'); }\n        catch (\\Exception \$e) { \$this->dispatch('toast', message: __('$transPk.delete_error'), type: 'error'); }\n    }\n}";
         File::put("$dir/$pluralName.php", $indexStub);
 
-        File::put("$dir/Create.php", "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse App\Domain{$groupNamespace}\\$name\DTOs\\{$name}DTO;\nuse App\Domain{$groupNamespace}\\$name\Actions\\Create{$name}Action;\n$imports\n#[Title('Add $name')]\nclass Create extends Component\n{\n    $traits $props $onEvents $updatedHooks $formHelperMethods\n    public function render() { abort_if_cannot('add_{$pluralSnake}'); return view('$viewPath.create', [\n$availableListsForm        ])->layout('components.layouts.app'); }\n    public function store(Create{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$dto); session()->flash('success', __('$transPk.created')); return to_route('$groupRoutePath.index'); }\n    protected function rules(): array { return $name::rules(); }\n}");
+        File::put("$dir/Create.php", "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse App\Domain{$groupNamespace}\\$name\DTOs\\{$name}DTO;\nuse App\Domain{$groupNamespace}\\$name\Actions\\Create{$name}Action;\n$imports\n#[Title('Add $name')]\nclass Create extends Component\n{\n    $traits $props $onEvents $updatedHooks $formHelperMethods\n    public function render() {\n        abort_if_cannot('add_{$pluralSnake}');\n        return view('$viewPath.create', [\n$availableListsForm        ])->layout('components.layouts.app');\n    }\n    public function store(Create{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$dto); session()->flash('success', __('$transPk.created')); return to_route('$groupRoutePath.index'); }\n    protected function rules(): array { return $name::rules(); }\n}");
 
         $dateFills = collect($fields)->filter(fn ($f) => in_array($f['type'], ['date', 'datetime']))->map(function ($f) use ($camel) {
             $fmt = $f['type'] === 'datetime' ? "'Y-m-d\\TH:i'" : "'Y-m-d'";
             return "\$this->{$f['name']} = \$" . $camel . "->{$f['name']}?->format($fmt);";
         })->implode(' ');
-        File::put("$dir/Edit.php", "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse App\Domain{$groupNamespace}\\$name\DTOs\\{$name}DTO;\nuse App\Domain{$groupNamespace}\\$name\Actions\\Update{$name}Action;\n$imports\n#[Title('Edit $name')]\nclass Edit extends Component\n{\n    $traits public $name \$item;\n$props $onEvents $updatedHooks $formHelperMethods\n    public function mount($name \$" . $camel . ") { \$this->item = \$" . $camel . "; \$this->fill(\$" . $camel . "->toArray()); $dateFills }\n    public function render() { abort_if_cannot('edit_{$pluralSnake}'); return view('$viewPath.edit', [\n$availableListsForm        ])->layout('components.layouts.app'); }\n    public function update(Update{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$this->item, \$dto); session()->flash('success', __('$transPk.updated')); return to_route('$groupRoutePath.index'); }\n    protected function rules(): array { return $name::rules(\$this->item->id); }\n}");
+        File::put("$dir/Edit.php", "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse App\Domain{$groupNamespace}\\$name\DTOs\\{$name}DTO;\nuse App\Domain{$groupNamespace}\\$name\Actions\\Update{$name}Action;\n$imports\n#[Title('Edit $name')]\nclass Edit extends Component\n{\n    $traits public $name \$item;\n$props $onEvents $updatedHooks $formHelperMethods\n    public function mount($name \$" . $camel . ") { \$this->item = \$" . $camel . "; \$this->fill(\$" . $camel . "->toArray()); $dateFills }\n    public function render() {\n        abort_if_cannot('edit_{$pluralSnake}');\n        return view('$viewPath.edit', [\n$availableListsForm        ])->layout('components.layouts.app');\n    }\n    public function update(Update{$name}Action \$action) { \$this->validate(); $fileHandlers \$dto = {$name}DTO::fromArray([\n$dataMap        ]); \$action->execute(\$this->item, \$dto); session()->flash('success', __('$transPk.updated')); return to_route('$groupRoutePath.index'); }\n    protected function rules(): array { return $name::rules(\$this->item->id); }\n}");
         File::put("$dir/Row.php", "<?php\n\nnamespace App\Livewire\Admin{$groupNamespace}\\$pluralName;\n\nuse App\Models{$groupNamespace}\\$name;\nuse Livewire\Component;\n\nclass Row extends Component { public $name \$item; public function render() { return view('$viewPath.row'); } }");
 
         $displayField = 'id';
@@ -570,7 +578,11 @@ class NewView extends Command
                 $labelPath = str_replace('.', '?->', $f['labelField']);
                 return "<td class=\"px-6 py-5 font-bold text-gray-900 dark:text-white\">{{ \$item->".Str::camel(str_replace('_id', '', $f['name']))."?->{$labelPath} ?? '-' }}</td>";
             }
-            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
+            if (Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo', 'picture', 'logo', 'avatar'])) {
+                $isImage = Str::contains(strtolower($f['name']), ['image', 'photo', 'picture', 'logo', 'avatar']);
+                if ($isImage) {
+                    return "<td class=\"px-6 py-5\">@if(\$item->{$f['name']}) <a href=\"{{ asset('uploads/'.\$item->{$f['name']}) }}\" target=\"_blank\" rel=\"noopener\"><img src=\"{{ asset('uploads/'.\$item->{$f['name']}) }}\" class=\"w-10 h-10 object-cover rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm\"></a> @else - @endif</td>";
+                }
                 return "<td class=\"px-6 py-5\">@if(\$item->{$f['name']}) <a href=\"{{ asset('uploads/'.\$item->{$f['name']}) }}\" target=\"_blank\" rel=\"noopener\"><x-heroicon-o-arrow-down-tray class=\"w-5 h-5 text-blue-500\" /></a> @else - @endif</td>";
             }
             if (in_array($f['type'], ['date', 'datetime'])) {
@@ -596,19 +608,37 @@ class NewView extends Command
     {
         $groupDot = $groupKebab ? "$groupKebab." : "";
         $inputs = '<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">';
-        $inputs .= collect($fields)->map(function ($f) use ($pk, $isCreating, $groupDot, $transPk) {
+        $inputs .= collect($fields)->map(function ($f) use ($pk, $isCreating, $groupDot, $transPk, $groupKebab) {
             $label = Str::title(str_replace('_', ' ', $f['name']));
             if ($f['type'] === 'foreignId') {
                 $rv = Str::plural(Str::camel(str_replace('_id', '', $f['name'])));
                 $relatedPluralKebab = Str::kebab(Str::plural($f['relatedModel']));
 
-                // FALLBACK: We assume related models are either in the SAME group or flat.
-                $comp = "admin.{$groupDot}{$relatedPluralKebab}.quick-create";
+                // We try multiple possible paths for the component
+                $possibleComponents = [
+                    "admin." . ($groupKebab ? $groupKebab . "." : "") . "{$relatedPluralKebab}.quick-create",
+                    "admin.{$relatedPluralKebab}.quick-create"
+                ];
 
-                return "<div>\n    <div class=\"flex items-end gap-2\">\n        <div class=\"flex-1\"><x-form.dropdown-search name=\"{$f['name']}\" wire:model.live=\"{$f['name']}\" :label=\"__('$transPk.$label')\" :data=\"\${$rv}\" /></div>\n        <x-modal>\n            <x-slot name=\"trigger\"><button type=\"button\" @click=\"on = true\" class=\"mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform\"><x-heroicon-o-plus class=\"w-5 h-5\" /></button></x-slot>\n            <x-slot name=\"modalTitle\"><div class=\"dark:text-white px-6 pt-6\">Add New " . $f['relatedModel'] . "</div></x-slot>\n            <x-slot name=\"content\"><livewire:$comp /></x-slot>\n        </x-modal>\n    </div>\n</div>";
+                $comp = null;
+                foreach ($possibleComponents as $c) {
+                    $viewPath = resource_path("views/livewire/" . str_replace('.', '/', $c) . ".blade.php");
+                    if (File::exists($viewPath)) {
+                        $comp = $c;
+                        break;
+                    }
+                }
+
+                if ($comp) {
+                    return "<div>\n    <div class=\"flex items-end gap-2\">\n        <div class=\"flex-1\"><x-form.dropdown-search name=\"{$f['name']}\" wire:model.live=\"{$f['name']}\" :label=\"__('$transPk.$label')\" :data=\"\${$rv}\" /></div>\n        <x-modal>\n            <x-slot name=\"trigger\"><button type=\"button\" @click=\"on = true\" class=\"mb-6 p-3 bg-blue-50 dark:bg-zinc-900/30 text-blue-600 dark:text-blue-400 rounded-2xl hover:scale-105 transition-transform\"><x-heroicon-o-plus class=\"w-5 h-5\" /></button></x-slot>\n            <x-slot name=\"modalTitle\"><div class=\"dark:text-white px-6 pt-6\">Add New " . $f['relatedModel'] . "</div></x-slot>\n            <x-slot name=\"content\"><livewire:$comp /></x-slot>\n        </x-modal>\n    </div>\n</div>";
+                }
+
+                // Fallback to dropdown only
+                return "<div><x-form.dropdown-search name=\"{$f['name']}\" wire:model.live=\"{$f['name']}\" :label=\"__('$transPk.$label')\" :data=\"\${$rv}\" /></div>";
             }
-            if (Str::contains(strtolower($f['name']), ['file', 'document'])) {
-                return "<div><x-form.file-upload name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$transPk.$label')\" id=\"{$f['name']}\" :isEditing=\"!\" . ($isCreating ? 'true' : 'false') . \" /></div>";
+            if (Str::contains(strtolower($f['name']), ['file', 'document', 'image', 'photo', 'picture', 'logo', 'avatar'])) {
+                $isEditingValue = $isCreating ? 'false' : 'true';
+                return "<div><x-form.file-upload name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$transPk.$label')\" id=\"{$f['name']}\" :isEditing=\"$isEditingValue\" /></div>";
             }
             if ($f['type'] === 'text') {
                 return "<div class=\"md:col-span-2\"><x-form.textarea name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$transPk.$label')\" class=\"dark:bg-gray-900\" /></div>";
@@ -617,7 +647,7 @@ class NewView extends Command
                 return "<div><x-form.checkbox name=\"{$f['name']}\" wire:model=\"{$f['name']}\" :label=\"__('$transPk.$label')\" /></div>";
             }
             if ($f['type'] === 'enum') {
-                $opts = collect($f['options'])->map(fn ($o) => '<option value=\"' . e($o) . '\">' . e($o) . '</option>')->implode('');
+                $opts = collect($f['options'])->map(fn ($o) => '<option value="' . e($o) . '">' . e($o) . '</option>')->implode('');
                 return "<div><label class=\"block mb-1.5 text-[10px] font-bold uppercase tracking-widest\">{{ __('$transPk.$label') }}</label><select name=\"{$f['name']}\" wire:model=\"{$f['name']}\" class=\"w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl\"><option value=\"\">--</option>$opts</select></div>";
             }
             $type = ($f['type'] === 'datetime') ? 'datetime-local' : (($f['type'] === 'date') ? 'date' : 'text');
@@ -744,76 +774,47 @@ class NewView extends Command
             $this->updateAdminTranslations($group);
         }
 
-        // Remove ANY existing link for this module by routeName to avoid duplicates
-        $escapedRoute = preg_quote($routeName, '/');
-        $pattern = "/\s*@can\('view_{$pluralSnake}'\)\s*<x-nav\.link route=\"{$escapedRoute}\".*?<\/x-nav\.link>\s*@endcan/s";
-        $content = preg_replace($pattern, '', $content);
+        $linkBlock = "\n    @can('view_{$pluralSnake}')\n        <x-nav.link route=\"$routeName\" icon=\"$icon\">{{ __('$transPk.$pluralName') }}</x-nav.link>\n    @endcan\n";
 
-        $newLink = "\n    @can('view_{$pluralSnake}')\n        <x-nav.link route=\"$routeName\" icon=\"$icon\">{{ __('$transPk.$pluralName') }}</x-nav.link>\n    @endcan\n";
+        // If link already exists anywhere in the file with this exact route, don't duplicate
+        if (str_contains($content, "route=\"$routeName\"")) {
+            return;
+        }
 
         if ($group) {
             $escapedGroup = preg_quote("{{ __('admin.$group') }}", '/');
-            // Pattern to match the group with its potential @if wrapper
-            $groupPattern = "/(@if\(.*?\)\s*)?<x-nav\.group label=['\"]([0-9]+\. )?{$escapedGroup}['\"].*?<\/x-nav\.group>(\s*@endif)?/s";
+            // Improved group pattern: matches the <x-nav.group> block specifically
+            $groupPattern = "/<x-nav\.group label=['\"]([0-9]+\. )?{$escapedGroup}['\"].*?<\/x-nav\.group>/s";
 
             if (preg_match($groupPattern, $content, $matches)) {
-                $matchedFullGroup = $matches[0];
-                $ifWrapper = $matches[1] ?? '';
-                $endifWrapper = $matches[3] ?? '';
-
-                if (str_contains($matchedFullGroup, $newLink)) {
-                    return; // Link already exists
-                }
-
-                // Update @if condition if it exists
-                if ($ifWrapper) {
-                    if (!str_contains($ifWrapper, "'view_{$pluralSnake}'")) {
-                        $newIf = preg_replace("/\)\s*$/", " || can('view_{$pluralSnake}'))", trim($ifWrapper));
-                        $content = str_replace($ifWrapper, $newIf . "\n", $content);
-                    }
-                } else {
-                    // Wrap existing group in @if
-                    // First we need to find all permissions already inside the group
-                    preg_match_all("/@can\('(view_[a-z_]+)'\)/", $matchedFullGroup, $perms);
-                    $allPerms = array_unique(array_merge($perms[1] ?? [], ["view_{$pluralSnake}"]));
-                    $ifCond = "@if(" . collect($allPerms)->map(fn($p) => "can('$p')")->implode(' || ') . ")";
-                    $updatedGroup = "$ifCond\n" . $matchedFullGroup . "\n@endif";
-                    $content = str_replace($matchedFullGroup, $updatedGroup, $content);
-                }
-
-                // Insert the new link inside the group (re-read content because we might have changed it above)
-                if (preg_match($groupPattern, $content, $newMatches)) {
-                    $matchedGroupPart = $newMatches[0];
-                    $updatedGroup = str_replace('</x-nav.group>', $newLink . '</x-nav.group>', $matchedGroupPart);
-                    $content = str_replace($matchedGroupPart, $updatedGroup, $content);
-                }
-
-                File::put($navPath, $content);
+                // Group exists, insert link before the closing tag
+                $matchedGroup = $matches[0];
+                $updatedGroup = str_replace('</x-nav.group>', $linkBlock . '</x-nav.group>', $matchedGroup);
+                $content = str_replace($matchedGroup, $updatedGroup, $content);
             } else {
-                // Create new group wrapped in @if
-                $groupLabelTrans = "{{ __('admin.$group') }}";
-                if ($groupLabel && preg_match('/^[0-9]+\. /', $groupLabel, $idMatch)) {
-                    $groupLabelTrans = $idMatch[0] . $groupLabelTrans;
-                }
+                // Group doesn't exist, create it
+                $newGroup = "\n<x-nav.group label=\"{{ __('admin.$group') }}\" icon=\"rectangle-group\" route=\"admin.$groupKebab\">$linkBlock</x-nav.group>\n";
 
-                $ifCond = "@if(can('view_{$pluralSnake}'))";
-                $newGroup = "\n$ifCond\n<x-nav.group label=\"$groupLabelTrans\" icon=\"rectangle-group\" route=\"admin." . Str::kebab($group) . "\">" . $newLink . "</x-nav.group>\n@endif\n";
-
-                $search = "<x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>";
-                if (str_contains($content, $search)) {
-                    File::put($navPath, str_replace($search, $newGroup . $search, $content));
+                // Insert after the placeholder
+                $placeholder = "{{-- MODULAR GROUPS START --}}";
+                if (str_contains($content, $placeholder)) {
+                    $content = str_replace($placeholder, $placeholder . $newGroup, $content);
                 } else {
-                    File::append($navPath, $newGroup);
+                    $search = "<x-nav.divider>{{ __('admin.Modules') }}</x-nav.divider>";
+                    $content = str_replace($search, $search . $newGroup, $content);
                 }
             }
         } else {
+            // Ungrouped link, add before Account divider
             $search = "<x-nav.divider>{{ __('admin.Account') }}</x-nav.divider>";
             if (str_contains($content, $search)) {
-                File::put($navPath, str_replace($search, $newLink . $search, $content));
+                $content = str_replace($search, $linkBlock . $search, $content);
             } else {
-                File::append($navPath, $newLink);
+                $content .= $linkBlock;
             }
         }
+
+        File::put($navPath, $content);
     }
 
     protected function updateAdminTranslations($group)

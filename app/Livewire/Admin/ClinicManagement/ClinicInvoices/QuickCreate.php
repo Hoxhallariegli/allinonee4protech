@@ -29,7 +29,7 @@ class QuickCreate extends Component
     }
  
     protected function getvisitsList() {
-        return \App\Models\ClinicManagement\Visit::with('patient')->get()->pluck('patient.name', 'id')->toArray();
+        return \App\Models\ClinicManagement\Visit::pluck('id', 'id')->toArray();
     }
 
     public bool $created = false;

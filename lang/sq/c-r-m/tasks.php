@@ -26,4 +26,5 @@ return [
   'Deal Id' => 'Deal Id',
   'Due Date' => 'Due Date',
   'Completed' => 'Completed',
+  'Status' => 'Status',
 ];

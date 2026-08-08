@@ -35,8 +35,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Product::find($value);
         if (!$related) return;
-        if (isset($related->from_warehouse_id)) { $this->from_warehouse_id = $related->from_warehouse_id; }
-        if (isset($related->to_warehouse_id)) { $this->to_warehouse_id = $related->to_warehouse_id; }
     }
 
     public function updatedFromWarehouseId($value)
@@ -44,8 +42,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Warehouse::find($value);
         if (!$related) return;
-        if (isset($related->product_id)) { $this->product_id = $related->product_id; }
-        if (isset($related->to_warehouse_id)) { $this->to_warehouse_id = $related->to_warehouse_id; }
     }
 
     public function updatedToWarehouseId($value)
@@ -53,8 +49,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Warehouse::find($value);
         if (!$related) return;
-        if (isset($related->product_id)) { $this->product_id = $related->product_id; }
-        if (isset($related->from_warehouse_id)) { $this->from_warehouse_id = $related->from_warehouse_id; }
     }
  
     protected function getproductsList() {
@@ -70,11 +64,14 @@ class Edit extends Component
     }
 
     public function mount(StockTransfer $stockTransfer) { $this->item = $stockTransfer; $this->fill($stockTransfer->toArray());  }
-    public function render() { abort_if_cannot('edit_stock_transfers'); return view('livewire.admin.warehouse-management.stock-transfers.edit', [
+    public function render() {
+        abort_if_cannot('edit_stock_transfers');
+        return view('livewire.admin.warehouse-management.stock-transfers.edit', [
             'products' => $this->getproductsList(),
             'fromWarehouses' => $this->getfromWarehousesList(),
             'toWarehouses' => $this->gettoWarehousesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateStockTransferAction $action) { $this->validate();  $dto = StockTransferDTO::fromArray([
             'product_id' => $this->product_id,
             'from_warehouse_id' => $this->from_warehouse_id,

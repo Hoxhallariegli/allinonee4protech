@@ -29,9 +29,8 @@ class Create extends Component
     public function updatedSupplierId($value)
     {
         if (!$value) return;
-        $related = \App\Models\AutoRepairManagement\Supplier::find($value);
+        $related = \App\Models\ConstructionERP\Supplier::find($value);
         if (!$related) return;
-        if (isset($related->project_id)) { $this->project_id = $related->project_id; }
     }
 
     public function updatedProjectId($value)
@@ -39,21 +38,23 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Project::find($value);
         if (!$related) return;
-        if (isset($related->supplier_id)) { $this->supplier_id = $related->supplier_id; }
     }
  
     protected function getsuppliersList() {
-        return \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray();
+        return \App\Models\ConstructionERP\Supplier::pluck('name', 'id')->toArray();
     }
 
     protected function getprojectsList() {
         return \App\Models\ConstructionERP\Project::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_purchase_orders'); return view('livewire.admin.construction-e-r-p.purchase-orders.create', [
+    public function render() {
+        abort_if_cannot('add_purchase_orders');
+        return view('livewire.admin.construction-e-r-p.purchase-orders.create', [
             'suppliers' => $this->getsuppliersList(),
             'projects' => $this->getprojectsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreatePurchaseOrderAction $action) { $this->validate();  $dto = PurchaseOrderDTO::fromArray([
             'supplier_id' => $this->supplier_id,
             'project_id' => $this->project_id,

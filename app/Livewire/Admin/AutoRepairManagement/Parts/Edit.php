@@ -21,8 +21,11 @@ class Edit extends Component
     public $stock = '';
    
     public function mount(Part $part) { $this->item = $part; $this->fill($part->toArray());  }
-    public function render() { abort_if_cannot('edit_parts'); return view('livewire.admin.auto-repair-management.parts.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_parts');
+        return view('livewire.admin.auto-repair-management.parts.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePartAction $action) { $this->validate();  $dto = PartDTO::fromArray([
             'name' => $this->name,
             'price' => $this->price,

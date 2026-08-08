@@ -17,23 +17,23 @@ class Create extends Component
 {
         use WithPagination, WithFileUploads;
      public $name = '';
-    public $photo = '';
     public $specialization = '';
-    public $active = '';
-    public $user_id = '';
-
+    public $phone = '';
+    public $commission_rate = '';
+    public $photo = '';
+   
     public function render() {
         abort_if_cannot('add_barbers');
         return view('livewire.admin.berber-app.barbers.create', [
-            'users' => \App\Models\User::all()
         ])->layout('components.layouts.app');
     }
-    public function store(CreateBarberAction $action) { $this->validate();  $dto = BarberDTO::fromArray([
+    public function store(CreateBarberAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/barbers', 'uploads'); }
+ $dto = BarberDTO::fromArray([
             'name' => $this->name,
-            'photo' => $this->photo,
             'specialization' => $this->specialization,
-            'active' => $this->active,
-            'user_id' => $this->user_id,
+            'phone' => $this->phone,
+            'commission_rate' => $this->commission_rate,
+            'photo' => $this->photo,
         ]); $action->execute($dto); session()->flash('success', __('berber-app/barbers.created')); return to_route('admin.berber-app.barbers.index'); }
     protected function rules(): array { return Barber::rules(); }
 }

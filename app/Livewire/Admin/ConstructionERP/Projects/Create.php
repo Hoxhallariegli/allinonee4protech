@@ -35,9 +35,12 @@ class Create extends Component
         return \App\Models\ConstructionERP\Client::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_projects'); return view('livewire.admin.construction-e-r-p.projects.create', [
+    public function render() {
+        abort_if_cannot('add_projects');
+        return view('livewire.admin.construction-e-r-p.projects.create', [
             'clients' => $this->getclientsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateProjectAction $action) { $this->validate();  $dto = ProjectDTO::fromArray([
             'name' => $this->name,
             'client_id' => $this->client_id,

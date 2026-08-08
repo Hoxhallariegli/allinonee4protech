@@ -10,25 +10,32 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Edit Material')]
 class Edit extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
  public Material $item;
     public $name = '';
     public $unit = '';
     public $price = '';
     public $stock = '';
+    public $photo = '';
    
     public function mount(Material $material) { $this->item = $material; $this->fill($material->toArray());  }
-    public function render() { abort_if_cannot('edit_materials'); return view('livewire.admin.construction-e-r-p.materials.edit', [
-        ])->layout('components.layouts.app'); }
-    public function update(UpdateMaterialAction $action) { $this->validate();  $dto = MaterialDTO::fromArray([
+    public function render() {
+        abort_if_cannot('edit_materials');
+        return view('livewire.admin.construction-e-r-p.materials.edit', [
+        ])->layout('components.layouts.app');
+    }
+    public function update(UpdateMaterialAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/materials', 'uploads'); }
+ $dto = MaterialDTO::fromArray([
             'name' => $this->name,
             'unit' => $this->unit,
             'price' => $this->price,
             'stock' => $this->stock,
+            'photo' => $this->photo,
         ]); $action->execute($this->item, $dto); session()->flash('success', __('construction-e-r-p/materials.updated')); return to_route('admin.construction-e-r-p.materials.index'); }
     protected function rules(): array { return Material::rules($this->item->id); }
 }

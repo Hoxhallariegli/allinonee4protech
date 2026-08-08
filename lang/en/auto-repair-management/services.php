@@ -25,4 +25,8 @@ return [
   'Name' => 'Name',
   'Price' => 'Price',
   'Duration' => 'Duration',
+  'Description' => 'Description',
+  'Base Price' => 'Base Price',
+  'Est Duration' => 'Est Duration',
+  'Duration Minutes' => 'Duration Minutes',
 ];

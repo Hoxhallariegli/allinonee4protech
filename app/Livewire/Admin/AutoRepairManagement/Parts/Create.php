@@ -19,8 +19,11 @@ class Create extends Component
     public $price = '';
     public $stock = '';
    
-    public function render() { abort_if_cannot('add_parts'); return view('livewire.admin.auto-repair-management.parts.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_parts');
+        return view('livewire.admin.auto-repair-management.parts.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreatePartAction $action) { $this->validate();  $dto = PartDTO::fromArray([
             'name' => $this->name,
             'price' => $this->price,

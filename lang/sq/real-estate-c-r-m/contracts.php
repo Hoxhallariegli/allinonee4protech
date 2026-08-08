@@ -25,4 +25,5 @@ return [
   'Property Id' => 'Property Id',
   'Client Id' => 'Client Id',
   'Amount' => 'Amount',
+  'Document File' => 'Document File',
 ];

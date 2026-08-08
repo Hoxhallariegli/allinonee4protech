@@ -10,14 +10,16 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class QuickCreate extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $unit = '';
     public $price = '';
     public $stock = '';
+    public $photo = '';
    
     public bool $created = false;
     public ?int $createdId = null;
@@ -29,11 +31,13 @@ class QuickCreate extends Component
     public function store(CreateMaterialAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/materials', 'uploads'); }
         $dto = MaterialDTO::fromArray([
             'name' => $this->name,
             'unit' => $this->unit,
             'price' => $this->price,
             'stock' => $this->stock,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('material-created', id: $item->id);
@@ -42,7 +46,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'unit', 'price', 'stock']);
+        $this->reset(['name', 'unit', 'price', 'stock', 'photo']);
     }
 
     public function addAnother()

@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\RestaurantPOS\Order::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_payments'); return view('livewire.admin.restaurant-p-o-s.payments.create', [
+    public function render() {
+        abort_if_cannot('add_payments');
+        return view('livewire.admin.restaurant-p-o-s.payments.create', [
             'orders' => $this->getordersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreatePaymentAction $action) { $this->validate();  $dto = PaymentDTO::fromArray([
             'order_id' => $this->order_id,
             'amount' => $this->amount,

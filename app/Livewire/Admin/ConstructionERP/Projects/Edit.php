@@ -37,9 +37,12 @@ class Edit extends Component
     }
 
     public function mount(Project $project) { $this->item = $project; $this->fill($project->toArray()); $this->start_date = $project->start_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_projects'); return view('livewire.admin.construction-e-r-p.projects.edit', [
+    public function render() {
+        abort_if_cannot('edit_projects');
+        return view('livewire.admin.construction-e-r-p.projects.edit', [
             'clients' => $this->getclientsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateProjectAction $action) { $this->validate();  $dto = ProjectDTO::fromArray([
             'name' => $this->name,
             'client_id' => $this->client_id,

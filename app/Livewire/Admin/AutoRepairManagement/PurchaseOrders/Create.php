@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_purchase_orders'); return view('livewire.admin.auto-repair-management.purchase-orders.create', [
+    public function render() {
+        abort_if_cannot('add_purchase_orders');
+        return view('livewire.admin.auto-repair-management.purchase-orders.create', [
             'suppliers' => $this->getsuppliersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreatePurchaseOrderAction $action) { $this->validate();  $dto = PurchaseOrderDTO::fromArray([
             'supplier_id' => $this->supplier_id,
             'order_date' => $this->order_date,

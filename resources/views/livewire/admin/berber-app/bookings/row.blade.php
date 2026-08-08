@@ -1,13 +1,9 @@
 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-none border-b border-gray-50 dark:border-gray-700/50 last:border-none">
     <td class="px-6 py-5 font-bold text-blue-600 dark:text-blue-400">{{ $item->id }}</td>
-    <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->barber?->name ?? '-' }}</td>
+    <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->customer?->name ?? '-' }}</td>
+<td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->barber?->name ?? '-' }}</td>
 <td class="px-6 py-5 font-bold text-gray-900 dark:text-white">{{ $item->service?->name ?? '-' }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->customer_name }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->customer_phone }}</td>
 <td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->appointment_datetime?->format('d/m/Y H:i') ?? '-' }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->status }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->reminder_enabled }}</td>
-<td class="px-6 py-5 text-gray-600 dark:text-gray-300">{{ $item->reminder_minutes }}</td>
     <td class="px-6 py-5 text-right !transition-none">
         <div class="flex justify-end gap-3 !transition-none">
             @can('edit_bookings')

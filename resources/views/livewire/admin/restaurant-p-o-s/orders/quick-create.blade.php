@@ -30,7 +30,7 @@
     </div>
 </div>
 <div><x-form.input name="order_date" type="datetime-local" wire:model="order_date" :label="__('restaurant-p-o-s/orders.Order Date')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/orders.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"pending\">pending</option><option value=\"ready\">ready</option><option value=\"paid\">paid</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/orders.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="pending">pending</option><option value="ready">ready</option><option value="paid">paid</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('restaurant-p-o-s/orders.Save') }}</x-button></div>
     @endif
 </div>

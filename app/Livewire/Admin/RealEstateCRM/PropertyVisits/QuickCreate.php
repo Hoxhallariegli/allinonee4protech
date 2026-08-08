@@ -29,15 +29,13 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RealEstateCRM\Property::find($value);
         if (!$related) return;
-        if (isset($related->client_id)) { $this->client_id = $related->client_id; }
     }
 
     public function updatedClientId($value)
     {
         if (!$value) return;
-        $related = \App\Models\ConstructionERP\Client::find($value);
+        $related = \App\Models\RealEstateCRM\Client::find($value);
         if (!$related) return;
-        if (isset($related->property_id)) { $this->property_id = $related->property_id; }
     }
  
     protected function getpropertiesList() {
@@ -45,7 +43,7 @@ class QuickCreate extends Component
     }
 
     protected function getclientsList() {
-        return \App\Models\ConstructionERP\Client::pluck('name', 'id')->toArray();
+        return \App\Models\RealEstateCRM\Client::pluck('name', 'id')->toArray();
     }
 
     public bool $created = false;

@@ -10,23 +10,30 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Edit Company')]
 class Edit extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
  public Company $item;
     public $name = '';
     public $industry = '';
     public $phone = '';
+    public $logo = '';
    
     public function mount(Company $company) { $this->item = $company; $this->fill($company->toArray());  }
-    public function render() { abort_if_cannot('edit_companies'); return view('livewire.admin.c-r-m.companies.edit', [
-        ])->layout('components.layouts.app'); }
-    public function update(UpdateCompanyAction $action) { $this->validate();  $dto = CompanyDTO::fromArray([
+    public function render() {
+        abort_if_cannot('edit_companies');
+        return view('livewire.admin.c-r-m.companies.edit', [
+        ])->layout('components.layouts.app');
+    }
+    public function update(UpdateCompanyAction $action) { $this->validate();         if ($this->logo && !is_string($this->logo)) { $this->logo = $this->logo->store('uploads/companies', 'uploads'); }
+ $dto = CompanyDTO::fromArray([
             'name' => $this->name,
             'industry' => $this->industry,
             'phone' => $this->phone,
+            'logo' => $this->logo,
         ]); $action->execute($this->item, $dto); session()->flash('success', __('c-r-m/companies.updated')); return to_route('admin.c-r-m.companies.index'); }
     protected function rules(): array { return Company::rules($this->item->id); }
 }

@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(Exam $exam) { $this->item = $exam; $this->fill($exam->toArray()); $this->exam_date = $exam->exam_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_exams'); return view('livewire.admin.school-management.exams.edit', [
+    public function render() {
+        abort_if_cannot('edit_exams');
+        return view('livewire.admin.school-management.exams.edit', [
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateExamAction $action) { $this->validate();  $dto = ExamDTO::fromArray([
             'name' => $this->name,
             'class_id' => $this->class_id,

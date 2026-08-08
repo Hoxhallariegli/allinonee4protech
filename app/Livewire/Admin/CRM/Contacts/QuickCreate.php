@@ -10,13 +10,15 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class QuickCreate extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $company_id = '';
     public $email = '';
+    public $photo = '';
  
     #[On('company-created')] 
     public function refreshCompanies($id) { $this->company_id = $id; $this->updatedCompanyId($id); }
@@ -43,10 +45,12 @@ class QuickCreate extends Component
     public function store(CreateContactAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/contacts', 'uploads'); }
         $dto = ContactDTO::fromArray([
             'name' => $this->name,
             'company_id' => $this->company_id,
             'email' => $this->email,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('contact-created', id: $item->id);
@@ -55,7 +59,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'company_id', 'email']);
+        $this->reset(['name', 'company_id', 'email', 'photo']);
     }
 
     public function addAnother()

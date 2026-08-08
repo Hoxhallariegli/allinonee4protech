@@ -10,15 +10,17 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Add Student')]
 class Create extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $guardian_id = '';
     public $class_id = '';
     public $birth_date = '';
+    public $photo = '';
  
     #[On('guardian-created')] 
     public function refreshGuardians($id) { $this->guardian_id = $id; $this->updatedGuardianId($id); }
@@ -31,7 +33,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Guardian::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -39,7 +40,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->guardian_id)) { $this->guardian_id = $related->guardian_id; }
     }
  
     protected function getguardiansList() {
@@ -50,15 +50,20 @@ class Create extends Component
         return \App\Models\SchoolManagement\SchoolClass::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_students'); return view('livewire.admin.school-management.students.create', [
+    public function render() {
+        abort_if_cannot('add_students');
+        return view('livewire.admin.school-management.students.create', [
             'guardians' => $this->getguardiansList(),
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
-    public function store(CreateStudentAction $action) { $this->validate();  $dto = StudentDTO::fromArray([
+        ])->layout('components.layouts.app');
+    }
+    public function store(CreateStudentAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/students', 'uploads'); }
+ $dto = StudentDTO::fromArray([
             'name' => $this->name,
             'guardian_id' => $this->guardian_id,
             'class_id' => $this->class_id,
             'birth_date' => $this->birth_date,
+            'photo' => $this->photo,
         ]); $action->execute($dto); session()->flash('success', __('school-management/students.created')); return to_route('admin.school-management.students.index'); }
     protected function rules(): array { return Student::rules(); }
 }

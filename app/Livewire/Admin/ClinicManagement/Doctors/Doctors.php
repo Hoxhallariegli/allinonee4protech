@@ -10,11 +10,12 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Doctors')]
 class Doctors extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
 
     public int $paginate = 10;
     #[Url(history: true)] public string $search = '';

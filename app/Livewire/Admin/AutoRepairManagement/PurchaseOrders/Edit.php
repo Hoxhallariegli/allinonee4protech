@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(PurchaseOrder $purchaseOrder) { $this->item = $purchaseOrder; $this->fill($purchaseOrder->toArray()); $this->order_date = $purchaseOrder->order_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_purchase_orders'); return view('livewire.admin.auto-repair-management.purchase-orders.edit', [
+    public function render() {
+        abort_if_cannot('edit_purchase_orders');
+        return view('livewire.admin.auto-repair-management.purchase-orders.edit', [
             'suppliers' => $this->getsuppliersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePurchaseOrderAction $action) { $this->validate();  $dto = PurchaseOrderDTO::fromArray([
             'supplier_id' => $this->supplier_id,
             'order_date' => $this->order_date,

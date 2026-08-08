@@ -32,9 +32,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Employee::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_mechanics'); return view('livewire.admin.auto-repair-management.mechanics.create', [
+    public function render() {
+        abort_if_cannot('add_mechanics');
+        return view('livewire.admin.auto-repair-management.mechanics.create', [
             'employees' => $this->getemployeesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateMechanicAction $action) { $this->validate();  $dto = MechanicDTO::fromArray([
             'employee_id' => $this->employee_id,
             'specialization' => $this->specialization,

@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'InventorySupply' => 'InventorySupply',
+  'InventorySupplies' => 'InventorySupplies',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add InventorySupply' => 'Add InventorySupply',
+  'Edit InventorySupply' => 'Edit InventorySupply',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'InventorySupply created.',
+  'updated' => 'InventorySupply updated.',
+  'deleted' => 'InventorySupply deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Stock Quantity' => 'Stock Quantity',
+  'Unit' => 'Unit',
+];

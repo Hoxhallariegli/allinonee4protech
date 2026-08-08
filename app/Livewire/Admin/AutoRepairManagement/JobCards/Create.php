@@ -36,8 +36,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Vehicle::find($value);
         if (!$related) return;
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedCustomerId($value)
@@ -45,8 +43,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Customer::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedMechanicId($value)
@@ -54,8 +50,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Mechanic::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
     }
  
     protected function getvehiclesList() {
@@ -70,11 +64,14 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Mechanic::with('employee')->get()->pluck('employee.name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_job_cards'); return view('livewire.admin.auto-repair-management.job-cards.create', [
+    public function render() {
+        abort_if_cannot('add_job_cards');
+        return view('livewire.admin.auto-repair-management.job-cards.create', [
             'vehicles' => $this->getvehiclesList(),
             'customers' => $this->getcustomersList(),
             'mechanics' => $this->getmechanicsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateJobCardAction $action) { $this->validate();  $dto = JobCardDTO::fromArray([
             'vehicle_id' => $this->vehicle_id,
             'customer_id' => $this->customer_id,

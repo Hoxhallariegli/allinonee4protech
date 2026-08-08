@@ -11,7 +11,8 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('school-management/teachers.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="subject" type="text" wire:model="subject" :label="__('school-management/teachers.Subject')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('school-management/teachers.Phone')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('school-management/teachers.Phone')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('school-management/teachers.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('school-management/teachers.Save') }}</x-button></div>
     @endif
 </div>

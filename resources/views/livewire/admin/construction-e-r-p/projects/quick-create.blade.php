@@ -22,7 +22,7 @@
 </div>
 <div><x-form.input name="start_date" type="date" wire:model="start_date" :label="__('construction-e-r-p/projects.Start Date')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="budget" type="text" wire:model="budget" :label="__('construction-e-r-p/projects.Budget')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/projects.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"planning\">planning</option><option value=\"active\">active</option><option value=\"completed\">completed</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/projects.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="planning">planning</option><option value="active">active</option><option value="completed">completed</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('construction-e-r-p/projects.Save') }}</x-button></div>
     @endif
 </div>

@@ -26,4 +26,5 @@ return [
   'Unit' => 'Unit',
   'Price' => 'Price',
   'Stock' => 'Stock',
+  'Photo' => 'Photo',
 ];

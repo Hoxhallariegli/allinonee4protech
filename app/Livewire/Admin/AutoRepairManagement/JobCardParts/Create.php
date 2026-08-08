@@ -31,7 +31,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\JobCard::find($value);
         if (!$related) return;
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -39,7 +38,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->job_card_id)) { $this->job_card_id = $related->job_card_id; }
     }
  
     protected function getjobCardsList() {
@@ -50,10 +48,13 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Part::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_job_card_parts'); return view('livewire.admin.auto-repair-management.job-card-parts.create', [
+    public function render() {
+        abort_if_cannot('add_job_card_parts');
+        return view('livewire.admin.auto-repair-management.job-card-parts.create', [
             'jobCards' => $this->getjobCardsList(),
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateJobCardPartAction $action) { $this->validate();  $dto = JobCardPartDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'part_id' => $this->part_id,

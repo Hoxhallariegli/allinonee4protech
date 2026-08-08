@@ -24,4 +24,10 @@ return [
   'delete_error' => 'Could not delete record.',
   'Name' => 'Name',
   'Phone' => 'Phone',
+  'Photo' => 'Photo',
+  'Commission Rate' => 'Commission Rate',
+  'Salary' => 'Salary',
+  'Hire Date' => 'Hire Date',
+  'Email' => 'Email',
+  'Status' => 'Status',
 ];

@@ -30,7 +30,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Student::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -38,7 +37,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->student_id)) { $this->student_id = $related->student_id; }
     }
  
     protected function getstudentsList() {

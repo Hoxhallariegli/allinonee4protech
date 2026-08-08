@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Ingredient' => 'Ingredient',
+  'Ingredients' => 'Ingredients',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Ingredient' => 'Add Ingredient',
+  'Edit Ingredient' => 'Edit Ingredient',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Ingredient created.',
+  'updated' => 'Ingredient updated.',
+  'deleted' => 'Ingredient deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Name' => 'Name',
+  'Stock Quantity' => 'Stock Quantity',
+  'Unit' => 'Unit',
+];

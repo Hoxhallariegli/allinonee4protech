@@ -9,13 +9,14 @@ class BarberListQuery
 {
     public function handle(array $params = [], string $sortField = 'id', string $sortAsc = 'asc'): Builder
     {
-        $query = Barber::query()->with('exceptions');
+        $query = Barber::query();
         if (isset($params['search']) && $params['search']) {
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
-                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('specialization', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('phone', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
 

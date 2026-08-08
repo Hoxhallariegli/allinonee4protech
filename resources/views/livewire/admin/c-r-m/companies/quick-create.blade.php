@@ -11,7 +11,8 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('c-r-m/companies.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="industry" type="text" wire:model="industry" :label="__('c-r-m/companies.Industry')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('c-r-m/companies.Phone')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('c-r-m/companies.Phone')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="logo" wire:model="logo" :label="__('c-r-m/companies.Logo')" id="logo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('c-r-m/companies.Save') }}</x-button></div>
     @endif
 </div>

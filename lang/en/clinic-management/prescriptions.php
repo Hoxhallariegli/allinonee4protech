@@ -25,4 +25,5 @@ return [
   'Visit Id' => 'Visit Id',
   'Medicine' => 'Medicine',
   'Dosage' => 'Dosage',
+  'Instructions' => 'Instructions',
 ];

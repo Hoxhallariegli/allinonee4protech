@@ -1,7 +1,7 @@
 
 <div class="space-y-8" x-data="{ init() {
     new ApexCharts(this.$refs.chart, {
-        series: [{ name: 'Attendances', data: @js($chartData['attendances']) }, { name: 'Exams', data: @js($chartData['exams']) }, { name: 'Grades', data: @js($chartData['grades']) }, { name: 'Guardians', data: @js($chartData['guardians']) }, { name: 'Payments (€)', data: @js($chartData['payments']) }, { name: 'School Classes', data: @js($chartData['schoolClasses']) }, ],
+        series: [{ name: 'Assignments', data: @js($chartData['assignments']) }, { name: 'Attendances', data: @js($chartData['attendances']) }, { name: 'Grades', data: @js($chartData['grades']) }, { name: 'Guardians', data: @js($chartData['guardians']) }, { name: 'Guardian Addresses', data: @js($chartData['guardianAddresses']) }, { name: 'Payments (€)', data: @js($chartData['payments']) }, ],
         chart: { height: 350, type: 'area', toolbar: {show:false}, zoom: {enabled:false}, fontFamily: 'inherit' },
         stroke: { curve: 'smooth', width: 3 },
         dataLabels: { enabled: false },
@@ -44,6 +44,14 @@
     <div class="space-y-6">
         <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('Operational Metrics') }}</h4>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <a href="{{ route('admin.school-management.assignments.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Assignments</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['assignments'] }}</p>
+            </a>
             <a href="{{ route('admin.school-management.attendances.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
@@ -51,14 +59,6 @@
                 </div>
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Attendances</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['attendances'] }}</p>
-            </a>
-            <a href="{{ route('admin.school-management.exams.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
-                </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Exams</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['exams'] }}</p>
             </a>
             <a href="{{ route('admin.school-management.grades.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
@@ -75,6 +75,14 @@
                 </div>
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Guardians</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['guardians'] }}</p>
+            </a>
+            <a href="{{ route('admin.school-management.guardian-addresses.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Guardian Addresses</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['guardianAddresses'] }}</p>
             </a>
             <a href="{{ route('admin.school-management.payments.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
@@ -100,6 +108,14 @@
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Students</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['students'] }}</p>
             </a>
+            <a href="{{ route('admin.school-management.subjects.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Subjects</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['subjects'] }}</p>
+            </a>
             <a href="{{ route('admin.school-management.teachers.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
@@ -107,6 +123,14 @@
                 </div>
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Teachers</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['teachers'] }}</p>
+            </a>
+            <a href="{{ route('admin.school-management.timetables.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Timetables</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['timetables'] }}</p>
             </a></div>
     </div>
 </div>

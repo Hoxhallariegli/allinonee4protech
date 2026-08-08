@@ -34,7 +34,7 @@ class PurchaseOrders extends Component
         return view('livewire.admin.warehouse-management.purchase-orders.index', [
             'items' => $query->paginate($this->paginate),
             'sortableFields' => PurchaseOrder::sortable(),
-            'suppliers' => \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray(),
+            'suppliers' => \App\Models\WarehouseManagement\Supplier::pluck('name', 'id')->toArray(),
         ])->layout('components.layouts.app');
     }
 

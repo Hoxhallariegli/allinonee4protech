@@ -33,8 +33,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Product::find($value);
         if (!$related) return;
-        if (isset($related->from_warehouse_id)) { $this->from_warehouse_id = $related->from_warehouse_id; }
-        if (isset($related->to_warehouse_id)) { $this->to_warehouse_id = $related->to_warehouse_id; }
     }
 
     public function updatedFromWarehouseId($value)
@@ -42,8 +40,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Warehouse::find($value);
         if (!$related) return;
-        if (isset($related->product_id)) { $this->product_id = $related->product_id; }
-        if (isset($related->to_warehouse_id)) { $this->to_warehouse_id = $related->to_warehouse_id; }
     }
 
     public function updatedToWarehouseId($value)
@@ -51,8 +47,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\WarehouseManagement\Warehouse::find($value);
         if (!$related) return;
-        if (isset($related->product_id)) { $this->product_id = $related->product_id; }
-        if (isset($related->from_warehouse_id)) { $this->from_warehouse_id = $related->from_warehouse_id; }
     }
  
     protected function getproductsList() {

@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(Building $building) { $this->item = $building; $this->fill($building->toArray());  }
-    public function render() { abort_if_cannot('edit_buildings'); return view('livewire.admin.construction-e-r-p.buildings.edit', [
+    public function render() {
+        abort_if_cannot('edit_buildings');
+        return view('livewire.admin.construction-e-r-p.buildings.edit', [
             'projects' => $this->getprojectsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateBuildingAction $action) { $this->validate();  $dto = BuildingDTO::fromArray([
             'project_id' => $this->project_id,
             'name' => $this->name,

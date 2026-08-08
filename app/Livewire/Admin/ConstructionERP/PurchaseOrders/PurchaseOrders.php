@@ -36,7 +36,7 @@ class PurchaseOrders extends Component
         return view('livewire.admin.construction-e-r-p.purchase-orders.index', [
             'items' => $query->paginate($this->paginate),
             'sortableFields' => PurchaseOrder::sortable(),
-            'suppliers' => \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray(),
+            'suppliers' => \App\Models\ConstructionERP\Supplier::pluck('name', 'id')->toArray(),
             'projects' => \App\Models\ConstructionERP\Project::pluck('name', 'id')->toArray(),
         ])->layout('components.layouts.app');
     }

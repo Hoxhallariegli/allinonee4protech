@@ -36,8 +36,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\VehicleBrand::find($value);
         if (!$related) return;
-        if (isset($related->model_id)) { $this->model_id = $related->model_id; }
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
     }
 
     public function updatedModelId($value)
@@ -45,8 +43,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\VehicleModel::find($value);
         if (!$related) return;
-        if (isset($related->brand_id)) { $this->brand_id = $related->brand_id; }
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
     }
 
     public function updatedCustomerId($value)
@@ -54,8 +50,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Customer::find($value);
         if (!$related) return;
-        if (isset($related->brand_id)) { $this->brand_id = $related->brand_id; }
-        if (isset($related->model_id)) { $this->model_id = $related->model_id; }
     }
  
     protected function getbrandsList() {
@@ -70,11 +64,14 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Customer::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_vehicles'); return view('livewire.admin.auto-repair-management.vehicles.create', [
+    public function render() {
+        abort_if_cannot('add_vehicles');
+        return view('livewire.admin.auto-repair-management.vehicles.create', [
             'brands' => $this->getbrandsList(),
             'models' => $this->getmodelsList(),
             'customers' => $this->getcustomersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateVehicleAction $action) { $this->validate();  $dto = VehicleDTO::fromArray([
             'brand_id' => $this->brand_id,
             'model_id' => $this->model_id,

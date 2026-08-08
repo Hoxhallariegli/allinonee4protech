@@ -10,14 +10,16 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Add Contact')]
 class Create extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $company_id = '';
     public $email = '';
+    public $photo = '';
  
     #[On('company-created')] 
     public function refreshCompanies($id) { $this->company_id = $id; $this->updatedCompanyId($id); }
@@ -33,13 +35,18 @@ class Create extends Component
         return \App\Models\CRM\Company::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_contacts'); return view('livewire.admin.c-r-m.contacts.create', [
+    public function render() {
+        abort_if_cannot('add_contacts');
+        return view('livewire.admin.c-r-m.contacts.create', [
             'companies' => $this->getcompaniesList(),
-        ])->layout('components.layouts.app'); }
-    public function store(CreateContactAction $action) { $this->validate();  $dto = ContactDTO::fromArray([
+        ])->layout('components.layouts.app');
+    }
+    public function store(CreateContactAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/contacts', 'uploads'); }
+ $dto = ContactDTO::fromArray([
             'name' => $this->name,
             'company_id' => $this->company_id,
             'email' => $this->email,
+            'photo' => $this->photo,
         ]); $action->execute($dto); session()->flash('success', __('c-r-m/contacts.created')); return to_route('admin.c-r-m.contacts.index'); }
     protected function rules(): array { return Contact::rules(); }
 }

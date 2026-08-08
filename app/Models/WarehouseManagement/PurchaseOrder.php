@@ -20,6 +20,6 @@ class PurchaseOrder extends Model
         ]; }
     public static function sortable(): array { return ['id', 'supplier_id', 'order_date', 'status']; }
 
-    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\AutoRepairManagement\Supplier::class, 'supplier_id'); }
+    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\WarehouseManagement\Supplier::class, 'supplier_id'); }
 
 }

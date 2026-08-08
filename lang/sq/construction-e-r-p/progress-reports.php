@@ -25,4 +25,5 @@ return [
   'Project Id' => 'Project Id',
   'Report Date' => 'Report Date',
   'Percentage' => 'Percentage',
+  'Photo' => 'Photo',
 ];

@@ -16,10 +16,8 @@ class Create extends Component
 {
         use WithPagination;
      public $booking_id = '';
-    public $send_at = '';
+    public $reminder_type = '';
     public $sent_at = '';
-    public $type = '';
-    public $status = '';
  
     #[On('booking-created')] 
     public function refreshBookings($id) { $this->booking_id = $id; $this->updatedBookingId($id); }
@@ -35,15 +33,16 @@ class Create extends Component
         return \App\Models\BerberApp\Booking::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_reminders'); return view('livewire.admin.berber-app.reminders.create', [
+    public function render() {
+        abort_if_cannot('add_reminders');
+        return view('livewire.admin.berber-app.reminders.create', [
             'bookings' => $this->getbookingsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateReminderAction $action) { $this->validate();  $dto = ReminderDTO::fromArray([
             'booking_id' => $this->booking_id,
-            'send_at' => $this->send_at,
+            'reminder_type' => $this->reminder_type,
             'sent_at' => $this->sent_at,
-            'type' => $this->type,
-            'status' => $this->status,
         ]); $action->execute($dto); session()->flash('success', __('berber-app/reminders.created')); return to_route('admin.berber-app.reminders.index'); }
     protected function rules(): array { return Reminder::rules(); }
 }

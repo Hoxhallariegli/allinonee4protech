@@ -8,27 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     use HasFactory;
-
     protected $table = 'ba_customers';
-
-    protected $fillable = ['name', 'phone', 'email'];
-
-    public static function rules($id = null): array
-    {
-        return [
+    protected $fillable = ['name', 'phone', 'email', 'photo'];
+    protected function casts(): array { return [
+        ]; }
+    public static function rules($id = null): array { return [
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:255', 'unique:ba_customers,phone,' . $id],
-            'email' => ['nullable', 'email', 'max:255'],
-        ];
-    }
+            'phone' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'max:255'],
+            'photo' => ['nullable', 'max:255'],
+        ]; }
+    public static function sortable(): array { return ['id', 'name', 'phone', 'email', 'photo']; }
 
-    public static function sortable(): array
-    {
-        return ['id', 'name', 'phone', 'email'];
-    }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
-    }
 }

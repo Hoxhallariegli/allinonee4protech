@@ -31,7 +31,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Patient::find($value);
         if (!$related) return;
-        if (isset($related->doctor_id)) { $this->doctor_id = $related->doctor_id; }
     }
 
     public function updatedDoctorId($value)
@@ -39,7 +38,6 @@ class Create extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Doctor::find($value);
         if (!$related) return;
-        if (isset($related->patient_id)) { $this->patient_id = $related->patient_id; }
     }
  
     protected function getpatientsList() {
@@ -50,10 +48,13 @@ class Create extends Component
         return \App\Models\ClinicManagement\Doctor::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_visits'); return view('livewire.admin.clinic-management.visits.create', [
+    public function render() {
+        abort_if_cannot('add_visits');
+        return view('livewire.admin.clinic-management.visits.create', [
             'patients' => $this->getpatientsList(),
             'doctors' => $this->getdoctorsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateVisitAction $action) { $this->validate();  $dto = VisitDTO::fromArray([
             'patient_id' => $this->patient_id,
             'doctor_id' => $this->doctor_id,

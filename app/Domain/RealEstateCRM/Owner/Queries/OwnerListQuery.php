@@ -16,6 +16,7 @@ class OwnerListQuery
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('phone', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('email', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
 

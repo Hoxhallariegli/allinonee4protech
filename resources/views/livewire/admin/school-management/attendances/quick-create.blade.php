@@ -30,7 +30,7 @@
     </div>
 </div>
 <div><x-form.input name="date" type="date" wire:model="date" :label="__('school-management/attendances.Date')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('school-management/attendances.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"present\">present</option><option value=\"absent\">absent</option><option value=\"late\">late</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('school-management/attendances.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="present">present</option><option value="absent">absent</option><option value="late">late</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('school-management/attendances.Save') }}</x-button></div>
     @endif
 </div>

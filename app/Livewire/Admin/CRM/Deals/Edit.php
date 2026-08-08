@@ -36,9 +36,12 @@ class Edit extends Component
     }
 
     public function mount(Deal $deal) { $this->item = $deal; $this->fill($deal->toArray());  }
-    public function render() { abort_if_cannot('edit_deals'); return view('livewire.admin.c-r-m.deals.edit', [
+    public function render() {
+        abort_if_cannot('edit_deals');
+        return view('livewire.admin.c-r-m.deals.edit', [
             'contacts' => $this->getcontactsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateDealAction $action) { $this->validate();  $dto = DealDTO::fromArray([
             'name' => $this->name,
             'contact_id' => $this->contact_id,

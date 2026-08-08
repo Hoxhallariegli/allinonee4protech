@@ -26,4 +26,8 @@ return [
   'Category Id' => 'Category Id',
   'Price' => 'Price',
   'Stock' => 'Stock',
+  'Photo' => 'Photo',
+  'Sku' => 'Sku',
+  'Stock Quantity' => 'Stock Quantity',
+  'Supplier Id' => 'Supplier Id',
 ];

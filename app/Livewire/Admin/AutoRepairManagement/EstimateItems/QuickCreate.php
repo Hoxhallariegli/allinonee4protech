@@ -33,8 +33,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Estimate::find($value);
         if (!$related) return;
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedServiceId($value)
@@ -42,8 +40,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Service::find($value);
         if (!$related) return;
-        if (isset($related->estimate_id)) { $this->estimate_id = $related->estimate_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -51,8 +47,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->estimate_id)) { $this->estimate_id = $related->estimate_id; }
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
     }
  
     protected function getestimatesList() {

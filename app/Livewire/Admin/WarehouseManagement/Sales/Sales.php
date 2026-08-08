@@ -34,7 +34,7 @@ class Sales extends Component
         return view('livewire.admin.warehouse-management.sales.index', [
             'items' => $query->paginate($this->paginate),
             'sortableFields' => Sale::sortable(),
-            'customers' => \App\Models\AutoRepairManagement\Customer::pluck('name', 'id')->toArray(),
+            'customers' => \App\Models\WarehouseManagement\Customer::pluck('name', 'id')->toArray(),
         ])->layout('components.layouts.app');
     }
 

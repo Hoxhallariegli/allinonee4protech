@@ -20,8 +20,11 @@ class Edit extends Component
     public $phone = '';
    
     public function mount(Supplier $supplier) { $this->item = $supplier; $this->fill($supplier->toArray());  }
-    public function render() { abort_if_cannot('edit_suppliers'); return view('livewire.admin.construction-e-r-p.suppliers.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_suppliers');
+        return view('livewire.admin.construction-e-r-p.suppliers.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateSupplierAction $action) { $this->validate();  $dto = SupplierDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,

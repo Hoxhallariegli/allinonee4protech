@@ -21,8 +21,11 @@ class Edit extends Component
     public $email = '';
    
     public function mount(Guardian $guardian) { $this->item = $guardian; $this->fill($guardian->toArray());  }
-    public function render() { abort_if_cannot('edit_guardians'); return view('livewire.admin.school-management.guardians.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_guardians');
+        return view('livewire.admin.school-management.guardians.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateGuardianAction $action) { $this->validate();  $dto = GuardianDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,

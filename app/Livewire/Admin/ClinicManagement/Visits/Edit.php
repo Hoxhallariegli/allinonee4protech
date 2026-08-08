@@ -32,7 +32,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Patient::find($value);
         if (!$related) return;
-        if (isset($related->doctor_id)) { $this->doctor_id = $related->doctor_id; }
     }
 
     public function updatedDoctorId($value)
@@ -40,7 +39,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\ClinicManagement\Doctor::find($value);
         if (!$related) return;
-        if (isset($related->patient_id)) { $this->patient_id = $related->patient_id; }
     }
  
     protected function getpatientsList() {
@@ -52,10 +50,13 @@ class Edit extends Component
     }
 
     public function mount(Visit $visit) { $this->item = $visit; $this->fill($visit->toArray()); $this->visit_date = $visit->visit_date?->format('Y-m-d\TH:i'); }
-    public function render() { abort_if_cannot('edit_visits'); return view('livewire.admin.clinic-management.visits.edit', [
+    public function render() {
+        abort_if_cannot('edit_visits');
+        return view('livewire.admin.clinic-management.visits.edit', [
             'patients' => $this->getpatientsList(),
             'doctors' => $this->getdoctorsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateVisitAction $action) { $this->validate();  $dto = VisitDTO::fromArray([
             'patient_id' => $this->patient_id,
             'doctor_id' => $this->doctor_id,

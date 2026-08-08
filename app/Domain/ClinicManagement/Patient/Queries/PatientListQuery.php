@@ -15,6 +15,7 @@ class PatientListQuery
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('phone', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
 

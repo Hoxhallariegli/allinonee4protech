@@ -9,7 +9,7 @@ class PrescriptionListQuery
 {
     public function handle(array $params = [], string $sortField = 'id', string $sortAsc = 'asc'): Builder
     {
-        $query = Prescription::query()->with(['visit.patient']);
+        $query = Prescription::query()->with(['visit']);
         if (isset($params['search']) && $params['search']) {
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');

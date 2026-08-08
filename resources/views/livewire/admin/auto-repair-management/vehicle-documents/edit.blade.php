@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between gap-4 px-1"><div><x-h1>{{ __('auto-repair-management/vehicle-documents.Edit VehicleDocument') }}</x-h1><x-short-description class="dark:text-gray-400">{{ __('auto-repair-management/vehicle-documents.Update info') }}</x-short-description></div><x-back-btn route="admin.auto-repair-management.vehicle-documents.index" /></div>
     @include('errors.errors')
     <div class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700"><form wire:submit.prevent="update" class="space-y-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="type" type="text" wire:model="type" :label="__('auto-repair-management/vehicle-documents.Type')" class="dark:bg-gray-900" /></div>
-<div><x-form.file-upload name="document" wire:model="document" :label="__('auto-repair-management/vehicle-documents.Document')" id="document" :isEditing="!" . ( ? 'true' : 'false') . " /></div>
+<div><x-form.file-upload name="document" wire:model="document" :label="__('auto-repair-management/vehicle-documents.Document')" id="document" :isEditing="true" /></div>
 <div>
     <div class="flex items-end gap-2">
         <div class="flex-1"><x-form.dropdown-search name="vehicle_id" wire:model.live="vehicle_id" :label="__('auto-repair-management/vehicle-documents.Vehicle Id')" :data="$vehicles" /></div>

@@ -15,6 +15,7 @@ class MaterialListQuery
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('unit', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
 

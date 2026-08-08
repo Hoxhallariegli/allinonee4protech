@@ -23,8 +23,9 @@ return [
   'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
   'delete_error' => 'Could not delete record.',
   'Booking Id' => 'Booking Id',
-  'Send At' => 'Send At',
+  'Reminder Type' => 'Reminder Type',
   'Sent At' => 'Sent At',
+  'Send At' => 'Send At',
   'Type' => 'Type',
   'Status' => 'Status',
 ];

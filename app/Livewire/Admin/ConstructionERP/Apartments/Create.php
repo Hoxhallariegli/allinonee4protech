@@ -34,9 +34,12 @@ class Create extends Component
         return \App\Models\ConstructionERP\Building::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_apartments'); return view('livewire.admin.construction-e-r-p.apartments.create', [
+    public function render() {
+        abort_if_cannot('add_apartments');
+        return view('livewire.admin.construction-e-r-p.apartments.create', [
             'buildings' => $this->getbuildingsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateApartmentAction $action) { $this->validate();  $dto = ApartmentDTO::fromArray([
             'building_id' => $this->building_id,
             'number' => $this->number,

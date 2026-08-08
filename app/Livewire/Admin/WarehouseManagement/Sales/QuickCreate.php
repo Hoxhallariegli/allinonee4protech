@@ -24,12 +24,12 @@ class QuickCreate extends Component
     public function updatedCustomerId($value)
     {
         if (!$value) return;
-        $related = \App\Models\AutoRepairManagement\Customer::find($value);
+        $related = \App\Models\WarehouseManagement\Customer::find($value);
         if (!$related) return;
     }
  
     protected function getcustomersList() {
-        return \App\Models\AutoRepairManagement\Customer::pluck('name', 'id')->toArray();
+        return \App\Models\WarehouseManagement\Customer::pluck('name', 'id')->toArray();
     }
 
     public bool $created = false;

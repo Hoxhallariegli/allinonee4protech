@@ -25,4 +25,8 @@ return [
   'Name' => 'Name',
   'Price' => 'Price',
   'Category' => 'Category',
+  'Photo' => 'Photo',
+  'Category Id' => 'Category Id',
+  'Description' => 'Description',
+  'Active' => 'Active',
 ];

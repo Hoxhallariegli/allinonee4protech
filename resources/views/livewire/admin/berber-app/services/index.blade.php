@@ -28,9 +28,8 @@
         <div class="overflow-x-auto border-t border-gray-100 dark:border-gray-700">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="bg-gray-100/50 dark:bg-gray-700/50"><tr><x-table.th name="id" :label="__('berber-app/services.ID')" :$sortField :$sortAsc :sortable="true" /><x-table.th name="name" :label="__('berber-app/services.Name')" :$sortField :$sortAsc :sortable="in_array('name', $sortableFields)" />
-<x-table.th name="duration_minutes" :label="__('berber-app/services.Duration Minutes')" :$sortField :$sortAsc :sortable="in_array('duration_minutes', $sortableFields)" />
 <x-table.th name="price" :label="__('berber-app/services.Price')" :$sortField :$sortAsc :sortable="in_array('price', $sortableFields)" />
-<x-table.th name="active" :label="__('berber-app/services.Active')" :$sortField :$sortAsc :sortable="in_array('active', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('berber-app/services.Action') }}</th></tr></thead>
+<x-table.th name="duration" :label="__('berber-app/services.Duration')" :$sortField :$sortAsc :sortable="in_array('duration', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('berber-app/services.Action') }}</th></tr></thead>
                 <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">@forelse($items as $item) <livewire:admin.berber-app.services.row :$item :key="$item->id" /> @empty <tr><td colspan="100" class="px-6 py-10 text-center text-sm text-gray-400">{{ __('berber-app/services.No records found.') }}</td></tr> @endforelse</tbody>
             </table>
         </div>

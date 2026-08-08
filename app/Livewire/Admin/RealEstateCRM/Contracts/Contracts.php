@@ -37,7 +37,7 @@ class Contracts extends Component
             'items' => $query->paginate($this->paginate),
             'sortableFields' => Contract::sortable(),
             'properties' => \App\Models\RealEstateCRM\Property::pluck('title', 'id')->toArray(),
-            'clients' => \App\Models\ConstructionERP\Client::pluck('name', 'id')->toArray(),
+            'clients' => \App\Models\RealEstateCRM\Client::pluck('name', 'id')->toArray(),
         ])->layout('components.layouts.app');
     }
 

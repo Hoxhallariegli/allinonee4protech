@@ -21,5 +21,5 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="visit_date" type="datetime-local" wire:model="visit_date" :label="__('real-estate-c-r-m/property-visits.Visit Date')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('real-estate-c-r-m/property-visits.Save') }}</x-button></div></form></div>
+<div><x-form.input name="visit_date" type="date" wire:model="visit_date" :label="__('real-estate-c-r-m/property-visits.Visit Date')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('real-estate-c-r-m/property-visits.Save') }}</x-button></div></form></div>
 </div>

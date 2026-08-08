@@ -34,9 +34,12 @@ class Edit extends Component
     }
 
     public function mount(Mechanic $mechanic) { $this->item = $mechanic; $this->fill($mechanic->toArray());  }
-    public function render() { abort_if_cannot('edit_mechanics'); return view('livewire.admin.auto-repair-management.mechanics.edit', [
+    public function render() {
+        abort_if_cannot('edit_mechanics');
+        return view('livewire.admin.auto-repair-management.mechanics.edit', [
             'employees' => $this->getemployeesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateMechanicAction $action) { $this->validate();  $dto = MechanicDTO::fromArray([
             'employee_id' => $this->employee_id,
             'specialization' => $this->specialization,

@@ -12,5 +12,6 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="email" type="text" wire:model="email" :label="__('c-r-m/contacts.Email')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('c-r-m/contacts.Update') }}</x-button></div></form></div>
+<div><x-form.input name="email" type="text" wire:model="email" :label="__('c-r-m/contacts.Email')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('c-r-m/contacts.Photo')" id="photo" :isEditing="true" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('c-r-m/contacts.Update') }}</x-button></div></form></div>
 </div>

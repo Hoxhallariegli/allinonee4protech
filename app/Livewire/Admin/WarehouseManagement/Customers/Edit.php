@@ -21,8 +21,11 @@ class Edit extends Component
     public $email = '';
    
     public function mount(Customer $customer) { $this->item = $customer; $this->fill($customer->toArray());  }
-    public function render() { abort_if_cannot('edit_customers'); return view('livewire.admin.warehouse-management.customers.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_customers');
+        return view('livewire.admin.warehouse-management.customers.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateCustomerAction $action) { $this->validate();  $dto = CustomerDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,

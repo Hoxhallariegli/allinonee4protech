@@ -32,7 +32,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Student::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -40,7 +39,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->student_id)) { $this->student_id = $related->student_id; }
     }
  
     protected function getstudentsList() {
@@ -52,10 +50,13 @@ class Edit extends Component
     }
 
     public function mount(Attendance $attendance) { $this->item = $attendance; $this->fill($attendance->toArray()); $this->date = $attendance->date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_attendances'); return view('livewire.admin.school-management.attendances.edit', [
+    public function render() {
+        abort_if_cannot('edit_attendances');
+        return view('livewire.admin.school-management.attendances.edit', [
             'students' => $this->getstudentsList(),
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateAttendanceAction $action) { $this->validate();  $dto = AttendanceDTO::fromArray([
             'student_id' => $this->student_id,
             'class_id' => $this->class_id,

@@ -7,8 +7,6 @@ namespace App\Providers;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use App\Models\BerberApp\Booking;
-use App\Observers\BookingObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
@@ -30,7 +28,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Booking::observe(BookingObserver::class);
         $this->configureAuth();
         $this->configureCommands();
         $this->configureDates();
@@ -100,5 +97,28 @@ class AppServiceProvider extends ServiceProvider
         foreach ($settings as $setting) {
             config()->set([$setting->key => $setting->value]);
         }
+
+        // Modular Layout Switcher
+        view()->composer(['components.layouts.app', 'components.layouts.groups.*'], function ($view) {
+            $path = request()->path();
+            $modules = [
+                'berber-app', 'clinic-management', 'auto-repair-management', 'construction-e-r-p',
+                'warehouse-management', 'restaurant-p-o-s', 'school-management', 'real-estate-c-r-m',
+                'c-r-m', 'hotel-management', 'human-resources', 'e--commerce', 'fleet-management',
+                'gym-management', 'finance', 'legal-management', 'pharmacy-management',
+                'event-management', 'travel-agency', 'facility-management', 'agriculture-management'
+            ];
+
+            foreach ($modules as $module) {
+                if (collect(request()->segments())->contains($module)) {
+                    $layout = "components.layouts.groups.{$module}";
+                    if ($view->getName() !== $layout && view()->exists($layout)) {
+                        // This allows us to handle the case where a component is trying to render 'layouts.app'
+                        // but we want to force it to a modular layout.
+                        // However, composers can't change the view being rendered easily.
+                    }
+                }
+            }
+        });
     }
 }

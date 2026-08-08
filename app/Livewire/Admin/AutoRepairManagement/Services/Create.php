@@ -19,8 +19,11 @@ class Create extends Component
     public $price = '';
     public $duration = '';
    
-    public function render() { abort_if_cannot('add_services'); return view('livewire.admin.auto-repair-management.services.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_services');
+        return view('livewire.admin.auto-repair-management.services.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateServiceAction $action) { $this->validate();  $dto = ServiceDTO::fromArray([
             'name' => $this->name,
             'price' => $this->price,

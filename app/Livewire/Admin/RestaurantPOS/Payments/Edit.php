@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(Payment $payment) { $this->item = $payment; $this->fill($payment->toArray());  }
-    public function render() { abort_if_cannot('edit_payments'); return view('livewire.admin.restaurant-p-o-s.payments.edit', [
+    public function render() {
+        abort_if_cannot('edit_payments');
+        return view('livewire.admin.restaurant-p-o-s.payments.edit', [
             'orders' => $this->getordersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePaymentAction $action) { $this->validate();  $dto = PaymentDTO::fromArray([
             'order_id' => $this->order_id,
             'amount' => $this->amount,

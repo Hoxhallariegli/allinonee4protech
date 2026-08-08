@@ -10,9 +10,8 @@
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('berber-app/services.Name')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="duration_minutes" type="text" wire:model="duration_minutes" :label="__('berber-app/services.Duration Minutes')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="price" type="text" wire:model="price" :label="__('berber-app/services.Price')" class="dark:bg-gray-900" /></div>
-<div><x-form.checkbox name="active" wire:model="active" :label="__('berber-app/services.Active')" /></div></div>
+<div><x-form.input name="duration" type="text" wire:model="duration" :label="__('berber-app/services.Duration')" class="dark:bg-gray-900" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('berber-app/services.Save') }}</x-button></div>
     @endif
 </div>

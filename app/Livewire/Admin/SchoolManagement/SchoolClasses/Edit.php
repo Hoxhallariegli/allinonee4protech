@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(SchoolClass $schoolClass) { $this->item = $schoolClass; $this->fill($schoolClass->toArray());  }
-    public function render() { abort_if_cannot('edit_school_classes'); return view('livewire.admin.school-management.school-classes.edit', [
+    public function render() {
+        abort_if_cannot('edit_school_classes');
+        return view('livewire.admin.school-management.school-classes.edit', [
             'teachers' => $this->getteachersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateSchoolClassAction $action) { $this->validate();  $dto = SchoolClassDTO::fromArray([
             'name' => $this->name,
             'teacher_id' => $this->teacher_id,

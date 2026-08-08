@@ -25,4 +25,7 @@ return [
   'Order Id' => 'Order Id',
   'Amount' => 'Amount',
   'Method' => 'Method',
+  'Payment Method' => 'Payment Method',
+  'Status' => 'Status',
+  'Transaction Id' => 'Transaction Id',
 ];

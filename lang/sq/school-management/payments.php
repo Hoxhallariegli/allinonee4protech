@@ -25,4 +25,6 @@ return [
   'Student Id' => 'Student Id',
   'Amount' => 'Amount',
   'Payment Date' => 'Payment Date',
+  'Date' => 'Date',
+  'Status' => 'Status',
 ];

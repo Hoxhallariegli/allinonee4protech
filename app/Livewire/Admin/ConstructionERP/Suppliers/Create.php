@@ -18,8 +18,11 @@ class Create extends Component
      public $name = '';
     public $phone = '';
    
-    public function render() { abort_if_cannot('add_suppliers'); return view('livewire.admin.construction-e-r-p.suppliers.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_suppliers');
+        return view('livewire.admin.construction-e-r-p.suppliers.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateSupplierAction $action) { $this->validate();  $dto = SupplierDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,

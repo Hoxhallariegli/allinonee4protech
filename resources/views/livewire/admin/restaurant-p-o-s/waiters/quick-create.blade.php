@@ -10,7 +10,8 @@
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('restaurant-p-o-s/waiters.Name')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('restaurant-p-o-s/waiters.Phone')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="phone" type="text" wire:model="phone" :label="__('restaurant-p-o-s/waiters.Phone')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('restaurant-p-o-s/waiters.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('restaurant-p-o-s/waiters.Save') }}</x-button></div>
     @endif
 </div>

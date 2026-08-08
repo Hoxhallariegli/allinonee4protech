@@ -31,7 +31,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\Order::find($value);
         if (!$related) return;
-        if (isset($related->menu_item_id)) { $this->menu_item_id = $related->menu_item_id; }
     }
 
     public function updatedMenuItemId($value)
@@ -39,7 +38,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\MenuItem::find($value);
         if (!$related) return;
-        if (isset($related->order_id)) { $this->order_id = $related->order_id; }
     }
  
     protected function getordersList() {
@@ -51,10 +49,13 @@ class Edit extends Component
     }
 
     public function mount(OrderItem $orderItem) { $this->item = $orderItem; $this->fill($orderItem->toArray());  }
-    public function render() { abort_if_cannot('edit_order_items'); return view('livewire.admin.restaurant-p-o-s.order-items.edit', [
+    public function render() {
+        abort_if_cannot('edit_order_items');
+        return view('livewire.admin.restaurant-p-o-s.order-items.edit', [
             'orders' => $this->getordersList(),
             'menuItems' => $this->getmenuItemsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateOrderItemAction $action) { $this->validate();  $dto = OrderItemDTO::fromArray([
             'order_id' => $this->order_id,
             'menu_item_id' => $this->menu_item_id,

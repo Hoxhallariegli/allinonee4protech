@@ -18,8 +18,11 @@ class Create extends Component
      public $name = '';
     public $address = '';
    
-    public function render() { abort_if_cannot('add_warehouses'); return view('livewire.admin.warehouse-management.warehouses.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_warehouses');
+        return view('livewire.admin.warehouse-management.warehouses.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateWarehouseAction $action) { $this->validate();  $dto = WarehouseDTO::fromArray([
             'name' => $this->name,
             'address' => $this->address,

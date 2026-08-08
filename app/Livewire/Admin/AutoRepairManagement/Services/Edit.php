@@ -21,8 +21,11 @@ class Edit extends Component
     public $duration = '';
    
     public function mount(Service $service) { $this->item = $service; $this->fill($service->toArray());  }
-    public function render() { abort_if_cannot('edit_services'); return view('livewire.admin.auto-repair-management.services.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_services');
+        return view('livewire.admin.auto-repair-management.services.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateServiceAction $action) { $this->validate();  $dto = ServiceDTO::fromArray([
             'name' => $this->name,
             'price' => $this->price,

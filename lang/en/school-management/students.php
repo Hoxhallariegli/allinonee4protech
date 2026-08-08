@@ -26,4 +26,7 @@ return [
   'Guardian Id' => 'Guardian Id',
   'Class Id' => 'Class Id',
   'Birth Date' => 'Birth Date',
+  'Photo' => 'Photo',
+  'Dob' => 'Dob',
+  'School Class Id' => 'School Class Id',
 ];

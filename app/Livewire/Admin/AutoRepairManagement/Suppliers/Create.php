@@ -19,8 +19,11 @@ class Create extends Component
     public $email = '';
     public $phone = '';
    
-    public function render() { abort_if_cannot('add_suppliers'); return view('livewire.admin.auto-repair-management.suppliers.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_suppliers');
+        return view('livewire.admin.auto-repair-management.suppliers.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateSupplierAction $action) { $this->validate();  $dto = SupplierDTO::fromArray([
             'name' => $this->name,
             'email' => $this->email,

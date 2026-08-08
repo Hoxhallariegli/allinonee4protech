@@ -32,6 +32,6 @@
     </div>
 </div>
 <div><x-form.input name="status" type="text" wire:model="status" :label="__('auto-repair-management/job-cards.Status')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="opened_at" type="datetime-local" wire:model="opened_at" :label="__('auto-repair-management/job-cards.Opened At')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="closed_at" type="datetime-local" wire:model="closed_at" :label="__('auto-repair-management/job-cards.Closed At')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('auto-repair-management/job-cards.Save') }}</x-button></div></form></div>
+<div><x-form.input name="opened_at" type="date" wire:model="opened_at" :label="__('auto-repair-management/job-cards.Opened At')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="closed_at" type="date" wire:model="closed_at" :label="__('auto-repair-management/job-cards.Closed At')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('auto-repair-management/job-cards.Save') }}</x-button></div></form></div>
 </div>

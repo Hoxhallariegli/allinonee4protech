@@ -19,8 +19,11 @@ class Create extends Component
     public $capacity = '';
     public $status = '';
    
-    public function render() { abort_if_cannot('add_dining_tables'); return view('livewire.admin.restaurant-p-o-s.dining-tables.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_dining_tables');
+        return view('livewire.admin.restaurant-p-o-s.dining-tables.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateDiningTableAction $action) { $this->validate();  $dto = DiningTableDTO::fromArray([
             'number' => $this->number,
             'capacity' => $this->capacity,

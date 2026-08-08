@@ -31,15 +31,13 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\RealEstateCRM\Property::find($value);
         if (!$related) return;
-        if (isset($related->client_id)) { $this->client_id = $related->client_id; }
     }
 
     public function updatedClientId($value)
     {
         if (!$value) return;
-        $related = \App\Models\ConstructionERP\Client::find($value);
+        $related = \App\Models\RealEstateCRM\Client::find($value);
         if (!$related) return;
-        if (isset($related->property_id)) { $this->property_id = $related->property_id; }
     }
  
     protected function getpropertiesList() {
@@ -47,14 +45,17 @@ class Edit extends Component
     }
 
     protected function getclientsList() {
-        return \App\Models\ConstructionERP\Client::pluck('name', 'id')->toArray();
+        return \App\Models\RealEstateCRM\Client::pluck('name', 'id')->toArray();
     }
 
-    public function mount(PropertyVisit $propertyVisit) { $this->item = $propertyVisit; $this->fill($propertyVisit->toArray()); $this->visit_date = $propertyVisit->visit_date?->format('Y-m-d\TH:i'); }
-    public function render() { abort_if_cannot('edit_property_visits'); return view('livewire.admin.real-estate-c-r-m.property-visits.edit', [
+    public function mount(PropertyVisit $propertyVisit) { $this->item = $propertyVisit; $this->fill($propertyVisit->toArray()); $this->visit_date = $propertyVisit->visit_date?->format('Y-m-d'); }
+    public function render() {
+        abort_if_cannot('edit_property_visits');
+        return view('livewire.admin.real-estate-c-r-m.property-visits.edit', [
             'properties' => $this->getpropertiesList(),
             'clients' => $this->getclientsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePropertyVisitAction $action) { $this->validate();  $dto = PropertyVisitDTO::fromArray([
             'property_id' => $this->property_id,
             'client_id' => $this->client_id,

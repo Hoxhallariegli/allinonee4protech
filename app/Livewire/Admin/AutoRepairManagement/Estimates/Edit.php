@@ -35,9 +35,12 @@ class Edit extends Component
     }
 
     public function mount(Estimate $estimate) { $this->item = $estimate; $this->fill($estimate->toArray()); $this->estimate_date = $estimate->estimate_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_estimates'); return view('livewire.admin.auto-repair-management.estimates.edit', [
+    public function render() {
+        abort_if_cannot('edit_estimates');
+        return view('livewire.admin.auto-repair-management.estimates.edit', [
             'jobCards' => $this->getjobCardsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateEstimateAction $action) { $this->validate();  $dto = EstimateDTO::fromArray([
             'job_card_id' => $this->job_card_id,
             'estimate_date' => $this->estimate_date,

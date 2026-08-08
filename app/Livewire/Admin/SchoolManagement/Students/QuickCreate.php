@@ -10,14 +10,16 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class QuickCreate extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $guardian_id = '';
     public $class_id = '';
     public $birth_date = '';
+    public $photo = '';
  
     #[On('guardian-created')] 
     public function refreshGuardians($id) { $this->guardian_id = $id; $this->updatedGuardianId($id); }
@@ -30,7 +32,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Guardian::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -38,7 +39,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->guardian_id)) { $this->guardian_id = $related->guardian_id; }
     }
  
     protected function getguardiansList() {
@@ -61,11 +61,13 @@ class QuickCreate extends Component
     public function store(CreateStudentAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/students', 'uploads'); }
         $dto = StudentDTO::fromArray([
             'name' => $this->name,
             'guardian_id' => $this->guardian_id,
             'class_id' => $this->class_id,
             'birth_date' => $this->birth_date,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('student-created', id: $item->id);
@@ -74,7 +76,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'guardian_id', 'class_id', 'birth_date']);
+        $this->reset(['name', 'guardian_id', 'class_id', 'birth_date', 'photo']);
     }
 
     public function addAnother()

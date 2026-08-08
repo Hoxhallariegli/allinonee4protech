@@ -34,10 +34,13 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Vehicle::pluck('license_plate', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_vehicle_documents'); return view('livewire.admin.auto-repair-management.vehicle-documents.create', [
+    public function render() {
+        abort_if_cannot('add_vehicle_documents');
+        return view('livewire.admin.auto-repair-management.vehicle-documents.create', [
             'vehicles' => $this->getvehiclesList(),
-        ])->layout('components.layouts.app'); }
-    public function store(CreateVehicleDocumentAction $action) { $this->validate();         if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'public'); }
+        ])->layout('components.layouts.app');
+    }
+    public function store(CreateVehicleDocumentAction $action) { $this->validate();         if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'uploads'); }
  $dto = VehicleDocumentDTO::fromArray([
             'type' => $this->type,
             'document' => $this->document,

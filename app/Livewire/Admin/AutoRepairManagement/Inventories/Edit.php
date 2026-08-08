@@ -34,9 +34,12 @@ class Edit extends Component
     }
 
     public function mount(Inventory $inventory) { $this->item = $inventory; $this->fill($inventory->toArray());  }
-    public function render() { abort_if_cannot('edit_inventories'); return view('livewire.admin.auto-repair-management.inventories.edit', [
+    public function render() {
+        abort_if_cannot('edit_inventories');
+        return view('livewire.admin.auto-repair-management.inventories.edit', [
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateInventoryAction $action) { $this->validate();  $dto = InventoryDTO::fromArray([
             'part_id' => $this->part_id,
             'quantity' => $this->quantity,

@@ -16,17 +16,18 @@ class Create extends Component
 {
         use WithPagination;
      public $name = '';
-    public $duration_minutes = '';
     public $price = '';
-    public $active = '';
-   
-    public function render() { abort_if_cannot('add_services'); return view('livewire.admin.berber-app.services.create', [
-        ])->layout('components.layouts.app'); }
+    public $duration_minutes = '';
+
+    public function render() {
+        abort_if_cannot('add_services');
+        return view('livewire.admin.berber-app.services.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateServiceAction $action) { $this->validate();  $dto = ServiceDTO::fromArray([
             'name' => $this->name,
-            'duration_minutes' => $this->duration_minutes,
             'price' => $this->price,
-            'active' => $this->active,
+            'duration_minutes' => $this->duration_minutes,
         ]); $action->execute($dto); session()->flash('success', __('berber-app/services.created')); return to_route('admin.berber-app.services.index'); }
     protected function rules(): array { return Service::rules(); }
 }

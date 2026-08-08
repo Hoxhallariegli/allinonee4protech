@@ -30,12 +30,15 @@ class Create extends Component
     }
  
     protected function getvisitsList() {
-        return \App\Models\ClinicManagement\Visit::with('patient')->get()->pluck('patient.name', 'id')->toArray();
+        return \App\Models\ClinicManagement\Visit::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_clinic_invoices'); return view('livewire.admin.clinic-management.clinic-invoices.create', [
+    public function render() {
+        abort_if_cannot('add_clinic_invoices');
+        return view('livewire.admin.clinic-management.clinic-invoices.create', [
             'visits' => $this->getvisitsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateClinicInvoiceAction $action) { $this->validate();  $dto = ClinicInvoiceDTO::fromArray([
             'visit_id' => $this->visit_id,
             'amount' => $this->amount,

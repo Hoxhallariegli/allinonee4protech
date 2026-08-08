@@ -15,10 +15,8 @@ class QuickCreate extends Component
 {
         use WithPagination;
      public $booking_id = '';
-    public $send_at = '';
+    public $reminder_type = '';
     public $sent_at = '';
-    public $type = '';
-    public $status = '';
  
     #[On('booking-created')] 
     public function refreshBookings($id) { $this->booking_id = $id; $this->updatedBookingId($id); }
@@ -47,10 +45,8 @@ class QuickCreate extends Component
         $this->validate();
         $dto = ReminderDTO::fromArray([
             'booking_id' => $this->booking_id,
-            'send_at' => $this->send_at,
+            'reminder_type' => $this->reminder_type,
             'sent_at' => $this->sent_at,
-            'type' => $this->type,
-            'status' => $this->status,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('reminder-created', id: $item->id);
@@ -59,7 +55,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->id ?? $item->id);
-        $this->reset(['booking_id', 'send_at', 'sent_at', 'type', 'status']);
+        $this->reset(['booking_id', 'reminder_type', 'sent_at']);
     }
 
     public function addAnother()

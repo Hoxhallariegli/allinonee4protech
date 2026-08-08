@@ -3,140 +3,15 @@
 namespace App\Domain\BerberApp\Booking\Actions;
 
 use App\Models\BerberApp\Booking;
-use App\Models\BerberApp\DeviceToken;
-use App\Models\User;
 use App\Domain\BerberApp\Booking\DTOs\BookingDTO;
 use App\Models\AuditTrail;
-use App\Services\FirebaseService;
-use Illuminate\Support\Facades\Log;
 
 class CreateBookingAction
 {
-    public function __construct(
-        protected FirebaseService $firebaseService
-    ) {}
-
-    public function execute(BookingDTO $dto): Booking
+    public function execute(BookingDTO $dto): Booking 
     {
-        $data = $dto->toArray();
-
-        // If customer_id is missing but name/phone are present (e.g. from Front Landing)
-        // Find or Create the customer record to maintain the relationship
-        if (empty($data['customer_id']) && $data['customer_phone']) {
-            $customer = \App\Models\BerberApp\Customer::firstOrCreate(
-                ['phone' => $data['customer_phone']],
-                ['name' => $data['customer_name']]
-            );
-            $data['customer_id'] = $customer->id;
-        }
-
-        $item = Booking::create($data);
+        $item = Booking::create($dto->toArray());
         AuditTrail::log($item, 'create', 'Bookings');
-
-        // Ensure barber relationship is loaded for notification logic
-        $item->load('barber');
-
-        // 0. Save Token if provided in DTO (for customers)
-        if ($dto->fcm_token) {
-            DeviceToken::create([
-                'booking_id' => $item->id,
-                'fcm_token' => $dto->fcm_token,
-                'device_type' => 'web'
-            ]);
-            Log::info("🔑 Saved FCM Token for new customer booking #{$item->id}");
-        }
-
-        // 1. Notify Barber/Admins (Staff)
-        $this->notifyStaff($item);
-
-        // 2. Notify Customer Immediately (Confirmation)
-        if ($item->reminder_enabled) {
-            $this->notifyCustomerImmediate($item);
-
-            // 3. Schedule Reminder (30 min before)
-            \App\Models\BerberApp\Reminder::create([
-                'booking_id' => $item->id,
-                'send_at' => $item->appointment_datetime->copy()->subMinutes(30),
-                'type' => 'appointment_reminder',
-                'status' => 'pending'
-            ]);
-
-            Log::info("📅 Scheduled 30min reminder for Booking #{$item->id}");
-        }
-
         return $item;
-    }
-
-    protected function notifyCustomerImmediate(Booking $booking)
-    {
-        $title = "Rezervimi u Krye!";
-        $body = "Përshëndetje {$booking->customer_name}. E morëm rezervimin tuaj për në orën " . $booking->appointment_datetime->format('H:i') . ". Do t'ju njoftojmë përsëri 30 min përpara takimit.";
-
-        $tokens = DeviceToken::where('booking_id', $booking->id)->pluck('fcm_token')->toArray();
-
-        Log::info("Attempting immediate confirmation to customer: {$booking->customer_name}. Found " . count($tokens) . " tokens.");
-
-        foreach ($tokens as $token) {
-            $this->firebaseService->sendNotification($title, $body, $token);
-        }
-    }
-
-    protected function notifyStaff(Booking $booking)
-    {
-        $barber = $booking->barber;
-        $title = "Rezervim i Ri!";
-        $body = "Klienti {$booking->customer_name} rezervoi në orën " . $booking->appointment_datetime->format('H:i');
-
-        Log::info("🚀 Notification Flow Started for Booking #{$booking->id}");
-
-        // 1. Notify specific barber if they are linked to a user
-        $barberUserId = data_get($barber, 'user_id');
-
-        if ($barberUserId) {
-            $enabled = \App\Models\NotificationSetting::where('user_id', $barberUserId)
-                ->where('module', 'BerberApp')
-                ->where('event_type', 'booking_created')
-                ->where('enabled', true)
-                ->exists();
-
-            if (\App\Models\NotificationSetting::where('user_id', $barberUserId)->where('module', 'BerberApp')->where('event_type', 'booking_created')->doesntExist()) {
-                $enabled = true;
-            }
-
-            if ($enabled) {
-                $tokens = DeviceToken::where('user_id', $barberUserId)->pluck('fcm_token')->toArray();
-                Log::info("Found " . count($tokens) . " tokens for Barber: " . data_get($barber, 'name', 'Unknown'));
-                foreach ($tokens as $token) {
-                    $this->firebaseService->sendNotification($title, $body, $token);
-                }
-            }
-        }
-
-        // 2. Notify all Admins who have role admin (Super-Admins)
-        $admins = User::role('admin')->get();
-        Log::info("🔍 Found " . $admins->count() . " Admins to notify.");
-
-        foreach ($admins as $admin) {
-            // Skip if this admin is also the barber we already notified
-            if ($barberUserId && $admin->id === $barberUserId) continue;
-
-            $enabled = \App\Models\NotificationSetting::where('user_id', $admin->id)
-                ->where('module', 'BerberApp')
-                ->where('event_type', 'booking_created')
-                ->where('enabled', true)
-                ->exists();
-
-            if (\App\Models\NotificationSetting::where('user_id', $admin->id)->where('module', 'BerberApp')->where('event_type', 'booking_created')->doesntExist()) {
-                $enabled = true;
-            }
-
-            if ($enabled) {
-                $tokens = DeviceToken::where('user_id', $admin->id)->pluck('fcm_token')->toArray();
-                Log::info("Found " . count($tokens) . " tokens for Admin: {$admin->name}");
-                foreach ($tokens as $token) {
-                    $this->firebaseService->sendNotification($title, $body, $token);
-                }
-            }
-        }
     }
 }

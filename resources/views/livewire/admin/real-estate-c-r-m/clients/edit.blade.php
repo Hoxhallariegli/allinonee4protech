@@ -3,5 +3,6 @@
     @include('errors.errors')
     <div class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700"><form wire:submit.prevent="update" class="space-y-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('real-estate-c-r-m/clients.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="phone" type="text" wire:model="phone" :label="__('real-estate-c-r-m/clients.Phone')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="email" type="text" wire:model="email" :label="__('real-estate-c-r-m/clients.Email')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('real-estate-c-r-m/clients.Update') }}</x-button></div></form></div>
+<div><x-form.input name="email" type="text" wire:model="email" :label="__('real-estate-c-r-m/clients.Email')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('real-estate-c-r-m/clients.Photo')" id="photo" :isEditing="true" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('real-estate-c-r-m/clients.Update') }}</x-button></div></form></div>
 </div>

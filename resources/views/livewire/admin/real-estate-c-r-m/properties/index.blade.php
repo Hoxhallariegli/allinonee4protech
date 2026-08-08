@@ -16,7 +16,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                         <label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">{{ __('real-estate-c-r-m/properties.Search') }}</label>
-                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Title" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
+                        <input name="search" wire:model.live.debounce.300ms="search" type="text" placeholder="Search by ID, Title, Photo" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500/20 dark:text-white">
                     </div>
                     <div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">Owner Id</label><x-form.dropdown-search name="owner_id" wire:model.live="owner_id" label="none" :data="$owners" placeholder="Filter Owner Id" /></div>
 <div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest ml-1 text-gray-900 dark:text-gray-100">Agent Id</label><x-form.dropdown-search name="agent_id" wire:model.live="agent_id" label="none" :data="$agents" placeholder="Filter Agent Id" /></div>
@@ -31,7 +31,9 @@
                 <thead class="bg-gray-100/50 dark:bg-gray-700/50"><tr><x-table.th name="id" :label="__('real-estate-c-r-m/properties.ID')" :$sortField :$sortAsc :sortable="true" /><x-table.th name="title" :label="__('real-estate-c-r-m/properties.Title')" :$sortField :$sortAsc :sortable="in_array('title', $sortableFields)" />
 <x-table.th name="owner_id" :label="__('real-estate-c-r-m/properties.Owner Id')" :$sortField :$sortAsc :sortable="in_array('owner_id', $sortableFields)" />
 <x-table.th name="agent_id" :label="__('real-estate-c-r-m/properties.Agent Id')" :$sortField :$sortAsc :sortable="in_array('agent_id', $sortableFields)" />
-<x-table.th name="no" :label="__('real-estate-c-r-m/properties.No')" :$sortField :$sortAsc :sortable="in_array('no', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('real-estate-c-r-m/properties.Action') }}</th></tr></thead>
+<x-table.th name="price" :label="__('real-estate-c-r-m/properties.Price')" :$sortField :$sortAsc :sortable="in_array('price', $sortableFields)" />
+<x-table.th name="type" :label="__('real-estate-c-r-m/properties.Type')" :$sortField :$sortAsc :sortable="in_array('type', $sortableFields)" />
+<x-table.th name="photo" :label="__('real-estate-c-r-m/properties.Photo')" :$sortField :$sortAsc :sortable="in_array('photo', $sortableFields)" /><th class="px-6 py-4 text-right text-[10px] font-black uppercase text-gray-400 tracking-widest">{{ __('real-estate-c-r-m/properties.Action') }}</th></tr></thead>
                 <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">@forelse($items as $item) <livewire:admin.real-estate-c-r-m.properties.row :$item :key="$item->id" /> @empty <tr><td colspan="100" class="px-6 py-10 text-center text-sm text-gray-400">{{ __('real-estate-c-r-m/properties.No records found.') }}</td></tr> @endforelse</tbody>
             </table>
         </div>

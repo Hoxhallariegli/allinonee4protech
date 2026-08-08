@@ -10,21 +10,28 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Add Client')]
 class Create extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $phone = '';
     public $email = '';
+    public $photo = '';
    
-    public function render() { abort_if_cannot('add_clients'); return view('livewire.admin.real-estate-c-r-m.clients.create', [
-        ])->layout('components.layouts.app'); }
-    public function store(CreateClientAction $action) { $this->validate();  $dto = ClientDTO::fromArray([
+    public function render() {
+        abort_if_cannot('add_clients');
+        return view('livewire.admin.real-estate-c-r-m.clients.create', [
+        ])->layout('components.layouts.app');
+    }
+    public function store(CreateClientAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/clients', 'uploads'); }
+ $dto = ClientDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,
             'email' => $this->email,
+            'photo' => $this->photo,
         ]); $action->execute($dto); session()->flash('success', __('real-estate-c-r-m/clients.created')); return to_route('admin.real-estate-c-r-m.clients.index'); }
     protected function rules(): array { return Client::rules(); }
 }

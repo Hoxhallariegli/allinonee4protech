@@ -32,9 +32,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\VehicleBrand::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_vehicle_models'); return view('livewire.admin.auto-repair-management.vehicle-models.create', [
+    public function render() {
+        abort_if_cannot('add_vehicle_models');
+        return view('livewire.admin.auto-repair-management.vehicle-models.create', [
             'brands' => $this->getbrandsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateVehicleModelAction $action) { $this->validate();  $dto = VehicleModelDTO::fromArray([
             'name' => $this->name,
             'brand_id' => $this->brand_id,

@@ -30,7 +30,9 @@
         </x-modal>
     </div>
 </div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('real-estate-c-r-m/properties.No') }}</label><select name="no" wire:model="no" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"apartment\">apartment</option><option value=\"house\">house</option><option value=\"land\">land</option></select></div></div>
+<div><x-form.input name="price" type="text" wire:model="price" :label="__('real-estate-c-r-m/properties.Price')" class="dark:bg-gray-900" /></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('real-estate-c-r-m/properties.Type') }}</label><select name="type" wire:model="type" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="apartment">apartment</option><option value="house">house</option><option value="land">land</option></select></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('real-estate-c-r-m/properties.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('real-estate-c-r-m/properties.Save') }}</x-button></div>
     @endif
 </div>

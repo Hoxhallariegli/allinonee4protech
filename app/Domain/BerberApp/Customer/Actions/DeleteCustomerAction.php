@@ -7,9 +7,9 @@ use App\Models\AuditTrail;
 
 class DeleteCustomerAction
 {
-    public function execute(Customer $model): bool
+    public function execute(Customer $model): bool 
     {
         AuditTrail::log($model, 'delete', 'Customers');
-        return $model->delete();
+        return $model->delete(); 
     }
 }

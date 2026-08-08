@@ -25,4 +25,6 @@ return [
   'Student Id' => 'Student Id',
   'Exam Id' => 'Exam Id',
   'Score' => 'Score',
+  'Subject Id' => 'Subject Id',
+  'Remarks' => 'Remarks',
 ];

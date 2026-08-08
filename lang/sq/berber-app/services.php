@@ -23,7 +23,10 @@ return [
   'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
   'delete_error' => 'Could not delete record.',
   'Name' => 'Name',
-  'Duration Minutes' => 'Duration Minutes',
   'Price' => 'Price',
+  'Duration' => 'Duration',
+  'Description' => 'Description',
+  'Duration Minutes' => 'Duration Minutes',
+  'Category' => 'Category',
   'Active' => 'Active',
 ];

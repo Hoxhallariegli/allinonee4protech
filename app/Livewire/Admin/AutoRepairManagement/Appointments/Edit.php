@@ -36,9 +36,12 @@ class Edit extends Component
     }
 
     public function mount(Appointment $appointment) { $this->item = $appointment; $this->fill($appointment->toArray()); $this->appointment_date = $appointment->appointment_date?->format('Y-m-d\TH:i'); }
-    public function render() { abort_if_cannot('edit_appointments'); return view('livewire.admin.auto-repair-management.appointments.edit', [
+    public function render() {
+        abort_if_cannot('edit_appointments');
+        return view('livewire.admin.auto-repair-management.appointments.edit', [
             'vehicles' => $this->getvehiclesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateAppointmentAction $action) { $this->validate();  $dto = AppointmentDTO::fromArray([
             'vehicle_id' => $this->vehicle_id,
             'appointment_date' => $this->appointment_date,

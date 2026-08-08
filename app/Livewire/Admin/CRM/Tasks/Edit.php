@@ -36,9 +36,12 @@ class Edit extends Component
     }
 
     public function mount(Task $task) { $this->item = $task; $this->fill($task->toArray()); $this->due_date = $task->due_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_tasks'); return view('livewire.admin.c-r-m.tasks.edit', [
+    public function render() {
+        abort_if_cannot('edit_tasks');
+        return view('livewire.admin.c-r-m.tasks.edit', [
             'deals' => $this->getdealsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateTaskAction $action) { $this->validate();  $dto = TaskDTO::fromArray([
             'title' => $this->title,
             'deal_id' => $this->deal_id,

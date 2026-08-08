@@ -51,10 +51,15 @@ class Languages extends Component
         $files = [];
 
         if (File::exists($path) && File::isDirectory($path)) {
-            $files = collect(File::files($path))
-                ->map(fn($file) => $file->getFilename())
-                ->toArray();
+            $allFiles = File::allFiles($path);
+            foreach ($allFiles as $file) {
+                $relativePath = $file->getRelativePathname();
+                $files[] = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+            }
         }
+
+        // Sort files: General ones first, then modular ones
+        sort($files);
 
         $jsonFile = "{$this->selectedLang}.json";
         if (File::exists(lang_path($jsonFile))) {
@@ -71,12 +76,23 @@ class Languages extends Component
             return;
         }
 
-        if (str_ends_with($this->selectedFile, '.json')) {
-            $path = lang_path($this->selectedFile);
-            $this->translations = json_decode(File::get($path), true) ?? [];
-        } else {
-            $path = lang_path("{$this->selectedLang}/{$this->selectedFile}");
-            $this->translations = File::getRequire($path);
+        $this->translations = [];
+
+        try {
+            if (str_ends_with($this->selectedFile, '.json')) {
+                $path = lang_path($this->selectedFile);
+                if (File::exists($path)) {
+                    $this->translations = json_decode(File::get($path), true) ?? [];
+                }
+            } else {
+                $path = lang_path("{$this->selectedLang}/{$this->selectedFile}");
+                if (File::exists($path)) {
+                    $this->translations = File::getRequire($path);
+                    if (!is_array($this->translations)) $this->translations = [];
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->dispatch('toast', message: 'Could not load file: ' . $e->getMessage(), type: 'error');
         }
     }
 
@@ -120,19 +136,31 @@ class Languages extends Component
             File::makeDirectory($targetPath, 0755, true);
         }
 
-        // 1. Sync PHP files
+        // 1. Sync PHP files (Recursive)
         if (File::isDirectory($enPath)) {
-            foreach (File::files($enPath) as $file) {
-                $targetFile = $targetPath . '/' . $file->getFilename();
+            $enFiles = File::allFiles($enPath);
+            foreach ($enFiles as $file) {
+                $relativePath = $file->getRelativePathname();
+                $targetFile = $targetPath . DIRECTORY_SEPARATOR . $relativePath;
+
+                if (!File::exists(dirname($targetFile))) {
+                    File::makeDirectory(dirname($targetFile), 0755, true);
+                }
 
                 if (!File::exists($targetFile)) {
-                    $content = File::getRequire($file->getPathname());
-                    $translated = $service->translate($content, $lang, 'en');
+                    try {
+                        $content = File::getRequire($file->getPathname());
+                        if (is_array($content)) {
+                            $translated = $service->translate($content, $lang, 'en');
 
-                    $phpContent = "<?php\n\nreturn " . var_export($translated, true) . ";\n";
-                    $phpContent = str_replace(['array (', ')'], ['[', ']'], $phpContent);
+                            $phpContent = "<?php\n\nreturn " . var_export($translated, true) . ";\n";
+                            $phpContent = str_replace(['array (', ')'], ['[', ']'], $phpContent);
 
-                    File::put($targetFile, $phpContent);
+                            File::put($targetFile, $phpContent);
+                        }
+                    } catch (\Throwable $e) {
+                        continue;
+                    }
                 }
             }
         }
@@ -141,9 +169,13 @@ class Languages extends Component
         $enJson = lang_path('en.json');
         $targetJson = lang_path("{$lang}.json");
         if (File::exists($enJson) && !File::exists($targetJson)) {
-            $content = json_decode(File::get($enJson), true);
-            $translated = $service->translate($content, $lang, 'en');
-            File::put($targetJson, json_encode($translated, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            try {
+                $content = json_decode(File::get($enJson), true);
+                if (is_array($content)) {
+                    $translated = $service->translate($content, $lang, 'en');
+                    File::put($targetJson, json_encode($translated, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                }
+            } catch (\Throwable $e) {}
         }
 
         $this->isTranslating = false;
@@ -155,17 +187,26 @@ class Languages extends Component
     {
         if (!$this->selectedFile) return;
 
-        if (str_ends_with($this->selectedFile, '.json')) {
-            $path = lang_path($this->selectedFile);
-            File::put($path, json_encode($this->translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        } else {
-            $path = lang_path("{$this->selectedLang}/{$this->selectedFile}");
-            $content = "<?php\n\nreturn " . var_export($this->translations, true) . ";\n";
-            $content = str_replace(['array (', ')'], ['[', ']'], $content);
-            File::put($path, $content);
-        }
+        try {
+            if (str_ends_with($this->selectedFile, '.json')) {
+                $path = lang_path($this->selectedFile);
+                File::put($path, json_encode($this->translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            } else {
+                $path = lang_path("{$this->selectedLang}/{$this->selectedFile}");
 
-        $this->dispatch('toast', ['message' => 'Translations saved successfully!', 'type' => 'success']);
+                if (!File::exists(dirname($path))) {
+                    File::makeDirectory(dirname($path), 0755, true);
+                }
+
+                $content = "<?php\n\nreturn " . var_export($this->translations, true) . ";\n";
+                $content = str_replace(['array (', ')'], ['[', ']'], $content);
+                File::put($path, $content);
+            }
+
+            $this->dispatch('toast', message: 'Translations saved successfully!', type: 'success');
+        } catch (\Throwable $e) {
+            $this->dispatch('toast', message: 'Error saving translations: ' . $e->getMessage(), type: 'error');
+        }
     }
 
     public function render()

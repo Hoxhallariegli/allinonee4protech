@@ -44,7 +44,7 @@ class QuickCreate extends Component
     public function store(CreateVehicleDocumentAction $action)
     {
         $this->validate();
-        if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'public'); }
+        if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'uploads'); }
         $dto = VehicleDocumentDTO::fromArray([
             'type' => $this->type,
             'document' => $this->document,

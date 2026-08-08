@@ -35,8 +35,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Vehicle::find($value);
         if (!$related) return;
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedCustomerId($value)
@@ -44,8 +42,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Customer::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedMechanicId($value)
@@ -53,8 +49,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Mechanic::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
     }
  
     protected function getvehiclesList() {

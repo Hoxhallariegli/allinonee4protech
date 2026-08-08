@@ -30,7 +30,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\JobCard::find($value);
         if (!$related) return;
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -38,7 +37,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->job_card_id)) { $this->job_card_id = $related->job_card_id; }
     }
  
     protected function getjobCardsList() {

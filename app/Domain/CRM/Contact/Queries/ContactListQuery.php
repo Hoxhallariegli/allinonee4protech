@@ -15,6 +15,7 @@ class ContactListQuery
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('email', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
         if (isset($params['company_id']) && $params['company_id']) $query->where('company_id', $params['company_id']);

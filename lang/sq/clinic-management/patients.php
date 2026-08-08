@@ -25,4 +25,10 @@ return [
   'Name' => 'Name',
   'Phone' => 'Phone',
   'Birth Date' => 'Birth Date',
+  'Photo' => 'Photo',
+  'Gender' => 'Gender',
+  'Blood Group' => 'Blood Group',
+  'Medical History' => 'Medical History',
+  'Email' => 'Email',
+  'Dob' => 'Dob',
 ];

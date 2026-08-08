@@ -26,4 +26,7 @@ return [
   'Invoice Date' => 'Invoice Date',
   'Total' => 'Total',
   'Status' => 'Status',
+  'Total Amount' => 'Total Amount',
+  'Date' => 'Date',
+  'Due Date' => 'Due Date',
 ];

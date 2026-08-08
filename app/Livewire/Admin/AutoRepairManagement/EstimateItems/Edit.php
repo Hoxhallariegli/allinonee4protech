@@ -35,8 +35,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Estimate::find($value);
         if (!$related) return;
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedServiceId($value)
@@ -44,8 +42,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Service::find($value);
         if (!$related) return;
-        if (isset($related->estimate_id)) { $this->estimate_id = $related->estimate_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -53,8 +49,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->estimate_id)) { $this->estimate_id = $related->estimate_id; }
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
     }
  
     protected function getestimatesList() {
@@ -70,11 +64,14 @@ class Edit extends Component
     }
 
     public function mount(EstimateItem $estimateItem) { $this->item = $estimateItem; $this->fill($estimateItem->toArray());  }
-    public function render() { abort_if_cannot('edit_estimate_items'); return view('livewire.admin.auto-repair-management.estimate-items.edit', [
+    public function render() {
+        abort_if_cannot('edit_estimate_items');
+        return view('livewire.admin.auto-repair-management.estimate-items.edit', [
             'estimates' => $this->getestimatesList(),
             'services' => $this->getservicesList(),
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateEstimateItemAction $action) { $this->validate();  $dto = EstimateItemDTO::fromArray([
             'estimate_id' => $this->estimate_id,
             'service_id' => $this->service_id,

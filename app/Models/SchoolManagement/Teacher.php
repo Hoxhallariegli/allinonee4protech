@@ -9,14 +9,15 @@ class Teacher extends Model
 {
     use HasFactory;
     protected $table = 'sm_teachers';
-    protected $fillable = ['name', 'subject', 'phone'];
+    protected $fillable = ['name', 'subject', 'phone', 'photo'];
     protected function casts(): array { return [
         ]; }
     public static function rules($id = null): array { return [
             'name' => ['required', 'string', 'max:255'],
             'subject' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
+            'photo' => ['nullable', 'max:255'],
         ]; }
-    public static function sortable(): array { return ['id', 'name', 'subject', 'phone']; }
+    public static function sortable(): array { return ['id', 'name', 'subject', 'phone', 'photo']; }
 
 }

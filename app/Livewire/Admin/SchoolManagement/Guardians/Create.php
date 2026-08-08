@@ -19,8 +19,11 @@ class Create extends Component
     public $phone = '';
     public $email = '';
    
-    public function render() { abort_if_cannot('add_guardians'); return view('livewire.admin.school-management.guardians.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_guardians');
+        return view('livewire.admin.school-management.guardians.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateGuardianAction $action) { $this->validate();  $dto = GuardianDTO::fromArray([
             'name' => $this->name,
             'phone' => $this->phone,

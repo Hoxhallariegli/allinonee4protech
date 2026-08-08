@@ -9,7 +9,7 @@ class Student extends Model
 {
     use HasFactory;
     protected $table = 'sm_students';
-    protected $fillable = ['name', 'guardian_id', 'class_id', 'birth_date'];
+    protected $fillable = ['name', 'guardian_id', 'class_id', 'birth_date', 'photo'];
     protected function casts(): array { return [
             'birth_date' => 'datetime',
         ]; }
@@ -18,8 +18,9 @@ class Student extends Model
             'guardian_id' => ['required', 'integer'],
             'class_id' => ['required', 'integer'],
             'birth_date' => ['nullable', 'date'],
+            'photo' => ['nullable', 'max:255'],
         ]; }
-    public static function sortable(): array { return ['id', 'name', 'guardian_id', 'class_id', 'birth_date']; }
+    public static function sortable(): array { return ['id', 'name', 'guardian_id', 'class_id', 'birth_date', 'photo']; }
 
     public function guardian(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\SchoolManagement\Guardian::class, 'guardian_id'); }
 

@@ -30,7 +30,7 @@
     </div>
 </div>
 <div><x-form.input name="order_date" type="date" wire:model="order_date" :label="__('construction-e-r-p/purchase-orders.Order Date')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/purchase-orders.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"pending\">pending</option><option value=\"delivered\">delivered</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('construction-e-r-p/purchase-orders.Status') }}</label><select name="status" wire:model="status" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="pending">pending</option><option value="delivered">delivered</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('construction-e-r-p/purchase-orders.Save') }}</x-button></div>
     @endif
 </div>

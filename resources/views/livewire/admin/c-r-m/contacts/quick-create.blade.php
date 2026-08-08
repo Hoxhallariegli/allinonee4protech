@@ -20,7 +20,8 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="email" type="text" wire:model="email" :label="__('c-r-m/contacts.Email')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="email" type="text" wire:model="email" :label="__('c-r-m/contacts.Email')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('c-r-m/contacts.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('c-r-m/contacts.Save') }}</x-button></div>
     @endif
 </div>

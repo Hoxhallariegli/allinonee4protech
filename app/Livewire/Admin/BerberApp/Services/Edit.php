@@ -17,18 +17,19 @@ class Edit extends Component
         use WithPagination;
  public Service $item;
     public $name = '';
-    public $duration_minutes = '';
     public $price = '';
-    public $active = '';
-   
+    public $duration_minutes = '';
+
     public function mount(Service $service) { $this->item = $service; $this->fill($service->toArray());  }
-    public function render() { abort_if_cannot('edit_services'); return view('livewire.admin.berber-app.services.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_services');
+        return view('livewire.admin.berber-app.services.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateServiceAction $action) { $this->validate();  $dto = ServiceDTO::fromArray([
             'name' => $this->name,
-            'duration_minutes' => $this->duration_minutes,
             'price' => $this->price,
-            'active' => $this->active,
+            'duration_minutes' => $this->duration_minutes,
         ]); $action->execute($this->item, $dto); session()->flash('success', __('berber-app/services.updated')); return to_route('admin.berber-app.services.index'); }
     protected function rules(): array { return Service::rules($this->item->id); }
 }

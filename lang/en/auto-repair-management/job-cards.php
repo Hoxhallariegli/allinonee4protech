@@ -28,4 +28,10 @@ return [
   'Status' => 'Status',
   'Opened At' => 'Opened At',
   'Closed At' => 'Closed At',
+  'Labor Hours' => 'Labor Hours',
+  'Diagnostic Notes' => 'Diagnostic Notes',
+  'Problem Description' => 'Problem Description',
+  'Problem Desc' => 'Problem Desc',
+  'Internal Notes' => 'Internal Notes',
+  'Notes' => 'Notes',
 ];

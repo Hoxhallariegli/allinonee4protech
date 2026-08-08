@@ -10,23 +10,30 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Add Material')]
 class Create extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $name = '';
     public $unit = '';
     public $price = '';
     public $stock = '';
+    public $photo = '';
    
-    public function render() { abort_if_cannot('add_materials'); return view('livewire.admin.construction-e-r-p.materials.create', [
-        ])->layout('components.layouts.app'); }
-    public function store(CreateMaterialAction $action) { $this->validate();  $dto = MaterialDTO::fromArray([
+    public function render() {
+        abort_if_cannot('add_materials');
+        return view('livewire.admin.construction-e-r-p.materials.create', [
+        ])->layout('components.layouts.app');
+    }
+    public function store(CreateMaterialAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/materials', 'uploads'); }
+ $dto = MaterialDTO::fromArray([
             'name' => $this->name,
             'unit' => $this->unit,
             'price' => $this->price,
             'stock' => $this->stock,
+            'photo' => $this->photo,
         ]); $action->execute($dto); session()->flash('success', __('construction-e-r-p/materials.created')); return to_route('admin.construction-e-r-p.materials.index'); }
     protected function rules(): array { return Material::rules(); }
 }

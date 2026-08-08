@@ -30,7 +30,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\DiningTable::find($value);
         if (!$related) return;
-        if (isset($related->waiter_id)) { $this->waiter_id = $related->waiter_id; }
     }
 
     public function updatedWaiterId($value)
@@ -38,7 +37,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\Waiter::find($value);
         if (!$related) return;
-        if (isset($related->table_id)) { $this->table_id = $related->table_id; }
     }
  
     protected function gettablesList() {

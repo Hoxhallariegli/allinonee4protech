@@ -11,7 +11,8 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="name" type="text" wire:model="name" :label="__('real-estate-c-r-m/owners.Name')" class="dark:bg-gray-900" /></div>
 <div><x-form.input name="phone" type="text" wire:model="phone" :label="__('real-estate-c-r-m/owners.Phone')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="email" type="text" wire:model="email" :label="__('real-estate-c-r-m/owners.Email')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="email" type="text" wire:model="email" :label="__('real-estate-c-r-m/owners.Email')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('real-estate-c-r-m/owners.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('real-estate-c-r-m/owners.Save') }}</x-button></div>
     @endif
 </div>

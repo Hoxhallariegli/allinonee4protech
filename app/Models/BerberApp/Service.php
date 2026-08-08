@@ -9,17 +9,15 @@ class Service extends Model
 {
     use HasFactory;
     protected $table = 'ba_services';
-    protected $fillable = ['name', 'duration_minutes', 'price', 'active'];
+    protected $fillable = ['name', 'price', 'duration_minutes'];
     protected function casts(): array { return [
             'price' => 'decimal:2',
-            'active' => 'boolean',
         ]; }
     public static function rules($id = null): array { return [
             'name' => ['required', 'string', 'max:255'],
-            'duration_minutes' => ['required', 'integer'],
             'price' => ['required', 'numeric'],
-            'active' => ['required', 'boolean'],
+            'duration_minutes' => ['nullable', 'integer'],
         ]; }
-    public static function sortable(): array { return ['id', 'name', 'duration_minutes', 'price', 'active']; }
+    public static function sortable(): array { return ['id', 'name', 'price', 'duration_minutes']; }
 
 }

@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\ConstructionERP\Project::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_progress_reports'); return view('livewire.admin.construction-e-r-p.progress-reports.create', [
+    public function render() {
+        abort_if_cannot('add_progress_reports');
+        return view('livewire.admin.construction-e-r-p.progress-reports.create', [
             'projects' => $this->getprojectsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateProgressReportAction $action) { $this->validate();  $dto = ProgressReportDTO::fromArray([
             'project_id' => $this->project_id,
             'report_date' => $this->report_date,

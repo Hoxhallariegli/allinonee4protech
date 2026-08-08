@@ -30,7 +30,8 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="birth_date" type="date" wire:model="birth_date" :label="__('school-management/students.Birth Date')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="birth_date" type="date" wire:model="birth_date" :label="__('school-management/students.Birth Date')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('school-management/students.Photo')" id="photo" :isEditing="false" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('school-management/students.Save') }}</x-button></div>
     @endif
 </div>

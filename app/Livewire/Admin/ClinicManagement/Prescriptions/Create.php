@@ -30,12 +30,15 @@ class Create extends Component
     }
  
     protected function getvisitsList() {
-        return \App\Models\ClinicManagement\Visit::with('patient')->get()->pluck('patient.name', 'id')->toArray();
+        return \App\Models\ClinicManagement\Visit::pluck('id', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_prescriptions'); return view('livewire.admin.clinic-management.prescriptions.create', [
+    public function render() {
+        abort_if_cannot('add_prescriptions');
+        return view('livewire.admin.clinic-management.prescriptions.create', [
             'visits' => $this->getvisitsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreatePrescriptionAction $action) { $this->validate();  $dto = PrescriptionDTO::fromArray([
             'visit_id' => $this->visit_id,
             'medicine' => $this->medicine,

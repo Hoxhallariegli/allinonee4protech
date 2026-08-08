@@ -34,9 +34,12 @@ class Create extends Component
         return \App\Models\CRM\Company::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_leads'); return view('livewire.admin.c-r-m.leads.create', [
+    public function render() {
+        abort_if_cannot('add_leads');
+        return view('livewire.admin.c-r-m.leads.create', [
             'companies' => $this->getcompaniesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateLeadAction $action) { $this->validate();  $dto = LeadDTO::fromArray([
             'name' => $this->name,
             'company_id' => $this->company_id,

@@ -34,9 +34,12 @@ class Create extends Component
         return \App\Models\AutoRepairManagement\Vehicle::pluck('license_plate', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_appointments'); return view('livewire.admin.auto-repair-management.appointments.create', [
+    public function render() {
+        abort_if_cannot('add_appointments');
+        return view('livewire.admin.auto-repair-management.appointments.create', [
             'vehicles' => $this->getvehiclesList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateAppointmentAction $action) { $this->validate();  $dto = AppointmentDTO::fromArray([
             'vehicle_id' => $this->vehicle_id,
             'appointment_date' => $this->appointment_date,

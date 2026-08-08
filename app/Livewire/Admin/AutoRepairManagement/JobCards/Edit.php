@@ -37,8 +37,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Vehicle::find($value);
         if (!$related) return;
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedCustomerId($value)
@@ -46,8 +44,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Customer::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->mechanic_id)) { $this->mechanic_id = $related->mechanic_id; }
     }
 
     public function updatedMechanicId($value)
@@ -55,8 +51,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Mechanic::find($value);
         if (!$related) return;
-        if (isset($related->vehicle_id)) { $this->vehicle_id = $related->vehicle_id; }
-        if (isset($related->customer_id)) { $this->customer_id = $related->customer_id; }
     }
  
     protected function getvehiclesList() {
@@ -71,12 +65,15 @@ class Edit extends Component
         return \App\Models\AutoRepairManagement\Mechanic::with('employee')->get()->pluck('employee.name', 'id')->toArray();
     }
 
-    public function mount(JobCard $jobCard) { $this->item = $jobCard; $this->fill($jobCard->toArray()); $this->opened_at = $jobCard->opened_at?->format('Y-m-d\TH:i'); $this->closed_at = $jobCard->closed_at?->format('Y-m-d\TH:i'); }
-    public function render() { abort_if_cannot('edit_job_cards'); return view('livewire.admin.auto-repair-management.job-cards.edit', [
+    public function mount(JobCard $jobCard) { $this->item = $jobCard; $this->fill($jobCard->toArray()); $this->opened_at = $jobCard->opened_at?->format('Y-m-d'); $this->closed_at = $jobCard->closed_at?->format('Y-m-d'); }
+    public function render() {
+        abort_if_cannot('edit_job_cards');
+        return view('livewire.admin.auto-repair-management.job-cards.edit', [
             'vehicles' => $this->getvehiclesList(),
             'customers' => $this->getcustomersList(),
             'mechanics' => $this->getmechanicsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateJobCardAction $action) { $this->validate();  $dto = JobCardDTO::fromArray([
             'vehicle_id' => $this->vehicle_id,
             'customer_id' => $this->customer_id,

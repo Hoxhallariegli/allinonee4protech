@@ -10,14 +10,17 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class QuickCreate extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
      public $title = '';
     public $owner_id = '';
     public $agent_id = '';
-    public $no = '';
+    public $price = '';
+    public $type = '';
+    public $photo = '';
  
     #[On('owner-created')] 
     public function refreshOwners($id) { $this->owner_id = $id; $this->updatedOwnerId($id); }
@@ -30,7 +33,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RealEstateCRM\Owner::find($value);
         if (!$related) return;
-        if (isset($related->agent_id)) { $this->agent_id = $related->agent_id; }
     }
 
     public function updatedAgentId($value)
@@ -38,7 +40,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RealEstateCRM\Agent::find($value);
         if (!$related) return;
-        if (isset($related->owner_id)) { $this->owner_id = $related->owner_id; }
     }
  
     protected function getownersList() {
@@ -61,11 +62,14 @@ class QuickCreate extends Component
     public function store(CreatePropertyAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/properties', 'uploads'); }
         $dto = PropertyDTO::fromArray([
             'title' => $this->title,
             'owner_id' => $this->owner_id,
             'agent_id' => $this->agent_id,
-            'no' => $this->no,
+            'price' => $this->price,
+            'type' => $this->type,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('property-created', id: $item->id);
@@ -74,7 +78,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->title ?? $item->id);
-        $this->reset(['title', 'owner_id', 'agent_id', 'no']);
+        $this->reset(['title', 'owner_id', 'agent_id', 'price', 'type', 'photo']);
     }
 
     public function addAnother()

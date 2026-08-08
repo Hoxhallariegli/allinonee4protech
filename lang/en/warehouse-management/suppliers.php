@@ -24,4 +24,6 @@ return [
   'delete_error' => 'Could not delete record.',
   'Name' => 'Name',
   'Phone' => 'Phone',
+  'Email' => 'Email',
+  'Address' => 'Address',
 ];

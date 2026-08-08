@@ -14,6 +14,7 @@ class PropertyListQuery
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('title', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('photo', 'like', '%' . $params['search'] . '%');
             });
         }
         if (isset($params['owner_id']) && $params['owner_id']) $query->where('owner_id', $params['owner_id']);

@@ -36,10 +36,13 @@ class Edit extends Component
     }
 
     public function mount(VehicleDocument $vehicleDocument) { $this->item = $vehicleDocument; $this->fill($vehicleDocument->toArray());  }
-    public function render() { abort_if_cannot('edit_vehicle_documents'); return view('livewire.admin.auto-repair-management.vehicle-documents.edit', [
+    public function render() {
+        abort_if_cannot('edit_vehicle_documents');
+        return view('livewire.admin.auto-repair-management.vehicle-documents.edit', [
             'vehicles' => $this->getvehiclesList(),
-        ])->layout('components.layouts.app'); }
-    public function update(UpdateVehicleDocumentAction $action) { $this->validate();         if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'public'); }
+        ])->layout('components.layouts.app');
+    }
+    public function update(UpdateVehicleDocumentAction $action) { $this->validate();         if ($this->document && !is_string($this->document)) { $this->document = $this->document->store('uploads/vehicle-documents', 'uploads'); }
  $dto = VehicleDocumentDTO::fromArray([
             'type' => $this->type,
             'document' => $this->document,

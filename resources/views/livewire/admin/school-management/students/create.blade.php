@@ -22,5 +22,6 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="birth_date" type="date" wire:model="birth_date" :label="__('school-management/students.Birth Date')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('school-management/students.Save') }}</x-button></div></form></div>
+<div><x-form.input name="birth_date" type="date" wire:model="birth_date" :label="__('school-management/students.Birth Date')" class="dark:bg-gray-900" /></div>
+<div><x-form.file-upload name="photo" wire:model="photo" :label="__('school-management/students.Photo')" id="photo" :isEditing="false" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('school-management/students.Save') }}</x-button></div></form></div>
 </div>

@@ -8,15 +8,18 @@ class ContactDTO
         public readonly mixed $name,
         public readonly mixed $company_id,
         public readonly mixed $email,
+        public readonly mixed $photo,
     ) {}
     public static function fromArray(array $data): self { return new self(
             name: $data['name'] ?? null,
             company_id: $data['company_id'] ?? null,
             email: $data['email'] ?? null,
+            photo: $data['photo'] ?? null,
         ); }
     public function toArray(): array { return [
             'name' => $this->name,
             'company_id' => $this->company_id,
             'email' => $this->email,
+            'photo' => $this->photo,
         ]; }
 }

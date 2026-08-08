@@ -20,7 +20,7 @@
     </div>
 </div>
 <div><x-form.input name="amount" type="text" wire:model="amount" :label="__('restaurant-p-o-s/payments.Amount')" class="dark:bg-gray-900" /></div>
-<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/payments.Method') }}</label><select name="method" wire:model="method" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value=\"cash\">cash</option><option value=\"card\">card</option></select></div></div>
+<div><label class="block mb-1.5 text-[10px] font-bold uppercase tracking-widest">{{ __('restaurant-p-o-s/payments.Method') }}</label><select name="method" wire:model="method" class="w-full p-3 text-sm font-bold bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl"><option value="">--</option><option value="cash">cash</option><option value="card">card</option></select></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('restaurant-p-o-s/payments.Save') }}</x-button></div>
     @endif
 </div>

@@ -1,0 +1,7 @@
+<div class="space-y-10">
+    <div class="flex items-center justify-between gap-4 px-1"><div><x-h1>{{ __('auto-repair-management/expense-trackings.Edit ExpenseTracking') }}</x-h1><x-short-description class="dark:text-gray-400">{{ __('auto-repair-management/expense-trackings.Update info') }}</x-short-description></div><x-back-btn route="admin.auto-repair-management.expense-trackings.index" /></div>
+    @include('errors.errors')
+    <div class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-[2.5rem] shadow-sm border border-gray-50 dark:border-gray-700"><form wire:submit.prevent="update" class="space-y-8"><div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div class="md:col-span-2"><x-form.textarea name="description" wire:model="description" :label="__('auto-repair-management/expense-trackings.Description')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="amount" type="text" wire:model="amount" :label="__('auto-repair-management/expense-trackings.Amount')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="date" type="date" wire:model="date" :label="__('auto-repair-management/expense-trackings.Date')" class="dark:bg-gray-900" /></div></div><div class="mt-10 flex justify-end"><x-button type="submit" variant="blue" class="w-full sm:w-auto !px-12 !py-4 !rounded-2xl">{{ __('auto-repair-management/expense-trackings.Update') }}</x-button></div></form></div>
+</div>

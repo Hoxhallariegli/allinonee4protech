@@ -31,7 +31,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Student::find($value);
         if (!$related) return;
-        if (isset($related->exam_id)) { $this->exam_id = $related->exam_id; }
     }
 
     public function updatedExamId($value)
@@ -39,7 +38,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Exam::find($value);
         if (!$related) return;
-        if (isset($related->student_id)) { $this->student_id = $related->student_id; }
     }
  
     protected function getstudentsList() {
@@ -51,10 +49,13 @@ class Edit extends Component
     }
 
     public function mount(Grade $grade) { $this->item = $grade; $this->fill($grade->toArray());  }
-    public function render() { abort_if_cannot('edit_grades'); return view('livewire.admin.school-management.grades.edit', [
+    public function render() {
+        abort_if_cannot('edit_grades');
+        return view('livewire.admin.school-management.grades.edit', [
             'students' => $this->getstudentsList(),
             'exams' => $this->getexamsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateGradeAction $action) { $this->validate();  $dto = GradeDTO::fromArray([
             'student_id' => $this->student_id,
             'exam_id' => $this->exam_id,

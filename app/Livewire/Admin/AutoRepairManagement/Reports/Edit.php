@@ -20,8 +20,11 @@ class Edit extends Component
     public $report_date = '';
    
     public function mount(Report $report) { $this->item = $report; $this->fill($report->toArray()); $this->report_date = $report->report_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_reports'); return view('livewire.admin.auto-repair-management.reports.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_reports');
+        return view('livewire.admin.auto-repair-management.reports.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateReportAction $action) { $this->validate();  $dto = ReportDTO::fromArray([
             'report_type' => $this->report_type,
             'report_date' => $this->report_date,

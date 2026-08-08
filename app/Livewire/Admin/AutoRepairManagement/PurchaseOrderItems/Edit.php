@@ -32,7 +32,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\PurchaseOrder::find($value);
         if (!$related) return;
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -40,7 +39,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->purchase_order_id)) { $this->purchase_order_id = $related->purchase_order_id; }
     }
  
     protected function getpurchaseOrdersList() {
@@ -52,10 +50,13 @@ class Edit extends Component
     }
 
     public function mount(PurchaseOrderItem $purchaseOrderItem) { $this->item = $purchaseOrderItem; $this->fill($purchaseOrderItem->toArray());  }
-    public function render() { abort_if_cannot('edit_purchase_order_items'); return view('livewire.admin.auto-repair-management.purchase-order-items.edit', [
+    public function render() {
+        abort_if_cannot('edit_purchase_order_items');
+        return view('livewire.admin.auto-repair-management.purchase-order-items.edit', [
             'purchaseOrders' => $this->getpurchaseOrdersList(),
             'parts' => $this->getpartsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdatePurchaseOrderItemAction $action) { $this->validate();  $dto = PurchaseOrderItemDTO::fromArray([
             'purchase_order_id' => $this->purchase_order_id,
             'part_id' => $this->part_id,

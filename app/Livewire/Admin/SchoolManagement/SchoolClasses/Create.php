@@ -33,9 +33,12 @@ class Create extends Component
         return \App\Models\SchoolManagement\Teacher::pluck('name', 'id')->toArray();
     }
 
-    public function render() { abort_if_cannot('add_school_classes'); return view('livewire.admin.school-management.school-classes.create', [
+    public function render() {
+        abort_if_cannot('add_school_classes');
+        return view('livewire.admin.school-management.school-classes.create', [
             'teachers' => $this->getteachersList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateSchoolClassAction $action) { $this->validate();  $dto = SchoolClassDTO::fromArray([
             'name' => $this->name,
             'teacher_id' => $this->teacher_id,

@@ -10,7 +10,7 @@
         </div>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"><div><x-form.input name="type" type="text" wire:model="type" :label="__('auto-repair-management/vehicle-documents.Type')" class="dark:bg-gray-900" /></div>
-<div><x-form.file-upload name="document" wire:model="document" :label="__('auto-repair-management/vehicle-documents.Document')" id="document" :isEditing="!" . (1 ? 'true' : 'false') . " /></div>
+<div><x-form.file-upload name="document" wire:model="document" :label="__('auto-repair-management/vehicle-documents.Document')" id="document" :isEditing="false" /></div>
 <div>
     <div class="flex items-end gap-2">
         <div class="flex-1"><x-form.dropdown-search name="vehicle_id" wire:model.live="vehicle_id" :label="__('auto-repair-management/vehicle-documents.Vehicle Id')" :data="$vehicles" /></div>

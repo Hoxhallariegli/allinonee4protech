@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'Recipe' => 'Recipe',
+  'Recipes' => 'Recipes',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add Recipe' => 'Add Recipe',
+  'Edit Recipe' => 'Edit Recipe',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'Recipe created.',
+  'updated' => 'Recipe updated.',
+  'deleted' => 'Recipe deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Menu Item Id' => 'Menu Item Id',
+  'Ingredient Id' => 'Ingredient Id',
+  'Quantity Required' => 'Quantity Required',
+];

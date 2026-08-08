@@ -29,7 +29,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\Order::find($value);
         if (!$related) return;
-        if (isset($related->menu_item_id)) { $this->menu_item_id = $related->menu_item_id; }
     }
 
     public function updatedMenuItemId($value)
@@ -37,7 +36,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\RestaurantPOS\MenuItem::find($value);
         if (!$related) return;
-        if (isset($related->order_id)) { $this->order_id = $related->order_id; }
     }
  
     protected function getordersList() {

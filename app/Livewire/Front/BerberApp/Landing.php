@@ -232,8 +232,8 @@ class Landing extends Component
     public function render()
     {
         return view('livewire.front.berber-app.landing', [
-            'barbers' => Barber::where('active', true)->get(),
-            'services' => Service::where('active', true)->get(),
+            'barbers' => Barber::all(), // Removed active filter for initial display
+            'services' => Service::all(), // Removed active filter for initial display
             'selectedService' => $this->selectedServiceId ? Service::find($this->selectedServiceId) : null,
             'selectedBarber' => $this->selectedBarberId ? Barber::find($this->selectedBarberId) : null,
         ])->layout('components.layouts.front');

@@ -34,8 +34,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Invoice::find($value);
         if (!$related) return;
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedServiceId($value)
@@ -43,8 +41,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Service::find($value);
         if (!$related) return;
-        if (isset($related->invoice_id)) { $this->invoice_id = $related->invoice_id; }
-        if (isset($related->part_id)) { $this->part_id = $related->part_id; }
     }
 
     public function updatedPartId($value)
@@ -52,8 +48,6 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\AutoRepairManagement\Part::find($value);
         if (!$related) return;
-        if (isset($related->invoice_id)) { $this->invoice_id = $related->invoice_id; }
-        if (isset($related->service_id)) { $this->service_id = $related->service_id; }
     }
  
     protected function getinvoicesList() {

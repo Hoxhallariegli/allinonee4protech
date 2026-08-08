@@ -10,16 +10,18 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 #[Title('Edit Student')]
 class Edit extends Component
 {
-        use WithPagination;
+        use WithPagination, WithFileUploads;
  public Student $item;
     public $name = '';
     public $guardian_id = '';
     public $class_id = '';
     public $birth_date = '';
+    public $photo = '';
  
     #[On('guardian-created')] 
     public function refreshGuardians($id) { $this->guardian_id = $id; $this->updatedGuardianId($id); }
@@ -32,7 +34,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\Guardian::find($value);
         if (!$related) return;
-        if (isset($related->class_id)) { $this->class_id = $related->class_id; }
     }
 
     public function updatedClassId($value)
@@ -40,7 +41,6 @@ class Edit extends Component
         if (!$value) return;
         $related = \App\Models\SchoolManagement\SchoolClass::find($value);
         if (!$related) return;
-        if (isset($related->guardian_id)) { $this->guardian_id = $related->guardian_id; }
     }
  
     protected function getguardiansList() {
@@ -52,15 +52,20 @@ class Edit extends Component
     }
 
     public function mount(Student $student) { $this->item = $student; $this->fill($student->toArray()); $this->birth_date = $student->birth_date?->format('Y-m-d'); }
-    public function render() { abort_if_cannot('edit_students'); return view('livewire.admin.school-management.students.edit', [
+    public function render() {
+        abort_if_cannot('edit_students');
+        return view('livewire.admin.school-management.students.edit', [
             'guardians' => $this->getguardiansList(),
             'classes' => $this->getclassesList(),
-        ])->layout('components.layouts.app'); }
-    public function update(UpdateStudentAction $action) { $this->validate();  $dto = StudentDTO::fromArray([
+        ])->layout('components.layouts.app');
+    }
+    public function update(UpdateStudentAction $action) { $this->validate();         if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/students', 'uploads'); }
+ $dto = StudentDTO::fromArray([
             'name' => $this->name,
             'guardian_id' => $this->guardian_id,
             'class_id' => $this->class_id,
             'birth_date' => $this->birth_date,
+            'photo' => $this->photo,
         ]); $action->execute($this->item, $dto); session()->flash('success', __('school-management/students.updated')); return to_route('admin.school-management.students.index'); }
     protected function rules(): array { return Student::rules($this->item->id); }
 }

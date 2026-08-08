@@ -28,9 +28,8 @@ class QuickCreate extends Component
     public function updatedSupplierId($value)
     {
         if (!$value) return;
-        $related = \App\Models\AutoRepairManagement\Supplier::find($value);
+        $related = \App\Models\ConstructionERP\Supplier::find($value);
         if (!$related) return;
-        if (isset($related->project_id)) { $this->project_id = $related->project_id; }
     }
 
     public function updatedProjectId($value)
@@ -38,11 +37,10 @@ class QuickCreate extends Component
         if (!$value) return;
         $related = \App\Models\ConstructionERP\Project::find($value);
         if (!$related) return;
-        if (isset($related->supplier_id)) { $this->supplier_id = $related->supplier_id; }
     }
  
     protected function getsuppliersList() {
-        return \App\Models\AutoRepairManagement\Supplier::pluck('name', 'id')->toArray();
+        return \App\Models\ConstructionERP\Supplier::pluck('name', 'id')->toArray();
     }
 
     protected function getprojectsList() {

@@ -1,0 +1,28 @@
+<?php
+
+return [
+  'ID' => 'ID',
+  'PatientAddress' => 'PatientAddress',
+  'PatientAddresses' => 'PatientAddresses',
+  'Action' => 'Action',
+  'Reset' => 'Reset',
+  'Filters' => 'Filters',
+  'Search' => 'Search',
+  'List of' => 'List of',
+  'Save' => 'Save',
+  'Update' => 'Update',
+  'Add PatientAddress' => 'Add PatientAddress',
+  'Edit PatientAddress' => 'Edit PatientAddress',
+  'New record' => 'New record',
+  'Update info' => 'Update info',
+  'No records found.' => 'No records found.',
+  'created' => 'PatientAddress created.',
+  'updated' => 'PatientAddress updated.',
+  'deleted' => 'PatientAddress deleted.',
+  'not_found' => 'Record not found.',
+  'delete_error_referenced' => 'Record is referenced by other items and cannot be deleted.',
+  'delete_error' => 'Could not delete record.',
+  'Patient Id' => 'Patient Id',
+  'Line1' => 'Line1',
+  'City' => 'City',
+];

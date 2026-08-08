@@ -21,7 +21,7 @@ class PurchaseOrder extends Model
         ]; }
     public static function sortable(): array { return ['id', 'supplier_id', 'project_id', 'order_date', 'status']; }
 
-    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\AutoRepairManagement\Supplier::class, 'supplier_id'); }
+    public function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\ConstructionERP\Supplier::class, 'supplier_id'); }
 
     public function project(): \Illuminate\Database\Eloquent\Relations\BelongsTo { return $this->belongsTo(\App\Models\ConstructionERP\Project::class, 'project_id'); }
 

@@ -19,10 +19,8 @@
         </x-modal>
     </div>
 </div>
-<div><x-form.input name="send_at" type="datetime-local" wire:model="send_at" :label="__('berber-app/reminders.Send At')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="sent_at" type="datetime-local" wire:model="sent_at" :label="__('berber-app/reminders.Sent At')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="type" type="text" wire:model="type" :label="__('berber-app/reminders.Type')" class="dark:bg-gray-900" /></div>
-<div><x-form.input name="status" type="text" wire:model="status" :label="__('berber-app/reminders.Status')" class="dark:bg-gray-900" /></div></div>
+<div><x-form.input name="reminder_type" type="text" wire:model="reminder_type" :label="__('berber-app/reminders.Reminder Type')" class="dark:bg-gray-900" /></div>
+<div><x-form.input name="sent_at" type="datetime-local" wire:model="sent_at" :label="__('berber-app/reminders.Sent At')" class="dark:bg-gray-900" /></div></div>
         <div class="mt-8 flex justify-end"><x-button wire:click="store" variant="blue">{{ __('berber-app/reminders.Save') }}</x-button></div>
     @endif
 </div>

@@ -16,6 +16,7 @@ class CompanyListQuery
                 $query->orWhere('name', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('industry', 'like', '%' . $params['search'] . '%');
                 $query->orWhere('phone', 'like', '%' . $params['search'] . '%');
+                $query->orWhere('logo', 'like', '%' . $params['search'] . '%');
             });
         }
 

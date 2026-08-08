@@ -19,8 +19,11 @@ class Create extends Component
     public $email = '';
     public $phone = '';
    
-    public function render() { abort_if_cannot('add_employees'); return view('livewire.admin.auto-repair-management.employees.create', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('add_employees');
+        return view('livewire.admin.auto-repair-management.employees.create', [
+        ])->layout('components.layouts.app');
+    }
     public function store(CreateEmployeeAction $action) { $this->validate();  $dto = EmployeeDTO::fromArray([
             'name' => $this->name,
             'email' => $this->email,

@@ -1,7 +1,7 @@
 
 <div class="space-y-8" x-data="{ init() {
     new ApexCharts(this.$refs.chart, {
-        series: [{ name: 'Apartments', data: @js($chartData['apartments']) }, { name: 'Buildings', data: @js($chartData['buildings']) }, { name: 'Clients', data: @js($chartData['clients']) }, { name: 'Contracts (€)', data: @js($chartData['contracts']) }, { name: 'Employees', data: @js($chartData['employees']) }, { name: 'Materials (€)', data: @js($chartData['materials']) }, ],
+        series: [{ name: 'Apartments', data: @js($chartData['apartments']) }, { name: 'Buildings', data: @js($chartData['buildings']) }, { name: 'Clients', data: @js($chartData['clients']) }, { name: 'Client Addresses', data: @js($chartData['clientAddresses']) }, { name: 'Contracts (€)', data: @js($chartData['contracts']) }, { name: 'Employees', data: @js($chartData['employees']) }, ],
         chart: { height: 350, type: 'area', toolbar: {show:false}, zoom: {enabled:false}, fontFamily: 'inherit' },
         stroke: { curve: 'smooth', width: 3 },
         dataLabels: { enabled: false },
@@ -36,6 +36,10 @@
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-l-4 border-emerald-500 shadow-sm border-y border-r border-gray-100 dark:border-gray-700/50">
                     <p class="text-[10px] font-black uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500 mb-1">Materials Total</p>
                     <p class="text-2xl font-bold dark:text-white tracking-tight">€{{ number_format($stats['materials_sum'] ?? 0, 2) }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border-l-4 border-amber-500 shadow-sm border-y border-r border-gray-100 dark:border-gray-700/50">
+                    <p class="text-[10px] font-black uppercase tracking-[0.1em] text-gray-400 dark:text-gray-500 mb-1">Payments Total</p>
+                    <p class="text-2xl font-bold dark:text-white tracking-tight">€{{ number_format($stats['payments_sum'] ?? 0, 2) }}</p>
                 </div></div>
 
     <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 shadow-sm">
@@ -72,6 +76,14 @@
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Clients</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['clients'] }}</p>
             </a>
+            <a href="{{ route('admin.construction-e-r-p.client-addresses.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Client Addresses</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['clientAddresses'] }}</p>
+            </a>
             <a href="{{ route('admin.construction-e-r-p.contracts.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
@@ -88,6 +100,14 @@
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Employees</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['employees'] }}</p>
             </a>
+            <a href="{{ route('admin.construction-e-r-p.heavy-machineries.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Heavy Machineries</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['heavyMachineries'] }}</p>
+            </a>
             <a href="{{ route('admin.construction-e-r-p.materials.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
@@ -95,6 +115,14 @@
                 </div>
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Materials</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['materials'] }}</p>
+            </a>
+            <a href="{{ route('admin.construction-e-r-p.payments.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                </div>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Payments</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['payments'] }}</p>
             </a>
             <a href="{{ route('admin.construction-e-r-p.progress-reports.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
@@ -120,13 +148,13 @@
                 <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Purchase Orders</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['purchaseOrders'] }}</p>
             </a>
-            <a href="{{ route('admin.construction-e-r-p.suppliers.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
+            <a href="{{ route('admin.construction-e-r-p.subcontractors.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
                     <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Suppliers</p>
-                <p class="text-lg font-bold dark:text-white">{{ $stats['suppliers'] }}</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Subcontractors</p>
+                <p class="text-lg font-bold dark:text-white">{{ $stats['subcontractors'] }}</p>
             </a></div>
     </div>
 </div>

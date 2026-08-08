@@ -25,4 +25,9 @@ return [
   'Customer Id' => 'Customer Id',
   'Sale Date' => 'Sale Date',
   'Total' => 'Total',
+  'Product Id' => 'Product Id',
+  'Quantity' => 'Quantity',
+  'Total Price' => 'Total Price',
+  'Date' => 'Date',
+  'Status' => 'Status',
 ];

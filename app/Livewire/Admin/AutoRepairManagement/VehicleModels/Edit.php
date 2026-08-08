@@ -34,9 +34,12 @@ class Edit extends Component
     }
 
     public function mount(VehicleModel $vehicleModel) { $this->item = $vehicleModel; $this->fill($vehicleModel->toArray());  }
-    public function render() { abort_if_cannot('edit_vehicle_models'); return view('livewire.admin.auto-repair-management.vehicle-models.edit', [
+    public function render() {
+        abort_if_cannot('edit_vehicle_models');
+        return view('livewire.admin.auto-repair-management.vehicle-models.edit', [
             'brands' => $this->getbrandsList(),
-        ])->layout('components.layouts.app'); }
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateVehicleModelAction $action) { $this->validate();  $dto = VehicleModelDTO::fromArray([
             'name' => $this->name,
             'brand_id' => $this->brand_id,

@@ -16,9 +16,10 @@ class QuickCreate extends Component
 {
         use WithPagination, WithFileUploads;
      public $name = '';
-    public $photo = '';
     public $specialization = '';
-    public $active = '';
+    public $phone = '';
+    public $commission_rate = '';
+    public $photo = '';
    
     public bool $created = false;
     public ?int $createdId = null;
@@ -30,11 +31,13 @@ class QuickCreate extends Component
     public function store(CreateBarberAction $action)
     {
         $this->validate();
+        if ($this->photo && !is_string($this->photo)) { $this->photo = $this->photo->store('uploads/barbers', 'uploads'); }
         $dto = BarberDTO::fromArray([
             'name' => $this->name,
-            'photo' => $this->photo,
             'specialization' => $this->specialization,
-            'active' => $this->active,
+            'phone' => $this->phone,
+            'commission_rate' => $this->commission_rate,
+            'photo' => $this->photo,
         ]);
         $item = $action->execute($dto);
         $this->dispatch('barber-created', id: $item->id);
@@ -43,7 +46,7 @@ class QuickCreate extends Component
         $this->created = true;
         $this->createdId = $item->id;
         $this->createdLabel = (string) ($item->name ?? $item->id);
-        $this->reset(['name', 'photo', 'specialization', 'active']);
+        $this->reset(['name', 'specialization', 'phone', 'commission_rate', 'photo']);
     }
 
     public function addAnother()

@@ -20,8 +20,11 @@ class Edit extends Component
     public $description = '';
    
     public function mount(Category $category) { $this->item = $category; $this->fill($category->toArray());  }
-    public function render() { abort_if_cannot('edit_categories'); return view('livewire.admin.warehouse-management.categories.edit', [
-        ])->layout('components.layouts.app'); }
+    public function render() {
+        abort_if_cannot('edit_categories');
+        return view('livewire.admin.warehouse-management.categories.edit', [
+        ])->layout('components.layouts.app');
+    }
     public function update(UpdateCategoryAction $action) { $this->validate();  $dto = CategoryDTO::fromArray([
             'name' => $this->name,
             'description' => $this->description,
