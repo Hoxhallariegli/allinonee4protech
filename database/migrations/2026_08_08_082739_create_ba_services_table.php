@@ -6,4 +6,5 @@ return new class extends Migration { public function up() { Schema::create('ba_s
             $table->string('name');
             $table->decimal('price');
             $table->integer('duration')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps(); }); } public function down() { Schema::dropIfExists('ba_services'); } };
