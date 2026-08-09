@@ -12,6 +12,9 @@ class ModuleSeeder extends Seeder
      */
     public function run(): void
     {
+        // Clear cache first to ensure visibility
+        \Illuminate\Support\Facades\Cache::forget('active_modules');
+
         $modules = [
             ['key' => 'berber-app', 'label' => 'Berber App', 'icon' => 'user'],
             ['key' => 'auto-repair-management', 'label' => 'Auto Repair Management', 'icon' => 'wrench'],

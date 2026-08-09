@@ -24,6 +24,8 @@ return [
   'Action' => 'Veprimi',
   'Admin' => 'Admin',
   'Landing' => 'Landing',
+  'enterprise_ecosystem' => 'Ekosistemi i Ndërmarrjes',
+  'active_management_modules' => 'Modulet e Menaxhimit Aktive',
   'Save' => 'Ruaj',
   'Update' => 'Përditëso',
   'Edit' => 'Modifiko',

@@ -1,11 +1,11 @@
 <div class="space-y-6">
     <div class="flex flex-col gap-1">
         <h1 class="text-2xl font-black tracking-tight text-gray-900 dark:text-white uppercase">
-            {{ __('admin.Enterprise Ecosystem') }}
+            {{ __('admin.enterprise_ecosystem') }}
         </h1>
         <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-2">
             <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            {{ __('admin.Active Management Modules') }}
+            {{ __('admin.active_management_modules') }}
         </p>
     </div>
 
