@@ -38,28 +38,38 @@ class UltimateDemoSeeder extends Seeder
         ];
 
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
-        $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
+        // Clean table names (remove quotes and generic sqlite prefixes)
+        $tables = array_map(function($t) {
+            $t = str_replace(['main.', '"', '`'], '', $t);
+            if (is_object($t)) return $t->name; // Handle some DB drivers returning objects
+            return (string)$t;
+        }, $rawTables);
 
         // Exclude system tables
-        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring']));
+        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'notification_settings', 'settings', 'permissions', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions', 'users', 'audit_trails', 'notifications']));
 
-        echo "🚀 Starting GOD-MODE (Enums Enabled) Demo Data Seeding..." . PHP_EOL;
+        echo "🚀 Starting GOD-MODE Demo Data Seeding (All 21 Modules)..." . PHP_EOL;
+        echo "📊 Total tables found in DB: " . count($tables) . PHP_EOL;
 
         foreach ($tables as $table) {
             $this->parseEnums($table);
         }
 
-        for ($pass = 1; $pass <= 5; $pass++) {
-            echo "🔄 Pass $pass..." . PHP_EOL;
-            foreach ($manifest as $group) {
-                $prefix = $group['prefix'];
-                $moduleTables = array_filter($tables, fn($t) => str_starts_with($t, $prefix));
+        foreach ($manifest as $groupName => $groupInfo) {
+            $prefix = $groupInfo['prefix'];
+            $moduleTables = array_filter($tables, fn($t) => str_starts_with($t, $prefix));
 
-                // Sort tables: parent tables (short names, no underscores after prefix) first
-                usort($moduleTables, function($a, $b) {
-                    return substr_count($a, '_') <=> substr_count($b, '_');
-                });
+            if (empty($moduleTables)) {
+                echo "   ⚠️ No tables found for prefix '$prefix'" . PHP_EOL;
+                continue;
+            }
 
+            // Sort tables: parent tables (short names, no underscores after prefix) first
+            usort($moduleTables, function($a, $b) {
+                return substr_count($a, '_') <=> substr_count($b, '_');
+            });
+
+            for ($pass = 1; $pass <= 3; $pass++) {
                 foreach ($moduleTables as $table) {
                     $this->seedTable($table, $prefix, $tables);
                 }
@@ -146,7 +156,8 @@ class UltimateDemoSeeder extends Seeder
             try {
                 DB::table($table)->insert($row);
             } catch (\Throwable $e) {
-                // Silently skip if insert fails
+                // If it's the last pass and still failing, maybe log it
+                // echo "      ❌ Failed to insert into '$table': " . Str::limit($e->getMessage(), 50) . PHP_EOL;
             }
         }
 

@@ -36,10 +36,14 @@ class UltimateGodSeeder extends Seeder
         ];
 
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
-        $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
+        $tables = array_map(function($t) {
+            $t = str_replace(['main.', '"', '`'], '', $t);
+            if (is_object($t)) return $t->name;
+            return (string)$t;
+        }, $rawTables);
 
         // Exclude system tables
-        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring']));
+        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'notification_settings', 'settings', 'permissions', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions', 'users', 'audit_trails', 'notifications']));
 
         echo "🚀 Starting ULTIMATE GOD-MODE Seeding (All 21 Modules)..." . PHP_EOL;
 

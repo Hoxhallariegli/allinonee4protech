@@ -10,7 +10,7 @@ class NotificationSetting extends Model
 {
     use HasFactory;
 
-    protected $table = 'ba_notification_settings';
+    protected $table = 'notification_settings';
 
     protected $fillable = ['user_id', 'module', 'event_type', 'enabled'];
 
