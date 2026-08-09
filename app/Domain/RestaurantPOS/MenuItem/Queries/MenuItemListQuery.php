@@ -9,7 +9,7 @@ class MenuItemListQuery
 {
     public function handle(array $params = [], string $sortField = 'id', string $sortAsc = 'asc'): Builder
     {
-        $query = MenuItem::query();
+        $query = MenuItem::query()->with('category');
         if (isset($params['search']) && $params['search']) {
             $query->where(function($query) use ($params) {
                 $query->where('id', 'like', '%' . $params['search'] . '%');
