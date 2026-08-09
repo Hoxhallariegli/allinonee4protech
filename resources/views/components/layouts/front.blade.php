@@ -149,9 +149,11 @@
 @endif
 
 {{-- Top auth nav --}}
-<x-layouts.landing-header />
+@unless(request()->routeIs('front.berber-app'))
+    <x-layouts.landing-header />
+@endunless
 
-<div class="pt-20">
+<div class="{{ request()->routeIs('front.berber-app') ? '' : 'pt-20' }}">
     {{ $slot }}
 </div>
 
