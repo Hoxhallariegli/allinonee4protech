@@ -19,7 +19,7 @@ class Dashboard extends Component
             'totalDoctors' => Doctor::count(),
             'totalPatients' => Patient::count(),
             'todayVisits' => Visit::whereDate('visit_date', today())->count(),
-            'totalRevenue' => ClinicInvoice::where('status', 'paid')->sum('total_amount'),
+            'totalRevenue' => ClinicInvoice::where('status', 'paid')->sum('amount'),
             'recentVisits' => Visit::with(['doctor', 'patient'])->latest()->take(5)->get(),
         ]);
     }

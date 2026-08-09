@@ -15,7 +15,7 @@ class Dashboard extends Component
         $chartData['hotelRooms'] = collect(range(6, 0))->map(fn($i) => \App\Models\HotelManagement\HotelRoom::whereDate('created_at', now()->subDays($i))->count())->toArray();
         $chartData['housekeepings'] = collect(range(6, 0))->map(fn($i) => \App\Models\HotelManagement\Housekeeping::whereDate('created_at', now()->subDays($i))->count())->toArray();
         $chartData['reservations'] = collect(range(6, 0))->map(fn($i) => \App\Models\HotelManagement\Reservation::whereDate('created_at', now()->subDays($i))->count())->toArray();
-        $chartData['roomTypes'] = collect(range(6, 0))->map(fn($i) => (float) \App\Models\HotelManagement\RoomType::whereDate('created_at', now()->subDays($i))->sum('price'))->toArray();
+        $chartData['roomTypes'] = collect(range(6, 0))->map(fn($i) => (float) \App\Models\HotelManagement\RoomType::whereDate('created_at', now()->subDays($i))->sum('base_price'))->toArray();
 
         return view('livewire.admin.hotel-management.dashboard', [
             'stats' => [
@@ -24,7 +24,7 @@ class Dashboard extends Component
             'housekeepings' => \App\Models\HotelManagement\Housekeeping::count(),
             'reservations' => \App\Models\HotelManagement\Reservation::count(),
             'roomTypes' => \App\Models\HotelManagement\RoomType::count(),
-            'roomTypes_sum' => (float) \App\Models\HotelManagement\RoomType::sum('price'),
+            'roomTypes_sum' => (float) \App\Models\HotelManagement\RoomType::sum('base_price'),
             ],
             'chartData' => $chartData,
             'days' => collect(range(6, 0))->map(fn($i) => now()->subDays($i)->format('D'))->toArray()

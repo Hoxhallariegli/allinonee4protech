@@ -16,7 +16,7 @@ class Dashboard extends Component
         $chartData['ingredients'] = collect(range(6, 0))->map(fn($i) => \App\Models\RestaurantPOS\Ingredient::whereDate('created_at', now()->subDays($i))->count())->toArray();
         $chartData['menuItems'] = collect(range(6, 0))->map(fn($i) => (float) \App\Models\RestaurantPOS\MenuItem::whereDate('created_at', now()->subDays($i))->sum('price'))->toArray();
         $chartData['orders'] = collect(range(6, 0))->map(fn($i) => \App\Models\RestaurantPOS\Order::whereDate('created_at', now()->subDays($i))->count())->toArray();
-        $chartData['orderItems'] = collect(range(6, 0))->map(fn($i) => (float) \App\Models\RestaurantPOS\OrderItem::whereDate('created_at', now()->subDays($i))->sum('price'))->toArray();
+        $chartData['orderItems'] = collect(range(6, 0))->map(fn($i) => \App\Models\RestaurantPOS\OrderItem::whereDate('created_at', now()->subDays($i))->count())->toArray();
         $chartData['payments'] = collect(range(6, 0))->map(fn($i) => (float) \App\Models\RestaurantPOS\Payment::whereDate('created_at', now()->subDays($i))->sum('amount'))->toArray();
         $chartData['recipes'] = collect(range(6, 0))->map(fn($i) => \App\Models\RestaurantPOS\Recipe::whereDate('created_at', now()->subDays($i))->count())->toArray();
         $chartData['waiters'] = collect(range(6, 0))->map(fn($i) => \App\Models\RestaurantPOS\Waiter::whereDate('created_at', now()->subDays($i))->count())->toArray();
@@ -30,7 +30,7 @@ class Dashboard extends Component
             'menuItems_sum' => (float) \App\Models\RestaurantPOS\MenuItem::sum('price'),
             'orders' => \App\Models\RestaurantPOS\Order::count(),
             'orderItems' => \App\Models\RestaurantPOS\OrderItem::count(),
-            'orderItems_sum' => (float) \App\Models\RestaurantPOS\OrderItem::sum('price'),
+            'orderItems_sum' => 0,
             'payments' => \App\Models\RestaurantPOS\Payment::count(),
             'payments_sum' => (float) \App\Models\RestaurantPOS\Payment::sum('amount'),
             'recipes' => \App\Models\RestaurantPOS\Recipe::count(),
