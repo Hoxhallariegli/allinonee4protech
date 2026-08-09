@@ -11,13 +11,30 @@ class UltimateGodSeeder extends Seeder
 {
     public function run()
     {
-        $manifestPath = storage_path('app/scaffold-groups.json');
-        if (!file_exists($manifestPath)) {
-            echo "❌ Scaffold manifest not found!" . PHP_EOL;
-            return;
-        }
+        $manifest = [
+            "BerberApp" => ["prefix" => "ba_"],
+            "AutoRepairManagement" => ["prefix" => "arm_"],
+            "ConstructionERP" => ["prefix" => "ce_"],
+            "WarehouseManagement" => ["prefix" => "wm_"],
+            "ClinicManagement" => ["prefix" => "cm_"],
+            "RestaurantPOS" => ["prefix" => "rp_"],
+            "SchoolManagement" => ["prefix" => "sm_"],
+            "RealEstateCRM" => ["prefix" => "rec_"],
+            "CRM" => ["prefix" => "c_"],
+            "HotelManagement" => ["prefix" => "hm_"],
+            "HumanResources" => ["prefix" => "hr_"],
+            "ECommerce" => ["prefix" => "ecom_"],
+            "FleetManagement" => ["prefix" => "fl_"],
+            "GymManagement" => ["prefix" => "gym_"],
+            "Finance" => ["prefix" => "fin_"],
+            "LegalManagement" => ["prefix" => "legal_"],
+            "PharmacyManagement" => ["prefix" => "pharm_"],
+            "EventManagement" => ["prefix" => "event_"],
+            "TravelAgency" => ["prefix" => "travel_"],
+            "FacilityManagement" => ["prefix" => "facility_"],
+            "AgricultureManagement" => ["prefix" => "agri_"]
+        ];
 
-        $manifest = json_decode(file_get_contents($manifestPath), true);
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
         $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
 
@@ -135,8 +152,8 @@ class UltimateGodSeeder extends Seeder
              return fake()->randomElement(['pending', 'active', 'completed', 'confirmed', 'paid', 'open']);
         }
 
-        if (str_contains($col, 'quantity') || str_contains($col, 'stock') || $col === 'capacity' || str_contains($col, 'count') || str_contains($col, 'duration') || str_contains($col, 'points') || str_contains($col, 'level') || str_contains($col, 'age') || str_contains($col, 'year') || str_contains($col, 'sort') || str_contains($col, 'order') || str_contains($col, 'step') || str_starts_with($col, 'is_') || str_starts_with($col, 'has_') || str_starts_with($col, 'can_') || in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint'])) {
-            return rand(0, 100);
+        if (str_contains($col, 'quantity') || str_contains($col, 'stock') || $col === 'capacity' || str_contains($col, 'count') || str_contains($col, 'duration') || str_contains($col, 'points') || str_contains($col, 'level') || str_contains($col, 'age') || str_contains($col, 'year') || str_contains($col, 'sort') || str_contains($col, 'order') || str_contains($col, 'step') || str_contains($col, 'priority') || str_contains($col, 'limit') || str_contains($col, 'min') || str_contains($col, 'max') || str_starts_with($col, 'is_') || str_starts_with($col, 'has_') || str_starts_with($col, 'can_') || in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint'])) {
+            return rand(0, 10);
         }
 
         if ($type === 'boolean') return rand(0, 1);

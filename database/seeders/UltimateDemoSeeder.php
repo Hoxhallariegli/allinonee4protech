@@ -13,13 +13,30 @@ class UltimateDemoSeeder extends Seeder
 
     public function run()
     {
-        $manifestPath = storage_path('app/scaffold-groups.json');
-        if (!file_exists($manifestPath)) {
-            echo "❌ Scaffold manifest not found!" . PHP_EOL;
-            return;
-        }
+        $manifest = [
+            "BerberApp" => ["prefix" => "ba_"],
+            "AutoRepairManagement" => ["prefix" => "arm_"],
+            "ConstructionERP" => ["prefix" => "ce_"],
+            "WarehouseManagement" => ["prefix" => "wm_"],
+            "ClinicManagement" => ["prefix" => "cm_"],
+            "RestaurantPOS" => ["prefix" => "rp_"],
+            "SchoolManagement" => ["prefix" => "sm_"],
+            "RealEstateCRM" => ["prefix" => "rec_"],
+            "CRM" => ["prefix" => "c_"],
+            "HotelManagement" => ["prefix" => "hm_"],
+            "HumanResources" => ["prefix" => "hr_"],
+            "ECommerce" => ["prefix" => "ecom_"],
+            "FleetManagement" => ["prefix" => "fl_"],
+            "GymManagement" => ["prefix" => "gym_"],
+            "Finance" => ["prefix" => "fin_"],
+            "LegalManagement" => ["prefix" => "legal_"],
+            "PharmacyManagement" => ["prefix" => "pharm_"],
+            "EventManagement" => ["prefix" => "event_"],
+            "TravelAgency" => ["prefix" => "travel_"],
+            "FacilityManagement" => ["prefix" => "facility_"],
+            "AgricultureManagement" => ["prefix" => "agri_"]
+        ];
 
-        $manifest = json_decode(file_get_contents($manifestPath), true);
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
         $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
 
@@ -167,8 +184,8 @@ class UltimateDemoSeeder extends Seeder
             return (float) (rand(1000, 50000) / 100);
         }
 
-        if (str_contains($lowCol, 'quantity') || str_contains($lowCol, 'stock') || str_contains($lowCol, 'capacity') || str_contains($lowCol, 'count') || str_contains($lowCol, 'duration') || str_contains($lowCol, 'points') || str_contains($lowCol, 'level') || str_contains($lowCol, 'age') || str_contains($lowCol, 'year') || str_contains($lowCol, 'sort') || str_contains($lowCol, 'order') || str_contains($lowCol, 'step') || str_starts_with($lowCol, 'is_') || str_starts_with($lowCol, 'has_') || str_starts_with($lowCol, 'can_')) {
-            return rand(0, 100);
+        if (str_contains($lowCol, 'quantity') || str_contains($lowCol, 'stock') || str_contains($lowCol, 'capacity') || str_contains($lowCol, 'count') || str_contains($lowCol, 'duration') || str_contains($lowCol, 'points') || str_contains($lowCol, 'level') || str_contains($lowCol, 'age') || str_contains($lowCol, 'year') || str_contains($lowCol, 'sort') || str_contains($lowCol, 'order') || str_contains($lowCol, 'step') || str_contains($lowCol, 'priority') || str_contains($lowCol, 'limit') || str_contains($lowCol, 'min') || str_contains($lowCol, 'max') || str_starts_with($lowCol, 'is_') || str_starts_with($lowCol, 'has_') || str_starts_with($lowCol, 'can_')) {
+            return rand(0, 10);
         }
 
         if (str_contains($lowCol, 'date') || str_contains($lowCol, 'at') || $lowCol === 'dob' || str_contains($lowCol, 'time') || str_contains($lowCol, 'birth') || str_contains($lowCol, 'check_in') || str_contains($lowCol, 'check_out')) {
