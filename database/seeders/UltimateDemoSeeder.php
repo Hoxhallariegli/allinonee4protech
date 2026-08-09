@@ -191,6 +191,10 @@ class UltimateDemoSeeder extends Seeder
             return "AA " . rand(100, 999) . " " . strtoupper(Str::random(2));
         }
 
+        if ($lowCol === 'slug') {
+            return Str::slug($label . " " . $index . " " . Str::random(5));
+        }
+
         // If it's still identified as a numeric type but escaped our name checks, force a number
         if (in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint', 'decimal', 'float', 'double'])) {
             return rand(1, 100);

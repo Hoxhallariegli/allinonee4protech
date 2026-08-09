@@ -18,6 +18,7 @@ class UserDatabaseSeeder extends Seeder
             ['email' => 'demo@e4protech.com'],
             [
                 'name' => 'Demo User',
+                'slug' => 'demo-user',
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'email_verified_at' => now(),
                 'is_active' => true,

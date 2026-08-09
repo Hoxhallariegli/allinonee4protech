@@ -147,6 +147,7 @@ class UltimateGodSeeder extends Seeder
         if ($col === 'industry') return fake()->randomElement(['Tech', 'Health', 'Finance', 'Retail', 'Logistics']);
         if (str_contains($col, 'specialization')) return fake()->randomElement(['Generalist', 'Expert', 'Consultant']);
         if (str_contains($col, 'license_plate')) return 'AA ' . rand(100, 999) . ' ' . strtoupper(Str::random(2));
+        if ($col === 'slug') return Str::slug(fake()->words(3, true) . '-' . Str::random(5));
 
         // If it's still identified as a numeric type but escaped our name checks, force a number
         if (in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint', 'decimal', 'float', 'double'])) {
