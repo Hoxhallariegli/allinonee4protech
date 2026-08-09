@@ -48,164 +48,164 @@
 
     <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 shadow-sm">
         <div class="flex items-center justify-between mb-8">
-            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">{{ __('Growth Trend (Last 7 Days)') }}</h3>
+            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">{{ __('admin.Growth Trend (Last 7 Days)') }}</h3>
         </div>
         <div x-ref="chart" class="min-h-[350px]"></div>
     </div>
 
     <div class="space-y-6">
-        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('Operational Metrics') }}</h4>
+        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('admin.Operational Metrics') }}</h4>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             <a href="{{ route('admin.auto-repair-management.appointments.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Appointments</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Appointments') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['appointments'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.customers.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Customers</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Customers') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['customers'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.customer-addresses.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Customer Addresses</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Customer Addresses') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['customerAddresses'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.employees.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Employees</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Employees') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['employees'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.expense-trackings.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Expense Trackings</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Expense Trackings') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['expenseTrackings'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.insurance-claims.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Insurance Claims</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Insurance Claims') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['insuranceClaims'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.inventories.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Inventories</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Inventories') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['inventories'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.invoices.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Invoices</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Invoices') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['invoices'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.job-cards.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Job Cards</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Job Cards') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['jobCards'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.job-card-parts.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Job Card Parts</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Job Card Parts') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['jobCardParts'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.job-card-services.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Job Card Services</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Job Card Services') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['jobCardServices'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.mechanics.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Mechanics</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Mechanics') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['mechanics'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.parts.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Parts</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Parts') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['parts'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.payments.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Payments</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Payments') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['payments'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.services.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Services</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Services') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['services'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.vehicles.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Vehicles</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Vehicles') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['vehicles'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.vehicle-brands.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Vehicle Brands</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Vehicle Brands') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['vehicleBrands'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.vehicle-documents.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Vehicle Documents</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Vehicle Documents') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['vehicleDocuments'] }}</p>
             </a>
             <a href="{{ route('admin.auto-repair-management.vehicle-models.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Vehicle Models</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Vehicle Models') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['vehicleModels'] }}</p>
             </a></div>
     </div>

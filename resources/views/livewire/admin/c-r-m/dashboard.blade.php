@@ -18,82 +18,82 @@
     <div class="flex items-end justify-between">
         <div>
             <x-h1>{{ __('admin.CRM Dashboard') }}</x-h1>
-            <x-short-description class="dark:text-gray-400">{{ __('Operational and financial insights for') }} CRM</x-short-description>
+            <x-short-description class="dark:text-gray-400">{{ __('admin.Operational and financial insights for') }} {{ __('admin.CRM') }}</x-short-description>
         </div>
         <div class="hidden md:block">
             <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl text-[10px] font-black uppercase text-gray-400 tracking-widest">
                 <span class="size-2 rounded-full bg-blue-500 animate-pulse"></span>
-                {{ __('Real-time Analytics') }}
+                {{ __('admin.Real-time Analytics') }}
             </div>
         </div>
     </div>
 
-    
+
 
     <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 shadow-sm">
         <div class="flex items-center justify-between mb-8">
-            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">{{ __('Growth Trend (Last 7 Days)') }}</h3>
+            <h3 class="text-sm font-black uppercase tracking-widest text-gray-400">{{ __('admin.Growth Trend (Last 7 Days)') }}</h3>
         </div>
         <div x-ref="chart" class="min-h-[350px]"></div>
     </div>
 
     <div class="space-y-6">
-        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('Operational Metrics') }}</h4>
+        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">{{ __('admin.Operational Metrics') }}</h4>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             <a href="{{ route('admin.c-r-m.companies.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Companies</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Companies') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['companies'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.contacts.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Contacts</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Contacts') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['contacts'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.contact-addresses.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Contact Addresses</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Contact Addresses') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['contactAddresses'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.deals.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Deals</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Deals') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['deals'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.interactions.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Interactions</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Interactions') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['interactions'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.leads.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Leads</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Leads') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['leads'] }}</p>
             </a>
             <a href="{{ route('admin.c-r-m.tasks.index') }}" wire:navigate class="group bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700/50 hover:border-blue-500/50 hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-400 dark:text-gray-500 group-hover:text-blue-500 transition-colors"><x-heroicon-o-cube class="size-4"/></div>
-                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">View All</span>
+                    <span class="text-[10px] font-bold text-gray-300 dark:text-gray-600 group-hover:text-blue-400">{{ __('admin.View All') }}</span>
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">Tasks</p>
+                <p class="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mb-0.5">{{ __('admin.Tasks') }}</p>
                 <p class="text-lg font-bold dark:text-white">{{ $stats['tasks'] }}</p>
             </a></div>
     </div>

@@ -21,6 +21,9 @@ class UltimateGodSeeder extends Seeder
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
         $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
 
+        // Exclude system tables
+        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring']));
+
         echo "🚀 Starting ULTIMATE GOD-MODE Seeding (All 21 Modules)..." . PHP_EOL;
 
         // We run multiple passes to ensure foreign keys are satisfied
@@ -106,24 +109,49 @@ class UltimateGodSeeder extends Seeder
     {
         $col = strtolower($column);
 
+        try {
+            $type = Schema::getColumnType($table, $column);
+        } catch (\Throwable $e) {
+            $type = 'string';
+        }
+
         if ($col === 'name' || $col === 'full_name') return fake()->name();
+        if ($col === 'password') return \Illuminate\Support\Facades\Hash::make('password');
         if (str_contains($col, 'title') || $col === 'subject') return fake()->sentence(3);
         if (str_contains($col, 'email')) return fake()->unique()->safeEmail();
         if (str_contains($col, 'phone') || str_contains($col, 'mobile')) return '06' . rand(7, 9) . rand(1000000, 9999999);
         if (str_contains($col, 'address')) return fake()->address();
         if (str_contains($col, 'description') || $col === 'notes' || $col === 'diagnosis') return fake()->paragraph();
-        if (str_contains($col, 'price') || str_contains($col, 'amount') || str_contains($col, 'budget') || str_contains($col, 'total') || $col === 'salary' || $col === 'balance' || $col === 'rate' || $col === 'tax' || $col === 'discount' || $col === 'fee' || $col === 'debt' || $col === 'credit' || $col === 'cost' || $col === 'revenue' || $col === 'profit') return rand(10, 5000) . '.00';
-        if (str_contains($col, 'date') || str_contains($col, '_at') || $col === 'dob') return now()->subDays(rand(0, 365))->toDateTimeString();
+
+        if (str_contains($col, 'price') || str_contains($col, 'amount') || str_contains($col, 'budget') || str_contains($col, 'total') || $col === 'salary' || $col === 'balance' || $col === 'rate' || $col === 'tax' || $col === 'discount' || $col === 'fee' || $col === 'debt' || $col === 'credit' || $col === 'cost' || $col === 'revenue' || $col === 'profit') {
+            return (float) (rand(10, 5000) . '.00');
+        }
+
+        if (str_contains($col, 'date') || str_contains($col, '_at') || $col === 'dob' || in_array($type, ['date', 'datetime', 'timestamp'])) {
+            return now()->subDays(rand(0, 365))->toDateTimeString();
+        }
+
         if (str_contains($col, 'status')) {
-             // Try to find if there are common status values
              return fake()->randomElement(['pending', 'active', 'completed', 'confirmed', 'paid', 'open']);
         }
-        if (str_contains($col, 'quantity') || str_contains($col, 'stock') || $col === 'capacity') return rand(1, 100);
+
+        if (str_contains($col, 'quantity') || str_contains($col, 'stock') || $col === 'capacity' || str_contains($col, 'count') || str_contains($col, 'duration') || str_contains($col, 'points') || str_contains($col, 'level') || str_contains($col, 'age') || str_contains($col, 'year') || str_contains($col, 'sort') || str_contains($col, 'order') || str_contains($col, 'step') || str_starts_with($col, 'is_') || str_starts_with($col, 'has_') || str_starts_with($col, 'can_') || in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint'])) {
+            return rand(0, 100);
+        }
+
+        if ($type === 'boolean') return rand(0, 1);
+        if (in_array($type, ['decimal', 'float', 'double'])) return (float) (rand(1000, 50000) / 100);
+
         if (str_contains($col, 'photo') || str_contains($col, 'image') || $col === 'logo') return 'https://i.pravatar.cc/150?u=' . Str::random(5);
         if ($col === 'gender') return fake()->randomElement(['male', 'female']);
         if ($col === 'industry') return fake()->randomElement(['Tech', 'Health', 'Finance', 'Retail', 'Logistics']);
         if (str_contains($col, 'specialization')) return fake()->randomElement(['Generalist', 'Expert', 'Consultant']);
         if (str_contains($col, 'license_plate')) return 'AA ' . rand(100, 999) . ' ' . strtoupper(Str::random(2));
+
+        // If it's still identified as a numeric type but escaped our name checks, force a number
+        if (in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint', 'decimal', 'float', 'double'])) {
+            return rand(1, 100);
+        }
 
         return Str::title(str_replace('_', ' ', $column)) . ' ' . rand(1, 100);
     }

@@ -23,6 +23,9 @@ class UltimateDemoSeeder extends Seeder
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
         $tables = array_map(fn($t) => str_replace('main.', '', $t), $rawTables);
 
+        // Exclude system tables
+        $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring']));
+
         echo "🚀 Starting GOD-MODE (Enums Enabled) Demo Data Seeding..." . PHP_EOL;
 
         foreach ($tables as $table) {
@@ -34,6 +37,11 @@ class UltimateDemoSeeder extends Seeder
             foreach ($manifest as $group) {
                 $prefix = $group['prefix'];
                 $moduleTables = array_filter($tables, fn($t) => str_starts_with($t, $prefix));
+
+                // Sort tables: parent tables (short names, no underscores after prefix) first
+                usort($moduleTables, function($a, $b) {
+                    return substr_count($a, '_') <=> substr_count($b, '_');
+                });
 
                 foreach ($moduleTables as $table) {
                     $this->seedTable($table, $prefix, $tables);
@@ -138,40 +146,54 @@ class UltimateDemoSeeder extends Seeder
             return $this->tableEnums[$table][$column][array_rand($this->tableEnums[$table][$column])];
         }
 
+        $lowCol = strtolower($column);
+        if ($lowCol === 'password') return \Illuminate\Support\Facades\Hash::make('password');
+
         try {
             $type = Schema::getColumnType($table, $column);
         } catch (\Throwable $e) {
             $type = 'string';
         }
 
+        // Priority 1: Strict Type Detection
         if ($type === 'boolean') return rand(0, 1);
-        if (in_array($type, ['integer', 'bigint', 'smallint'])) return rand(1, 100);
-        if (in_array($type, ['decimal', 'float', 'double'])) return rand(1000, 50000) / 100;
+        if (in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint'])) return rand(1, 100);
+        if (in_array($type, ['decimal', 'float', 'double'])) return (float) (rand(1000, 50000) / 100);
         if (in_array($type, ['date', 'datetime', 'timestamp'])) return now()->subDays(rand(1, 100))->toDateTimeString();
 
-        // Fallback checks based on column names if type detection is generic
-        if (str_contains($column, 'price') || str_contains($column, 'amount') || str_contains($column, 'balance') || str_contains($column, 'fee') || str_contains($column, 'budget') || str_contains($column, 'salary') || str_contains($column, 'cost') || str_contains($column, 'total') || str_contains($column, 'area') || str_contains($column, 'quantity') || str_contains($column, 'stock') || str_contains($column, 'capacity') || str_contains($column, 'rate') || str_contains($column, 'distance') || str_contains($column, 'percentage') || str_contains($column, 'commission') || str_contains($column, 'score')) {
-            return rand(1000, 50000) / 100;
+        // Priority 2: Fallback checks based on column names (if type detection returns 'string' for numeric fields)
+        $lowCol = strtolower($column);
+        if (str_contains($lowCol, 'price') || str_contains($lowCol, 'amount') || str_contains($lowCol, 'balance') || str_contains($lowCol, 'fee') || str_contains($lowCol, 'budget') || str_contains($lowCol, 'salary') || str_contains($lowCol, 'cost') || str_contains($lowCol, 'total') || str_contains($lowCol, 'rate') || str_contains($lowCol, 'percentage') || str_contains($lowCol, 'commission') || str_contains($lowCol, 'score') || str_contains($lowCol, 'tax')) {
+            return (float) (rand(1000, 50000) / 100);
         }
 
-        if (str_contains($column, 'date') || str_contains($column, 'at') || $column === 'dob' || str_contains($column, 'time') || str_contains($column, 'birth') || str_contains($column, 'check_in') || str_contains($column, 'check_out')) {
+        if (str_contains($lowCol, 'quantity') || str_contains($lowCol, 'stock') || str_contains($lowCol, 'capacity') || str_contains($lowCol, 'count') || str_contains($lowCol, 'duration') || str_contains($lowCol, 'points') || str_contains($lowCol, 'level') || str_contains($lowCol, 'age') || str_contains($lowCol, 'year') || str_contains($lowCol, 'sort') || str_contains($lowCol, 'order') || str_contains($lowCol, 'step') || str_starts_with($lowCol, 'is_') || str_starts_with($lowCol, 'has_') || str_starts_with($lowCol, 'can_')) {
+            return rand(0, 100);
+        }
+
+        if (str_contains($lowCol, 'date') || str_contains($lowCol, 'at') || $lowCol === 'dob' || str_contains($lowCol, 'time') || str_contains($lowCol, 'birth') || str_contains($lowCol, 'check_in') || str_contains($lowCol, 'check_out')) {
             return now()->subDays(rand(1, 100))->toDateTimeString();
         }
 
-        if (str_contains($column, 'email')) {
+        if (str_contains($lowCol, 'email')) {
             return "user" . rand(100, 9999) . "@example.com";
         }
 
-        if (str_contains($column, 'phone') || str_contains($column, 'mobile')) {
+        if (str_contains($lowCol, 'phone') || str_contains($lowCol, 'mobile')) {
             return "06" . rand(7, 9) . rand(1000000, 9999999);
         }
 
-        if (str_contains($column, 'gender')) {
+        if (str_contains($lowCol, 'gender')) {
             return rand(0, 1) ? 'male' : 'female';
         }
 
-        if (str_contains($column, 'license_plate')) {
+        if (str_contains($lowCol, 'license_plate')) {
             return "AA " . rand(100, 999) . " " . strtoupper(Str::random(2));
+        }
+
+        // If it's still identified as a numeric type but escaped our name checks, force a number
+        if (in_array($type, ['integer', 'bigint', 'smallint', 'mediumint', 'tinyint', 'decimal', 'float', 'double'])) {
+            return rand(1, 100);
         }
 
         $label = Str::title(str_replace(['_', 'ba_', 'arm_', 'ce_', 'wm_', 'cm_', 'rp_', 'sm_', 'rec_', 'c_', 'hm_', 'hr_', 'ecom_', 'fl_', 'gym_', 'fin_', 'legal_', 'pharm_', 'event_', 'travel_', 'facility_', 'agri_'], ' ', $table));

@@ -14,6 +14,18 @@ class UserDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
+        $demoUser = \App\Models\User::firstOrCreate(
+            ['email' => 'demo@e4protech.com'],
+            [
+                'name' => 'Demo User',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'email_verified_at' => now(),
+                'is_active' => true,
+            ]
+        );
+
+        $demoUser->assignRole('admin');
+
         Permission::firstOrCreate(['name' => 'view_users', 'label' => 'View Users', 'module' => 'Users']);
         Permission::firstOrCreate(['name' => 'view_users_profiles', 'label' => 'View Users Profiles', 'module' => 'Users']);
         Permission::firstOrCreate(['name' => 'view_users_activity', 'label' => 'View Users Activity', 'module' => 'Users']);
