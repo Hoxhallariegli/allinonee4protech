@@ -36,10 +36,14 @@ class UltimateGodSeeder extends Seeder
         ];
 
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
+
         $tables = array_map(function($t) {
-            $t = str_replace(['main.', '"', '`'], '', $t);
-            if (is_object($t)) return $t->name;
-            return (string)$t;
+            $name = is_object($t) ? ($t->name ?? (string)$t) : (string)$t;
+            if (str_contains($name, '.')) {
+                $parts = explode('.', $name);
+                $name = end($parts);
+            }
+            return str_replace(['`', '"', '[', ']'], '', $name);
         }, $rawTables);
 
         // Exclude system tables

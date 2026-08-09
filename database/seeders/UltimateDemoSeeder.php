@@ -38,18 +38,29 @@ class UltimateDemoSeeder extends Seeder
         ];
 
         $rawTables = DB::connection()->getSchemaBuilder()->getTableListing();
-        // Clean table names (remove quotes and generic sqlite prefixes)
+
         $tables = array_map(function($t) {
-            $t = str_replace(['main.', '"', '`'], '', $t);
-            if (is_object($t)) return $t->name; // Handle some DB drivers returning objects
-            return (string)$t;
+            // Handle if $t is an object (standard in newer Laravel/DB drivers)
+            $name = is_object($t) ? ($t->name ?? (string)$t) : (string)$t;
+
+            // Clean table name: remove "db_name.", backticks, and quotes
+            if (str_contains($name, '.')) {
+                $parts = explode('.', $name);
+                $name = end($parts);
+            }
+            return str_replace(['`', '"', '[', ']'], '', $name);
         }, $rawTables);
 
         // Exclude system tables
         $tables = array_filter($tables, fn($t) => !in_array($t, ['migrations', 'personal_access_tokens', 'failed_jobs', 'password_reset_tokens', 'sessions', 'cache', 'cache_locks', 'jobs', 'job_batches', 'telescope_entries', 'telescope_entries_tags', 'telescope_monitoring', 'notification_settings', 'settings', 'permissions', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions', 'users', 'audit_trails', 'notifications']));
 
         echo "🚀 Starting GOD-MODE Demo Data Seeding (All 21 Modules)..." . PHP_EOL;
-        echo "📊 Total tables found in DB: " . count($tables) . PHP_EOL;
+        echo "📊 Total tables to process: " . count($tables) . PHP_EOL;
+
+        // Debug: Show first few tables to verify cleaning
+        if (!empty($tables)) {
+            echo "🔎 Sample tables found: " . implode(', ', array_slice($tables, 0, 5)) . PHP_EOL;
+        }
 
         foreach ($tables as $table) {
             $this->parseEnums($table);
